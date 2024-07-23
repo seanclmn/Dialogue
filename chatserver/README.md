@@ -1,5 +1,7 @@
 # Chatserver
 
+this is a readme
+
 To start your Phoenix server:
 
   * Run `mix setup` to install and setup dependencies
