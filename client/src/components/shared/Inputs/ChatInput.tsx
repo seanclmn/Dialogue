@@ -30,7 +30,7 @@ export const ChatInput = ({ onChange, value }: ChatInputProps) => {
   return (
     <textarea
       className=" w-[100%] mx-0 resize-none leading-none 
-        transition-all duration-1000 ease-in-out outline-none "
+        transition-all duration-1000 ease-in-out outline-none"
       rows={1}
       ref={textAreaRef}
       onChange={onChange}
