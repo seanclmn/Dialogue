@@ -8,7 +8,7 @@ export const Message = ({ text, senderIsMe }: MessageProps) => {
   return (
     <div
       className={`${
-        senderIsMe ? "bg-blue-500 ml-auto max-w-40" : "bg-gray-200"
+        senderIsMe ? "bg-purple-700 ml-auto max-w-40" : "bg-gray-200"
       } my-[1px] p-1 rounded-[10px] inline-flex`}
     >
       <p

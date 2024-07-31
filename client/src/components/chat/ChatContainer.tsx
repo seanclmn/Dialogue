@@ -10,7 +10,7 @@ export const ChatContainer = () => {
   const [conversation, setConversation] = useState<MessageProps[]>([]);
 
   return (
-    <div className="m-2 h-full flex flex-col justify-between">
+    <div className="my-[5%] h-[90%] flex flex-col justify-between">
       <div className="flex flex-col items-start">
         <Message text={"sup"} id={"asdfasdf"} key={"asdfasdf"} />
         {conversation.map((messageObj) => (
