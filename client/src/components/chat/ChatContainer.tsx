@@ -10,8 +10,8 @@ export const ChatContainer = () => {
   const [conversation, setConversation] = useState<MessageProps[]>([]);
 
   return (
-    <div className="my-[5%] h-[90%] flex flex-col justify-between">
-      <div className="flex flex-col items-start">
+    <div className="h-full flex flex-col justify-between">
+      <div className="flex flex-col items-start grow overflow-auto">
         <Message text={"sup"} id={"asdfasdf"} key={"asdfasdf"} />
         {conversation.map((messageObj) => (
           <Message
@@ -29,12 +29,13 @@ export const ChatContainer = () => {
         "
         onSubmit={(e: React.KeyboardEvent<HTMLFormElement>) => {
           e.preventDefault();
-          console.log("new message: ", message);
-          setConversation([
-            ...conversation,
-            { text: message, id: uuidv4(), senderIsMe: true },
-          ]);
-          setMessage("");
+          if (message.length > 0) {
+            setConversation([
+              ...conversation,
+              { text: message, id: uuidv4(), senderIsMe: true },
+            ]);
+            setMessage("");
+          }
         }}
       >
         <ChatInput
@@ -45,7 +46,7 @@ export const ChatContainer = () => {
             setMessage(e.currentTarget.value);
           }}
         />
-        <ChatSendButton />
+        <ChatSendButton disabled={message.length === 0} />
       </form>
     </div>
   );

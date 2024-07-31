@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 
 interface ChatInputProps
-  extends React.InputHTMLAttributes<HTMLTextAreaElement> {}
+  extends React.InputHTMLAttributes<HTMLTextAreaElement> {
+  styles?: string;
+}
 
-export const ChatInput = ({ onChange, value }: ChatInputProps) => {
+export const ChatInput = ({ onChange, value, styles }: ChatInputProps) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -29,8 +31,8 @@ export const ChatInput = ({ onChange, value }: ChatInputProps) => {
   }, [value, windowWidth]);
   return (
     <textarea
-      className=" w-[100%] mx-0 resize-none leading-none 
-        transition-all duration-1000 ease-in-out outline-none"
+      className={` w-[100%] mx-0 resize-none leading-none 
+        transition-all duration-1000 ease-in-out outline-none ${styles}`}
       rows={1}
       ref={textAreaRef}
       onChange={onChange}
