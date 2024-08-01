@@ -13,7 +13,7 @@ export const Message = ({ text, senderIsMe }: MessageProps) => {
     >
       <p
         lang="en"
-        className={`px-2 whitespace-break-spaces text-wrap
+        className={`px-2 whitespace-break-spaces break-all
           text-[15px] 	 ${senderIsMe ? "text-white" : ""}`}
       >
         {text}
