@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { Message, MessageProps } from "../shared/Messages/Message";
@@ -8,7 +8,16 @@ import { Typing } from "./Typing";
 
 export const ChatContainer = () => {
   const [message, setMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const [conversation, setConversation] = useState<MessageProps[]>([]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      setIsTyping(false);
+    }, 3000);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [isTyping]);
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -22,7 +31,7 @@ export const ChatContainer = () => {
             senderIsMe
           />
         ))}
-        <Typing />
+        {isTyping ? <Typing /> : null}
       </div>
       <form
         className="border-[1px] rounded-[15px] 
@@ -43,6 +52,7 @@ export const ChatContainer = () => {
         <ChatInput
           value={message}
           onChange={(e: React.FormEvent<HTMLTextAreaElement>) => {
+            setIsTyping(true);
             console.log("onchange");
             e.preventDefault();
             setMessage(e.currentTarget.value);
