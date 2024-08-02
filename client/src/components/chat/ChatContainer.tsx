@@ -14,7 +14,7 @@ export const ChatContainer = () => {
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       setIsTyping(false);
-    }, 3000);
+    }, 2000);
 
     return () => clearTimeout(delayDebounceFn);
   }, [isTyping]);
@@ -22,13 +22,14 @@ export const ChatContainer = () => {
   return (
     <div className="h-full flex flex-col justify-between">
       <div className="flex flex-col items-start grow overflow-auto">
-        <Message text={"sup"} id={"asdfasdf"} key={"asdfasdf"} />
+        <Message text={"sup"} id={"asdfasdf"} key={"asdfasdf"} first />
         {conversation.map((messageObj) => (
           <Message
             text={messageObj.text}
             id={messageObj.id}
             key={messageObj.id}
             senderIsMe
+            first
           />
         ))}
         {isTyping ? <Typing /> : null}

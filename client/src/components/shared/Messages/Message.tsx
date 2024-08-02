@@ -1,23 +1,34 @@
+import { Avatar } from "../users/Avatar";
+import img from "../../../assets/jennie.jpeg";
+
 export interface MessageProps extends React.DOMAttributes<HTMLElement> {
   text: string;
   id: string;
   senderIsMe?: boolean;
+  first?: boolean;
 }
 
-export const Message = ({ text, senderIsMe }: MessageProps) => {
+export const Message = ({ text, senderIsMe, first }: MessageProps) => {
   return (
     <div
-      className={`${
-        senderIsMe ? "bg-purple-700 ml-auto max-w-[70%]" : "bg-gray-200"
-      } my-[1px] p-1 rounded-[10px] inline-flex`}
+      className={`flex ${
+        senderIsMe && " flex-row-reverse"
+      } w-full items-start justify-start`}
     >
-      <p
-        lang="en"
-        className={`px-2 whitespace-break-spaces break-all
-          text-[15px] 	 ${senderIsMe ? "text-white" : ""}`}
+      {first ? <Avatar src={img} /> : null}
+      <div
+        className={`${
+          senderIsMe ? "bg-purple-700 ml-auto max-w-[70%]" : "bg-gray-200"
+        } my-[1px] p-1 rounded-[10px] inline-flex`}
       >
-        {text}
-      </p>
+        <p
+          lang="en"
+          className={`px-2 whitespace-break-spaces break-all
+          text-[15px] 	 ${senderIsMe ? "text-white" : ""}`}
+        >
+          {text}
+        </p>
+      </div>
     </div>
   );
 };
