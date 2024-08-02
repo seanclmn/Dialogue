@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Message, MessageProps } from "../shared/Messages/Message";
 import { ChatInput } from "../shared/Inputs/ChatInput";
 import { ChatSendButton } from "../shared/Buttons/ChatSendButton";
+import { Typing } from "./Typing";
 
 export const ChatContainer = () => {
   const [message, setMessage] = useState("");
@@ -21,6 +22,7 @@ export const ChatContainer = () => {
             senderIsMe
           />
         ))}
+        <Typing />
       </div>
       <form
         className="border-[1px] rounded-[15px] 
