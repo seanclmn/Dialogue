@@ -21,8 +21,8 @@ export const ChatContainer = () => {
 
   return (
     <div className="h-full flex flex-col justify-between">
-      <div className="flex flex-col items-start grow overflow-auto">
-        <Message text={"sup"} id={"asdfasdf"} key={"asdfasdf"} first />
+      <div className="flex flex-col items-start grow overflow-auto mt-12">
+        <Message text={"henlo"} id={"asdfasdf"} key={"asdfasdf"} first />
         {conversation.map((messageObj) => (
           <Message
             text={messageObj.text}
