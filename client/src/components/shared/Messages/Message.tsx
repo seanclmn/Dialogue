@@ -10,12 +10,8 @@ export interface MessageProps extends React.DOMAttributes<HTMLElement> {
 
 export const Message = ({ text, senderIsMe, first }: MessageProps) => {
   return (
-    <div
-      className={`flex ${
-        senderIsMe && " flex-row-reverse"
-      } w-full items-start justify-start`}
-    >
-      {first ? <Avatar src={img} /> : null}
+    <div className={`flex w-full items-start justify-start`}>
+      {first && !senderIsMe ? <Avatar src={img} /> : null}
       <div
         className={`${
           senderIsMe ? "bg-purple-700 ml-auto max-w-[70%]" : "bg-gray-200"
@@ -23,7 +19,7 @@ export const Message = ({ text, senderIsMe, first }: MessageProps) => {
       >
         <p
           lang="en"
-          className={`px-2 whitespace-break-spaces break-all
+          className={`px-2 whitespace-break-spaces break-keep	
           text-[15px] 	 ${senderIsMe ? "text-white" : ""}`}
         >
           {text}

@@ -5,6 +5,8 @@ import { Message, MessageProps } from "../shared/Messages/Message";
 import { ChatInput } from "../shared/Inputs/ChatInput";
 import { ChatSendButton } from "../shared/Buttons/ChatSendButton";
 import { Typing } from "./Typing";
+import { Avatar } from "../shared/users/Avatar";
+import img from "../../assets/jennie.jpeg";
 
 export const ChatContainer = () => {
   const [message, setMessage] = useState("");
@@ -32,7 +34,12 @@ export const ChatContainer = () => {
             first
           />
         ))}
-        {isTyping ? <Typing /> : null}
+        {isTyping ? (
+          <div className="flex flex-row">
+            <Avatar src={img} />
+            <Typing />
+          </div>
+        ) : null}
       </div>
       <form
         className="border-[1px] rounded-[15px] 
@@ -47,6 +54,7 @@ export const ChatContainer = () => {
               { text: message, id: uuidv4(), senderIsMe: true },
             ]);
             setMessage("");
+            setIsTyping(false);
           }
         }}
       >
