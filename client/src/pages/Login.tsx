@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button } from "../components/shared/Buttons/GenericButton";
+import { Button } from "../components/shared/buttons/GenericButton";
 import { Input } from "../components/shared/Inputs/GenericInput";
 
 export const Login = () => {
