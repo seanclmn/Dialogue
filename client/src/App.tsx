@@ -5,7 +5,7 @@ import { ChatHeader } from "./components/chat/ChatHeader";
 
 function App() {
   return (
-    <div className="flex flex-row items-start h-[100vh]">
+    <div className="flex flex-row items-start h-full">
       <div className="h-[100vh] border-solid border-r-[1px] w-40">
         <ChatGroupsContainer />
       </div>
