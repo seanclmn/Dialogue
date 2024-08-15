@@ -51,7 +51,6 @@ export const ChatContainer = () => {
       <Button
         title={"load"}
         onClick={() => {
-          console.log("wotnon");
           setLoading(false);
         }}
       />
@@ -76,7 +75,6 @@ export const ChatContainer = () => {
           value={message}
           onChange={(e: React.FormEvent<HTMLTextAreaElement>) => {
             setIsTyping(true);
-            console.log("onchange");
             e.preventDefault();
             setMessage(e.currentTarget.value);
           }}
