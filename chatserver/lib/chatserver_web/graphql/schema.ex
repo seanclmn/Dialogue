@@ -18,7 +18,7 @@ defmodule ChatserverWeb.GraphQl.Schema do
     field :get_user, :user do
       arg :id, non_null(:id)
 
-      resolve fn %{id: id}, _ -> {:ok, Chatserver.Accounts.User.get_user(id)} end
+      resolve fn %{id: id}, _ -> {:ok, Accounts.get_user(id)} end
     end
   end
 
