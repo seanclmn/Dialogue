@@ -22,9 +22,22 @@ defmodule ChatserverWeb.GraphQl.Schema do
     end
   end
 
-  # mutation do
-  # end
+  mutation do
+    field :create_user, :user do
+      arg :id, non_null(:id)
+      arg :email, :string
+
+      resolve fn %{id: id, email: email}, _ -> {:ok, Accounts.create_user(id,email)} end
+    end
+  end
 
   # subscription do
   # end
+
+  # {
+  #   getUser(id: 11) {
+  #     email
+  #   }
+  # }
+  
 end
