@@ -14,7 +14,7 @@ defmodule ChatserverWeb.GraphQl.Router do
       max_complexity: 300
     ]
 
-  if Application.compile_env(:app, :dev_routes) do
+  if Mix.env() == :dev do
     forward "/graphiql",
       to: Absinthe.Plug.GraphiQL,
       init_opts: [

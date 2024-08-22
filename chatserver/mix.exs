@@ -51,7 +51,8 @@ defmodule Chatserver.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:absinthe, "~> 1.7"},
-      {:absinthe_plug, "~> 1.5"}
+      {:absinthe_plug, "~> 1.5"},
+      {:corsica, "~> 2.1.3"}
     ]
   end
 

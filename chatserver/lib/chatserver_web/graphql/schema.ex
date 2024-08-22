@@ -1,5 +1,5 @@
 defmodule ChatserverWeb.GraphQl.Schema do
-  use Absinthe.Schema
+  use Absinthe.Schema 
 
   alias Chatserver.Accounts
 
@@ -11,25 +11,39 @@ defmodule ChatserverWeb.GraphQl.Schema do
     field :email, :string
     field :inserted_at, non_null(:datetime)
     field :updated_at, non_null(:datetime)
-
   end
 
   query do
     field :get_user, :user do
       arg :id, non_null(:id)
 
-      resolve fn %{id: id}, _ -> {:ok, Accounts.get_user(id)} end
+      resolve fn %{id: id}, _ -> 
+        case Accounts.get_user(id) do
+          %Accounts.User{} = user -> {:ok, user}
+          _ -> {:ok, Accounts.get_user(id)} 
+        end
+      end
     end
+  end
+
+  input_object :create_user_input do
+    field :id, non_null(:id)
+    field :email, non_null(:string)
   end
 
   mutation do
     field :create_user, :user do
-      arg :id, non_null(:id)
-      arg :email, :string
+      arg :input, non_null(:create_user_input)
 
-      resolve fn %{id: id, email: email}, _ -> {:ok, Accounts.create_user(id,email)} end
+      resolve fn %{input: args}, _ -> 
+        case Accounts.create_user(args) do
+          {:ok, user} -> {:ok, user}
+          {:error, changeset} -> {:error, changeset}
+        end
+      end
     end
   end
+
 
   # subscription do
   # end
