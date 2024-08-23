@@ -7,7 +7,7 @@ import { useLazyLoadQuery } from "react-relay";
 
 const query = graphql`
   query AppQuery($id: ID!) {
-    getUser(id: $id) {
+    user(id: $id) {
       email
     }
   }
@@ -25,7 +25,7 @@ function App() {
       <div className="h-[100vh] border-solid border-r-[1px] w-40">
         <ChatGroupsContainer />
       </div>
-      <div className="h-[100vh] flex-grow">
+      <div className="h-[100vh] w-[100%] flex-grow relative">
         <ChatHeader title={"wonton"} style="absolute" />
         <div className="px-2 pt-2 h-full">
           <ChatContainer />

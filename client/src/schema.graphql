@@ -11,7 +11,7 @@ type User {
 }
 
 type RootQueryType {
-  getUser(id: ID!): User
+  user(id: ID!): User
 }
 
 input CreateUserInput {

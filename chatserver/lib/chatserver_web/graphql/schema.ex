@@ -14,7 +14,7 @@ defmodule ChatserverWeb.GraphQl.Schema do
   end
 
   query do
-    field :get_user, :user do
+    field :user, :user do
       arg :id, non_null(:id)
 
       resolve fn %{id: id}, _ -> 
