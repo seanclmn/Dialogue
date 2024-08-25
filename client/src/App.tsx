@@ -9,6 +9,8 @@ const query = graphql`
   query AppQuery($id: ID!) {
     user(id: $id) {
       email
+      id
+      insertedAt
     }
   }
 `;

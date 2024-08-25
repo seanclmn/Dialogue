@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9882bb5eb76b332b306e2a3f1cf3c34d>>
+ * @generated SignedSource<<aa9f5b56f6923d0e3e0844b75d7bd4c5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,8 @@ export type AppQuery$variables = {
 export type AppQuery$data = {
   readonly user: {
     readonly email: string | null | undefined;
+    readonly id: string;
+    readonly insertedAt: any;
   } | null | undefined;
 };
 export type AppQuery = {
@@ -32,38 +34,51 @@ var v0 = [
 ],
 v1 = [
   {
-    "kind": "Variable",
-    "name": "id",
-    "variableName": "id"
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "id",
+        "variableName": "id"
+      }
+    ],
+    "concreteType": "User",
+    "kind": "LinkedField",
+    "name": "user",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "email",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "id",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "insertedAt",
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
   }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "email",
-  "storageKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "AppQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "User",
-        "kind": "LinkedField",
-        "name": "user",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/)
-        ],
-        "storageKey": null
-      }
-    ],
+    "selections": (v1/*: any*/),
     "type": "RootQueryType",
     "abstractKey": null
   },
@@ -72,39 +87,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AppQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "User",
-        "kind": "LinkedField",
-        "name": "user",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "003306a9f77d815f64b399fd744b8e0b",
+    "cacheID": "6fb3241824c2c5ad8e0245e1db980fa5",
     "id": null,
     "metadata": {},
     "name": "AppQuery",
     "operationKind": "query",
-    "text": "query AppQuery(\n  $id: ID!\n) {\n  user(id: $id) {\n    email\n    id\n  }\n}\n"
+    "text": "query AppQuery(\n  $id: ID!\n) {\n  user(id: $id) {\n    email\n    id\n    insertedAt\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "696288c5f6ea9c6bc3119a2bdc01a703";
+(node as any).hash = "ea2dcf997d19f2a75d2d01cfba71dee4";
 
 export default node;
