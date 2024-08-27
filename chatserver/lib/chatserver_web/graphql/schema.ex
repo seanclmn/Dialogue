@@ -8,7 +8,7 @@ defmodule ChatserverWeb.GraphQl.Schema do
 
   object :user do
     field :id, non_null(:id)
-    field :email, :string
+    field :username, :string
     field :inserted_at, non_null(:datetime)
     field :updated_at, non_null(:datetime)
   end
@@ -20,15 +20,24 @@ defmodule ChatserverWeb.GraphQl.Schema do
       resolve fn %{id: id}, _ -> 
         case Accounts.get_user(id) do
           %Accounts.User{} = user -> {:ok, user}
-          _ -> {:ok, Accounts.get_user(id)} 
+          _ -> {:error, :not_found} 
         end
+      end
+      
+    end
+
+    field :users, list_of(:user) do
+      resolve fn _, _ -> {:ok, Accounts.list_users()}
+        # case Accounts.list_users do
+        #   [] -> {:ok, []}
+        #   users -> {:ok, users}
+        # end
       end
     end
   end
 
   input_object :create_user_input do
-    field :id, non_null(:id)
-    field :email, non_null(:string)
+    field :username, non_null(:string)
   end
 
   mutation do
@@ -37,8 +46,8 @@ defmodule ChatserverWeb.GraphQl.Schema do
 
       resolve fn %{input: args}, _ -> 
         case Accounts.create_user(args) do
-          {:ok, user} -> {:ok, user}
-          {:error, changeset} -> {:error, changeset}
+          {:ok, user} -> user
+          {:error, _} -> nil 
         end
       end
     end
@@ -50,7 +59,7 @@ defmodule ChatserverWeb.GraphQl.Schema do
 
   # {
   #   getUser(id: 11) {
-  #     email
+  #     username
   #   }
   # }
   

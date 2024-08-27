@@ -8,9 +8,8 @@ import { useLazyLoadQuery } from "react-relay";
 const query = graphql`
   query AppQuery($id: ID!) {
     user(id: $id) {
-      email
+      username
       id
-      insertedAt
     }
   }
 `;
@@ -18,7 +17,7 @@ const query = graphql`
 function App() {
   const data = useLazyLoadQuery(
     query,
-    { id: 6 },
+    { id: 1 },
     { fetchPolicy: "store-or-network" }
   );
   console.log(data);

@@ -5,18 +5,18 @@ schema {
 
 type User {
   id: ID!
-  email: String
+  username: String
   insertedAt: DateTime!
   updatedAt: DateTime!
 }
 
 type RootQueryType {
-  getUser(id: ID!): User
+  user(id: ID!): User
+  users: [User]
 }
 
 input CreateUserInput {
-  id: ID!
-  email: String!
+  username: String!
 }
 
 type RootMutationType {

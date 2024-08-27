@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<aa9f5b56f6923d0e3e0844b75d7bd4c5>>
+ * @generated SignedSource<<b00ce2efe0e42707ed66718c80ee9a79>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,9 +14,8 @@ export type AppQuery$variables = {
 };
 export type AppQuery$data = {
   readonly user: {
-    readonly email: string | null | undefined;
     readonly id: string;
-    readonly insertedAt: any;
+    readonly username: string | null | undefined;
   } | null | undefined;
 };
 export type AppQuery = {
@@ -51,7 +50,7 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "email",
+        "name": "username",
         "storageKey": null
       },
       {
@@ -59,13 +58,6 @@ v1 = [
         "args": null,
         "kind": "ScalarField",
         "name": "id",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "insertedAt",
         "storageKey": null
       }
     ],
@@ -90,16 +82,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "6fb3241824c2c5ad8e0245e1db980fa5",
+    "cacheID": "d508e996852f6f258645f3bb5391a791",
     "id": null,
     "metadata": {},
     "name": "AppQuery",
     "operationKind": "query",
-    "text": "query AppQuery(\n  $id: ID!\n) {\n  user(id: $id) {\n    email\n    id\n    insertedAt\n  }\n}\n"
+    "text": "query AppQuery(\n  $id: ID!\n) {\n  user(id: $id) {\n    username\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ea2dcf997d19f2a75d2d01cfba71dee4";
+(node as any).hash = "0b964c58eab769bdbe7e2f822fee5ab9";
 
 export default node;
