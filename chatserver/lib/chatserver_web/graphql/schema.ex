@@ -40,6 +40,10 @@ defmodule ChatserverWeb.GraphQl.Schema do
     field :username, non_null(:string)
   end
 
+  input_object :remove_user_input do
+    field :id, non_null(:id)
+  end
+
   mutation do
     field :create_user, :user do
       arg :input, non_null(:create_user_input)
@@ -51,6 +55,14 @@ defmodule ChatserverWeb.GraphQl.Schema do
         end
       end
     end
+
+    # field :remove_user, :user do
+    #   arg :id, non_null(id)
+
+    #   resolve fn %{input: args}, _ -> 
+    #     Accounts.delete_user(args)
+    #   end
+    # end
   end
 
 

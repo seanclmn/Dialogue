@@ -21,7 +21,7 @@ defmodule ChatserverWeb.GraphQl.Router do
         schema: ChatserverWeb.GraphQl.Schema,
         socket: ChatserverWeb.UserSocket,
         socket_url: "ws://localhost:4000/api/graphql",
-        interface: :playground
+        interface: :simple
       ]
   end
 end
