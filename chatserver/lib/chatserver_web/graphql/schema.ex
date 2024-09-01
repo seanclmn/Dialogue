@@ -1,5 +1,5 @@
 defmodule ChatserverWeb.GraphQl.Schema do
-  use Absinthe.Schema 
+  use Absinthe.Schema
 
   alias Chatserver.Accounts
 
@@ -17,13 +17,13 @@ defmodule ChatserverWeb.GraphQl.Schema do
     field :user, :user do
       arg :id, non_null(:id)
 
-      resolve fn %{id: id}, _ -> 
+      resolve fn %{id: id}, _ ->
         case Accounts.get_user(id) do
           %Accounts.User{} = user -> {:ok, user}
-          _ -> {:error, :not_found} 
+          _ -> {:error, :not_found}
         end
       end
-      
+
     end
 
     field :users, list_of(:user) do
@@ -48,10 +48,10 @@ defmodule ChatserverWeb.GraphQl.Schema do
     field :create_user, :user do
       arg :input, non_null(:create_user_input)
 
-      resolve fn %{input: args}, _ -> 
+      resolve fn %{input: args}, _ ->
         case Accounts.create_user(args) do
-          {:ok, user} -> user
-          {:error, _} -> nil 
+          {:ok, user} -> {:ok, user}
+          {:error, _} -> nil
         end
       end
     end
@@ -59,7 +59,7 @@ defmodule ChatserverWeb.GraphQl.Schema do
     # field :remove_user, :user do
     #   arg :id, non_null(id)
 
-    #   resolve fn %{input: args}, _ -> 
+    #   resolve fn %{input: args}, _ ->
     #     Accounts.delete_user(args)
     #   end
     # end
@@ -74,5 +74,5 @@ defmodule ChatserverWeb.GraphQl.Schema do
   #     username
   #   }
   # }
-  
+
 end
