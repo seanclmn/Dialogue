@@ -15,4 +15,19 @@ defmodule Chatserver.Accounts.User do
     |> validate_required([:username])
     |> unique_constraint([:username])
   end
+
+  defp hash_password(changeset) do
+    case get_change(changeset, :password) do
+      nil ->
+        changeset
+
+      password ->
+        put_change(changeset, :password_hash, Bcrypt.hashpwsalt(password))
+    end
+  end
+
+  def verify_password(%User{password_hash: password_hash}, password) do
+    Bcrypt.checkpw(password, password_hash)
+  end
+
 end
