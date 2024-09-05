@@ -1,6 +1,7 @@
 defmodule Chatserver.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Comeonin.Bcrypt
 
   schema "users" do
     field :username, :string
@@ -26,7 +27,7 @@ defmodule Chatserver.Accounts.User do
     end
   end
 
-  def verify_password(%User{password_hash: password_hash}, password) do
+  def verify_password(%Users{password_hash: password_hash}, password) do
     Bcrypt.checkpw(password, password_hash)
   end
 
