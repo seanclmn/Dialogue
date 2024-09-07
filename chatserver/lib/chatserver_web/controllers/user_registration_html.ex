@@ -1,0 +1,5 @@
+defmodule ChatserverWeb.UserRegistrationHTML do
+  use ChatserverWeb, :html
+
+  embed_templates "user_registration_html/*"
+end
