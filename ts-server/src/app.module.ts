@@ -9,6 +9,8 @@ import { UsersModule } from './users/users.module';
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
       sortSchema: true,
+      driver: ApolloDriver,
+      playground: true,
     }),
     UsersModule,
   ],

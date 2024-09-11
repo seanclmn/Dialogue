@@ -4,23 +4,37 @@ import { UpdateUserInput } from './dto/update-user.input';
 
 @Injectable()
 export class UsersService {
+  private readonly users = [
+    {
+      id: 1,
+      username: 'seanclmn',
+      password: 'password',
+    },
+  ];
+
   create(createUserInput: CreateUserInput) {
+    const user = {
+      ...createUserInput,
+      id: this.users.length + 1,
+    };
+
+    this.users.push(user);
     return 'This action adds a new user';
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.users;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(username: string) {
+    return this.users.find((user) => user.username === username);
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
-  }
+  // update(id: number, updateUserInput: UpdateUserInput) {
+  //   return `This action updates a #${id} user`;
+  // }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
+  // remove(id: number) {
+  //   return `This action removes a #${id} user`;
+  // }
 }
