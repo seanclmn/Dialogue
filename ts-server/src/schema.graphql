@@ -8,8 +8,19 @@ input CreateUserInput {
   username: String!
 }
 
+type LoginResponse {
+  accessToken: String!
+  user: User!
+}
+
+input LoginUserInput {
+  password: String!
+  username: String!
+}
+
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
+  login(loginUserInput: LoginUserInput!): LoginResponse!
 }
 
 type Query {
