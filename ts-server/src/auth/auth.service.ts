@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { CreateUserInput } from 'src/users/dto/create-user.input';
 @Injectable()
 export class AuthService {
   constructor(
@@ -28,5 +29,9 @@ export class AuthService {
       }),
       user,
     };
+  }
+
+  async signup(createUserInput: CreateUserInput){
+    this.usersService.create(createUserInput)
   }
 }
