@@ -3,7 +3,6 @@
 # ------------------------------------------------------
 
 input CreateUserInput {
-  id: Float!
   password: String!
   username: String!
 }
@@ -21,6 +20,7 @@ input LoginUserInput {
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   login(loginUserInput: LoginUserInput!): LoginResponse!
+  signup(createUserInput: CreateUserInput!): User!
 }
 
 type Query {

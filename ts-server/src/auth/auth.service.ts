@@ -32,6 +32,14 @@ export class AuthService {
   }
 
   async signup(createUserInput: CreateUserInput){
-    this.usersService.create(createUserInput)
+    console.log(createUserInput)
+    const user = await this.usersService.findOne(createUserInput.username);
+    
+
+    if(user) throw new Error('User already Exists')
+
+    return this.usersService.create({
+      ...createUserInput
+    })
   }
 }

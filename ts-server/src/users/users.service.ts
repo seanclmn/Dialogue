@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
 
 @Injectable()
 export class UsersService {
@@ -19,7 +18,7 @@ export class UsersService {
     };
 
     this.users.push(user);
-    return 'This action adds a new user';
+    return user;
   }
 
   findAll() {
