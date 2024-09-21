@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b00ce2efe0e42707ed66718c80ee9a79>>
+ * @generated SignedSource<<cb73afae63421f2ae318b99da3ec6c26>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,13 +10,13 @@
 
 import { ConcreteRequest, Query } from 'relay-runtime';
 export type AppQuery$variables = {
-  id: string;
+  username: string;
 };
 export type AppQuery$data = {
   readonly user: {
-    readonly id: string;
-    readonly username: string | null | undefined;
-  } | null | undefined;
+    readonly id: number;
+    readonly username: string;
+  };
 };
 export type AppQuery = {
   response: AppQuery$data;
@@ -28,7 +28,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id"
+    "name": "username"
   }
 ],
 v1 = [
@@ -37,8 +37,8 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "id",
-        "variableName": "id"
+        "name": "username",
+        "variableName": "username"
       }
     ],
     "concreteType": "User",
@@ -71,7 +71,7 @@ return {
     "metadata": null,
     "name": "AppQuery",
     "selections": (v1/*: any*/),
-    "type": "RootQueryType",
+    "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
@@ -82,16 +82,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "d508e996852f6f258645f3bb5391a791",
+    "cacheID": "c146fbe89e39460d0fc7298e198a23a5",
     "id": null,
     "metadata": {},
     "name": "AppQuery",
     "operationKind": "query",
-    "text": "query AppQuery(\n  $id: ID!\n) {\n  user(id: $id) {\n    username\n    id\n  }\n}\n"
+    "text": "query AppQuery(\n  $username: String!\n) {\n  user(username: $username) {\n    username\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0b964c58eab769bdbe7e2f822fee5ab9";
+(node as any).hash = "49b31a0fb480e69d70694369ac8445fd";
 
 export default node;

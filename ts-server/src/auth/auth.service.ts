@@ -42,9 +42,21 @@ export class AuthService {
 
     const password = await hash(createUserInput.password, 10);
 
-    return this.usersService.create({
+    console.log(password)
+
+    const newUser = this.usersService.create({
       ...createUserInput,
-      password,
-    });
+      password
+    })
+
+    console.log(newUser)
+
+    return {
+      accessToken: this.jwtService.sign({
+        username: newUser.username,
+        sub: newUser.id,
+      }),
+      user: newUser,
+    };
   }
 }

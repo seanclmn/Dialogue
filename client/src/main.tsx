@@ -7,6 +7,7 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./pages/404.tsx";
 import { Login } from "./pages/Login.tsx";
+import { CookiesProvider } from "react-cookie";
 
 const router = createBrowserRouter([
   {
@@ -22,9 +23,12 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <RelayEnvironmentProvider environment={RelayEnvironment}>
-    <React.StrictMode>
-      <RouterProvider router={router} />
-    </React.StrictMode>
-  </RelayEnvironmentProvider>
+  <React.StrictMode>
+    <CookiesProvider>
+      <RelayEnvironmentProvider environment={RelayEnvironment}>
+          <RouterProvider router={router} />
+      </RelayEnvironmentProvider>
+    </CookiesProvider>
+  </React.StrictMode>
+
 );

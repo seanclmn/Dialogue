@@ -20,11 +20,11 @@ input LoginUserInput {
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   login(loginUserInput: LoginUserInput!): LoginResponse!
-  signup(createUserInput: CreateUserInput!): User!
+  signup(createUserInput: CreateUserInput!): LoginResponse!
 }
 
 type Query {
-  user(username: Int!): User!
+  user(username: String!): User!
   users: [User!]!
 }
 

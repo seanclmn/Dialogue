@@ -5,10 +5,10 @@ import { CreateUserInput } from './dto/create-user.input';
 export class UsersService {
   private readonly users = [
     {
-      id: 1,
       username: 'seanclmn',
-      password: 'password',
-    },
+      password: '$2b$10$CqkDDWiGxecrcusjRtYRkOFNmgdEcQdlnV/qM6OhO34UFa2ld5FnO',
+      id: 1
+    }
   ];
 
   create(createUserInput: CreateUserInput) {

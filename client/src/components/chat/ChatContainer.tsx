@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import { Message, MessageProps } from "../shared/messages/Message";
+import { Message, MessageProps } from "../shared/Messages/Message";
 import { ChatInput } from "../shared/Inputs/ChatInput";
-import { ChatSendButton } from "../shared/buttons/ChatSendButton";
+import { ChatSendButton } from "../shared/Buttons/ChatSendButton";
 import { Typing } from "./Typing";
 import { Avatar } from "../shared/users/Avatar";
 import img from "../../assets/jennie.jpeg";
-import { Button } from "../shared/buttons/GenericButton";
+import { Button } from "../shared/Buttons/GenericButton";
 import { Loader } from "../shared/loaders/Loader";
 
 export const ChatContainer = () => {
