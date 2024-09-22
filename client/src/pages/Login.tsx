@@ -13,7 +13,6 @@ const mutation = graphql`
     login(loginUserInput: {username: $username, password: $password}){
       user{
         username
-        id
       }
       accessToken
     }

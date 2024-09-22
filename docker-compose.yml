@@ -1,10 +1,6 @@
 services:
   db:
-    image: postgres:latest
+    image: mysql
     restart: always
     environment:
-      POSTGRES_DB: chatserver_dev
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
+      MYSQL_ROOT_PASSWORD: password
