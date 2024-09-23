@@ -21,8 +21,8 @@ const mutation = graphql`
 
 export const Login = () => {
   const [creds, setCreds] = useState({ username: "", password: "" });
-  const [cookies, setCookie, removeCookie] = useCookies(['accessToken']);
-  const [commitMutation, isMutationInFlight] = useMutation<LoginMutation>(mutation);
+  const [cookies, setCookie, ] = useCookies(['accessToken']);
+  const [commitMutation, ] = useMutation<LoginMutation>(mutation);
 
   if(cookies['accessToken']) return <Navigate to='/' />
   return (
@@ -37,7 +37,7 @@ export const Login = () => {
           },
           onCompleted: (data: LoginMutation$data) => {
             setCookie('accessToken', data.login.accessToken)
-            console.log('completed')
+            console.log('completed') 
           },
           onError: (e) => {
             console.log(e)
