@@ -10,5 +10,10 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = "mysql://chatdb:root@localhost:3308/chatdb"
+}
+
+model User {
+  id    Int     @default(autoincrement()) @id
+  username  String
 }
