@@ -4,7 +4,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { PrismaModule } from 'nestjs-prisma';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -14,9 +14,14 @@ import { PrismaModule } from 'nestjs-prisma';
       driver: ApolloDriver,
       playground: true,
     }),
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: ':memory',
+      entities: [],
+      synchronize: true
+    }),
     UsersModule,
     AuthModule,
-    PrismaModule.forRoot({ isGlobal: true }),
   ],
 })
 export class AppModule {}

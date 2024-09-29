@@ -4,6 +4,12 @@ import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserInput } from 'src/users/dto/create-user.input';
 import { hash, compare } from 'bcrypt';
+
+export class ValidateUser {
+  id: number;
+  username: string;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -11,7 +17,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, password: string): Promise<User | null> {
+  async validateUser(username: string, password: string): Promise<ValidateUser | null> {
     const user = await this.usersService.findOne(username);
 
     if (!user) throw new Error('User does not exist');

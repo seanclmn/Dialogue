@@ -1,8 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserInput } from './dto/create-user.input';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
+
+  constructor(@InjectRepository(User) private usersRepository: Repository<User>){}
+
   private readonly users = [
     {
       username: 'seanclmn',
@@ -22,11 +28,15 @@ export class UsersService {
   }
 
   findAll() {
-    return this.users;
+    return this.usersRepository.find()
   }
 
   findOne(username: string) {
-    return this.users.find((user) => user.username === username);
+    return this.usersRepository.findOne({
+      where: {
+        username: username
+      }
+    })
   }
 
   // update(id: number, updateUserInput: UpdateUserInput) {

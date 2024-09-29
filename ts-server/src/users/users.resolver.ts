@@ -22,6 +22,7 @@ export class UsersResolver {
   }
 
   @Query(() => User, { name: 'user' })
+  @UseGuards(JwtGuard)
   findOne(@Args('username', { type: () => String }) username: string) {
     return this.usersService.findOne(username);
   }
