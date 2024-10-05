@@ -6,15 +6,16 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-
-  constructor(@InjectRepository(User) private usersRepository: Repository<User>){}
+  constructor(
+    @InjectRepository(User) private usersRepository: Repository<User>,
+  ) { }
 
   private readonly users = [
     {
       username: 'seanclmn',
       password: '$2b$10$CqkDDWiGxecrcusjRtYRkOFNmgdEcQdlnV/qM6OhO34UFa2ld5FnO',
-      id: 1
-    }
+      id: 1,
+    },
   ];
 
   create(createUserInput: CreateUserInput) {
@@ -28,15 +29,15 @@ export class UsersService {
   }
 
   findAll() {
-    return this.usersRepository.find()
+    return this.usersRepository.find();
   }
 
   findOne(username: string) {
     return this.usersRepository.findOne({
       where: {
-        username: username
-      }
-    })
+        username: username,
+      },
+    });
   }
 
   // update(id: number, updateUserInput: UpdateUserInput) {

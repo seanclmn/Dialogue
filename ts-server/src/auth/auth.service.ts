@@ -17,7 +17,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, password: string): Promise<ValidateUser | null> {
+  async validateUser(
+    username: string,
+    password: string,
+  ): Promise<ValidateUser | null> {
     const user = await this.usersService.findOne(username);
 
     if (!user) throw new Error('User does not exist');
@@ -48,14 +51,14 @@ export class AuthService {
 
     const password = await hash(createUserInput.password, 10);
 
-    console.log(password)
+    console.log(password);
 
     const newUser = this.usersService.create({
       ...createUserInput,
-      password
-    })
+      password,
+    });
 
-    console.log(newUser)
+    console.log(newUser);
 
     return {
       accessToken: this.jwtService.sign({
