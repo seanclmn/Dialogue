@@ -5,6 +5,7 @@ import { join } from 'path';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -15,13 +16,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       playground: true,
     }),
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: ':memory',
-      entities: ['dist/**/*.entity{.ts,.js}'],
+      type: 'mysql',
+      database: 'mysql',
+      host: "localhost",
+      port: 3306,
+      username: "root",
+      password: "root",
+      entities: [User],
       synchronize: true,
     }),
     UsersModule,
     AuthModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,9 +1,8 @@
 services:
   db:
     image: mysql
+    env_file: 
+      - .env
     ports:
       - 3308:3306
     restart: always
-    environment:
-      MYSQL_DATABASE: chatdb
-      MYSQL_ROOT_PASSWORD: root
