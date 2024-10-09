@@ -1,8 +1,11 @@
 services:
   db:
     image: mysql
-    env_file: 
-      - .env
+    environment: 
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=test
     ports:
-      - 3308:3306
+      - 3306:3306
     restart: always
+    # volumes: 
+    #   - /Users/seanclmn/Projects/chat/db:/var/lib/mysql
