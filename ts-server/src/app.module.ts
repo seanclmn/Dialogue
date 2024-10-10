@@ -22,7 +22,7 @@ import { User } from './users/entities/user.entity';
       username: 'root',
       password: 'root',
       database: 'test',
-      entities: ["dist/**/**.entity{.ts,.js}"],
+      entities: [User],
       synchronize: true,
     }),
     UsersModule,
