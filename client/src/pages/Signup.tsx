@@ -3,14 +3,14 @@ import { Button } from "../components/shared/Buttons/GenericButton";
 import { Input } from "../components/shared/Inputs/GenericInput";
 import { graphql } from "relay-runtime";
 import { useMutation } from "react-relay";
-import { LoginMutation, LoginMutation$data } from "./__generated__/LoginMutation.graphql";
+import { SignupMutation, SignupMutation$data } from "./__generated__/SignupMutation.graphql";
 import { useCookies } from "react-cookie";
 import { Navigate } from "react-router";
 
 
 const mutation = graphql`
-  mutation LoginMutation($username: String!, $password: String!){
-    login(loginUserInput: {username: $username, password: $password}){
+  mutation SignupMutation($username: String!, $password: String!){
+    signup(createUserInput: {username: $username, password: $password}){
       user{
         username
       }
@@ -19,10 +19,10 @@ const mutation = graphql`
   }
 `
 
-export const Login = () => {
+export const Signup = () => {
   const [creds, setCreds] = useState({ username: "", password: "" });
   const [cookies, setCookie,] = useCookies(['accessToken']);
-  const [commitMutation,] = useMutation<LoginMutation>(mutation);
+  const [commitMutation,] = useMutation<SignupMutation>(mutation);
 
   if (cookies['accessToken']) return <Navigate to='/' />
   return (
@@ -35,8 +35,8 @@ export const Login = () => {
           variables: {
             username: creds.username, password: creds.password
           },
-          onCompleted: (data: LoginMutation$data) => {
-            setCookie('accessToken', data.login.accessToken)
+          onCompleted: (data: SignupMutation$data) => {
+            setCookie('accessToken', data.signup.accessToken)
             console.log('completed')
           },
           onError: (e) => {

@@ -15,7 +15,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async validateUser(
     username: string,
@@ -53,7 +53,7 @@ export class AuthService {
 
     console.log(password);
 
-    const newUser = this.usersService.create({
+    const newUser = await this.usersService.create({
       ...createUserInput,
       password,
     });

@@ -10,30 +10,16 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) { }
 
-  private readonly users = [
-    {
-      username: 'seanclmn',
-      password: '$2b$10$CqkDDWiGxecrcusjRtYRkOFNmgdEcQdlnV/qM6OhO34UFa2ld5FnO',
-      id: 1,
-    },
-  ];
-
-  create(createUserInput: CreateUserInput) {
-    const user = {
-      ...createUserInput,
-      id: this.users.length + 1,
-    };
-
-    this.users.push(user);
-    return user;
+  async create(createUserInput: CreateUserInput) {
+    return await this.usersRepository.save(createUserInput)
   }
 
-  findAll() {
-    return this.usersRepository.find();
+  async findAll() {
+    return await this.usersRepository.find();
   }
 
-  findOne(username: string) {
-    return this.usersRepository.findOne({
+  async findOne(username: string) {
+    return await this.usersRepository.findOne({
       where: {
         username: username,
       },
