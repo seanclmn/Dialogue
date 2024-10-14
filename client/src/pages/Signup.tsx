@@ -3,10 +3,9 @@ import { Button } from "../components/shared/Buttons/GenericButton";
 import { Input } from "../components/shared/Inputs/GenericInput";
 import { graphql } from "relay-runtime";
 import { useMutation } from "react-relay";
-import { SignupMutation, SignupMutation$data } from "./__generated__/SignupMutation.graphql";
 import { useCookies } from "react-cookie";
 import { Navigate } from "react-router";
-
+import { SignupMutation, SignupMutation$data } from "@generated/SignupMutation.graphql";
 
 const mutation = graphql`
   mutation SignupMutation($username: String!, $password: String!){
@@ -57,7 +56,7 @@ export const Signup = () => {
           setCreds({ ...creds, password: e.currentTarget.value })
         }
       />
-      <Button title="Log in" type="submit" styles="text-sm py-[5px]" />
+      <Button title="Sign up" type="submit" styles="text-sm py-[5px]" />
     </form>
   );
 };

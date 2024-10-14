@@ -8,6 +8,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./pages/404.tsx";
 import { Login } from "./pages/Login.tsx";
 import { CookiesProvider } from "react-cookie";
+import { Signup } from "./pages/Signup.tsx";
 
 const router = createBrowserRouter([
   {
@@ -20,13 +21,18 @@ const router = createBrowserRouter([
     element: <Login />,
     errorElement: <ErrorPage />,
   },
+  {
+    path: "/signup",
+    element: <Signup />,
+    errorElement: <ErrorPage />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <CookiesProvider>
       <RelayEnvironmentProvider environment={RelayEnvironment}>
-          <RouterProvider router={router} />
+        <RouterProvider router={router} />
       </RelayEnvironmentProvider>
     </CookiesProvider>
   </React.StrictMode>
