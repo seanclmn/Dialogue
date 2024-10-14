@@ -7,7 +7,6 @@ import { useCookies } from "react-cookie";
 import { Navigate } from "react-router";
 import { LoginMutation, LoginMutation$data } from "@generated/LoginMutation.graphql";
 
-
 const mutation = graphql`
   mutation LoginMutation($username: String!, $password: String!){
     login(loginUserInput: {username: $username, password: $password}){
@@ -21,8 +20,10 @@ const mutation = graphql`
 
 export const Login = () => {
   const [creds, setCreds] = useState({ username: "", password: "" });
-  const [cookies, setCookie,] = useCookies(['accessToken']);
+  const [cookies, setCookie] = useCookies(['accessToken']);
   const [commitMutation,] = useMutation<LoginMutation>(mutation);
+
+  if (cookies["accessToken"]) return <Navigate to="/" />
 
   return (
     <form

@@ -38,6 +38,8 @@ export const ChatContainer = () => {
     return () => clearTimeout(delayDebounceFn);
   }, [isTyping]);
 
+  if (!data) return null
+
   return (
     <div className="h-full flex flex-col justify-between">
       {loading ? (
