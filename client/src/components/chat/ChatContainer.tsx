@@ -9,8 +9,22 @@ import { Avatar } from "../shared/users/Avatar";
 import img from "../../assets/jennie.jpeg";
 import { Button } from "../shared/Buttons/GenericButton";
 import { Loader } from "../shared/loaders/Loader";
+import { graphql } from "relay-runtime";
+import { useLazyLoadQuery } from "react-relay";
+
+const query = graphql`
+  query ChatContainerQuery {
+    currentUser {
+      username
+    }
+  }
+`
 
 export const ChatContainer = () => {
+
+  const data = useLazyLoadQuery(query, {})
+  console.log(data)
+
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [conversation, setConversation] = useState<MessageProps[]>([]);

@@ -1,3 +1,4 @@
+import { useCookies } from "react-cookie";
 import {
   Environment,
   Network,
@@ -9,10 +10,12 @@ import {
 const HTTP_ENDPOINT = "http://localhost:3000/graphql";
 
 const fetchFn: FetchFunction = async (request, variables) => {
+  const [cookies] = useCookies(['accessToken']);
+
   const resp = await fetch(HTTP_ENDPOINT, {
     method: "POST",
     headers: {
-      // 'Authorization': `bearer ${REACT_APP_GITHUB_AUTH_TOKEN}`,
+      'Authorization': `bearer ${cookies["accessToken"]}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({

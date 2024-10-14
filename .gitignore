@@ -1,2 +1,5 @@
 db/
 docker/
+
+client/__generated__/
+client/node_modules 

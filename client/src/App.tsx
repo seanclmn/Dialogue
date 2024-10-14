@@ -3,29 +3,14 @@ import "./App.css";
 import { ChatContainer } from "./components/chat/ChatContainer";
 import { ChatGroupsContainer } from "./components/chat/ChatGroupsContainer";
 import { ChatHeader } from "./components/chat/ChatHeader";
-import { useLazyLoadQuery } from "react-relay";
 import { useCookies } from "react-cookie";
 import { Navigate } from "react-router";
 
-const query = graphql`
-  query AppQuery($username: String!) {
-    user(username: $username) {
-      username
-      id
-    }
-  }
-`;
-
 function App() {
-  // const data = useLazyLoadQuery(
-  //   query,
-  //   { username: 'seanclmn' },
-  //   { fetchPolicy: "store-or-network" }
-  // );
 
-  const [cookies, setCookie, removeCookie] = useCookies(['accessToken']);
+  const [cookies,] = useCookies(['accessToken']);
 
-  if(!cookies['accessToken']) return <Navigate to='login' />
+  if (!cookies['accessToken']) return <Navigate to='login' />
 
   return (
     <div className="flex flex-row items-start h-full">
