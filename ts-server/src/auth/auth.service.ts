@@ -6,7 +6,7 @@ import { CreateUserInput } from 'src/users/dto/create-user.input';
 import { hash, compare } from 'bcrypt';
 
 export class ValidateUser {
-  id: number;
+  id: string;
   username: string;
 }
 

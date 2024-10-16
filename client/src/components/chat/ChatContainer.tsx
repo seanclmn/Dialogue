@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { Message, MessageProps } from "../shared/Messages/Message";
@@ -9,22 +9,8 @@ import { Avatar } from "../shared/users/Avatar";
 import img from "../../assets/jennie.jpeg";
 import { Button } from "../shared/Buttons/GenericButton";
 import { Loader } from "../shared/loaders/Loader";
-import { graphql } from "relay-runtime";
-import { useLazyLoadQuery } from "react-relay";
 
-const query = graphql`
-  query ChatContainerQuery {
-    currentUser {
-      username
-    }
-  }
-`
-
-export const ChatContainer = () => {
-
-  const data = useLazyLoadQuery(query, {})
-  console.log(data)
-
+export const Content = () => {
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [conversation, setConversation] = useState<MessageProps[]>([]);
@@ -37,8 +23,6 @@ export const ChatContainer = () => {
 
     return () => clearTimeout(delayDebounceFn);
   }, [isTyping]);
-
-  if (!data) return null
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -100,3 +84,16 @@ export const ChatContainer = () => {
     </div>
   );
 };
+
+export const ChatContainer = () => {
+
+  useEffect(() => {
+
+  }, [])
+
+  return (
+    <Suspense>
+      <Content />
+    </Suspense>
+  )
+}

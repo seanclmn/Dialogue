@@ -5,8 +5,46 @@ import { ChatGroupsContainer } from "./components/chat/ChatGroupsContainer";
 import { ChatHeader } from "./components/chat/ChatHeader";
 import { useCookies } from "react-cookie";
 import { Navigate } from "react-router";
+import { Suspense, useEffect } from "react";
+import { PreloadedQuery, usePreloadedQuery, useQueryLoader } from "react-relay";
+import { AppQuery } from "@generated/AppQuery.graphql";
 
-function App() {
+const query = graphql`
+  query AppQuery {
+    currentUser {
+      username
+      id
+    }
+  }
+`
+
+const App = () => {
+  const [queryReference, loadQuery] = useQueryLoader<AppQuery>(query);
+
+  useEffect(() => {
+    loadQuery({})
+  }, [])
+
+  if (!queryReference) return null
+
+  return (
+    <Suspense fallback={<div />}>
+      <Content queryReference={queryReference} />
+    </Suspense>
+  )
+}
+
+type ContentProps = {
+  queryReference: PreloadedQuery<AppQuery>
+}
+
+const Content = ({ queryReference }: ContentProps) => {
+
+  const data = usePreloadedQuery(query, queryReference)
+
+  useEffect(() => {
+    console.log(data.currentUser)
+  }, [data.currentUser.username])
 
   const [cookies,] = useCookies(['accessToken']);
 

@@ -13,7 +13,8 @@ export class UsersResolver {
   @Query(() => User)
   @UseGuards(JwtGuard)
   currentUser(@Context() context: any) {
-    return context.req.user;
+    const username = context.req.user.username;
+    return this.usersService.findOne(username)
   }
 
   @Mutation(() => User)

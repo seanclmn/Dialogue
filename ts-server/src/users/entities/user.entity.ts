@@ -1,12 +1,13 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Node } from 'src/relay';
 
 @Entity()
-@ObjectType()
-export class User {
+@ObjectType({ implements: Node })
+export class User implements Node {
   @PrimaryGeneratedColumn()
-  @Field()
-  id: number;
+  @Field(() => ID)
+  id: string;
 
   @Column()
   @Field()

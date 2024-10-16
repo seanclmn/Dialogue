@@ -23,14 +23,18 @@ type Mutation {
   signup(createUserInput: CreateUserInput!): LoginResponse!
 }
 
+interface Node {
+  id: ID!
+}
+
 type Query {
   currentUser: User!
   user(username: String!): User!
   users: [User!]!
 }
 
-type User {
-  id: Float!
+type User implements Node {
+  id: ID!
   password: String!
   username: String!
 }
