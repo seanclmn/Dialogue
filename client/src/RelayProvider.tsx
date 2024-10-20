@@ -19,9 +19,12 @@ export const RelayProvider = ({ children }: PropsWithChildren) => {
         query: params.text,
         variables,
       }),
-    });
+    })
 
-    return Observable.from(response.then((data) => data.json()));
+    return Observable.from(response.then((data) => {
+      console.log(data)
+      return data.json()
+    }));
   };
 
   function createEnvironment() {

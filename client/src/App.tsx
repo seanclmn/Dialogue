@@ -1,68 +1,39 @@
-import { graphql } from "relay-runtime";
-import "./App.css";
-import { ChatContainer } from "./components/chat/ChatContainer";
-import { ChatGroupsContainer } from "./components/chat/ChatGroupsContainer";
-import { ChatHeader } from "./components/chat/ChatHeader";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import ErrorPage from "./pages/404";
+import { Login } from "./pages/Login";
+import { Signup } from "./pages/Signup";
+import Page from "./Page";
 import { useCookies } from "react-cookie";
-import { Navigate } from "react-router";
-import { Suspense, useEffect } from "react";
-import { PreloadedQuery, usePreloadedQuery, useQueryLoader } from "react-relay";
-import { AppQuery } from "@generated/AppQuery.graphql";
 
-const query = graphql`
-  query AppQuery {
-    currentUser {
-      username
-      id
-    }
-  }
-`
-
-const App = () => {
-  const [queryReference, loadQuery] = useQueryLoader<AppQuery>(query);
-
-  useEffect(() => {
-    loadQuery({})
-  }, [])
-
-  if (!queryReference) return null
-
-  return (
-    <Suspense fallback={<div />}>
-      <Content queryReference={queryReference} />
-    </Suspense>
-  )
-}
-
-type ContentProps = {
-  queryReference: PreloadedQuery<AppQuery>
-}
-
-const Content = ({ queryReference }: ContentProps) => {
-
-  const data = usePreloadedQuery(query, queryReference)
-
-  useEffect(() => {
-    console.log(data.currentUser)
-  }, [data.currentUser.username])
+export const RouterParent = () => {
 
   const [cookies,] = useCookies(['accessToken']);
 
-  if (!cookies['accessToken']) return <Navigate to='login' />
-
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: !cookies['accessToken'] ? <Login /> : <Page />,
+      errorElement: <ErrorPage />,
+    },
+    {
+      path: "/login",
+      element: <Login />,
+      errorElement: <ErrorPage />,
+    },
+    {
+      path: "/signup",
+      element: <Signup />,
+      errorElement: <ErrorPage />,
+    },
+  ]);
   return (
-    <div className="flex flex-row items-start h-full">
-      <div className="h-[100vh] border-solid border-r-[1px] w-40">
-        <ChatGroupsContainer />
-      </div>
-      <div className="h-[100vh] w-[100%] flex-grow relative">
-        <ChatHeader title={"wonton"} style="absolute" />
-        <div className="px-2 pt-2 h-full">
-          <ChatContainer />
-        </div>
-      </div>
-    </div>
-  );
+    <RouterProvider router={router} />
+  )
 }
 
-export default App;
+export const App = () => {
+
+  return (
+    <RouterParent />
+  )
+}

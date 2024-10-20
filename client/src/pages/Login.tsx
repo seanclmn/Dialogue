@@ -4,7 +4,7 @@ import { Input } from "../components/shared/Inputs/GenericInput";
 import { graphql } from "relay-runtime";
 import { useMutation } from "react-relay";
 import { useCookies } from "react-cookie";
-import { Navigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { LoginMutation, LoginMutation$data } from "@generated/LoginMutation.graphql";
 
 const mutation = graphql`
@@ -20,6 +20,7 @@ const mutation = graphql`
 
 export const Login = () => {
   const [creds, setCreds] = useState({ username: "", password: "" });
+  // const navigate = useNavigate();
   const [cookies, setCookie] = useCookies(['accessToken']);
   const [commitMutation,] = useMutation<LoginMutation>(mutation);
 
@@ -37,6 +38,7 @@ export const Login = () => {
           },
           onCompleted: (data: LoginMutation$data) => {
             setCookie('accessToken', data.login.accessToken)
+            // navigate("/")
             console.log('completed')
           },
           onError: (e) => {
