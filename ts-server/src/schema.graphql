@@ -2,6 +2,17 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Chat {
+  """Example field (placeholder)"""
+  exampleField: Int!
+  participants: [User!]!
+}
+
+input CreateChatInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 input CreateUserInput {
   password: String!
   username: String!
@@ -18,9 +29,12 @@ input LoginUserInput {
 }
 
 type Mutation {
+  createChat(createChatInput: CreateChatInput!): Chat!
   createUser(createUserInput: CreateUserInput!): User!
   login(loginUserInput: LoginUserInput!): LoginResponse!
+  removeChat(id: Int!): Chat!
   signup(createUserInput: CreateUserInput!): LoginResponse!
+  updateChat(updateChatInput: UpdateChatInput!): Chat!
 }
 
 interface Node {
@@ -28,9 +42,17 @@ interface Node {
 }
 
 type Query {
+  chat(id: Int!): Chat!
+  chats: [Chat!]!
   currentUser: User!
   user(username: String!): User!
   users: [User!]!
+}
+
+input UpdateChatInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }
 
 type User implements Node {
