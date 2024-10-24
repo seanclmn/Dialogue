@@ -6,7 +6,7 @@ import { UpdateChatInput } from './dto/update-chat.input';
 
 @Resolver(() => Chat)
 export class ChatsResolver {
-  constructor(private readonly chatsService: ChatsService) {}
+  constructor(private readonly chatsService: ChatsService) { }
 
   @Mutation(() => Chat)
   createChat(@Args('createChatInput') createChatInput: CreateChatInput) {
@@ -19,7 +19,7 @@ export class ChatsResolver {
   }
 
   @Query(() => Chat, { name: 'chat' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne(@Args('id', { type: () => Int }) id: string) {
     return this.chatsService.findOne(id);
   }
 
@@ -29,7 +29,7 @@ export class ChatsResolver {
   }
 
   @Mutation(() => Chat)
-  removeChat(@Args('id', { type: () => Int }) id: number) {
+  removeChat(@Args('id', { type: () => Int }) id: string) {
     return this.chatsService.remove(id);
   }
 }
