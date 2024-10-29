@@ -9,8 +9,8 @@ type Chat implements Node {
 }
 
 input CreateChatInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  name: String!
+  participants: [UserInput!]!
 }
 
 input CreateUserInput {
@@ -50,13 +50,18 @@ type Query {
 }
 
 input UpdateChatInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  id: ID!
+  name: String!
+  participants: [UserInput!]
 }
 
 type User implements Node {
+  chats: [Chat!]!
   id: ID!
   password: String!
+  username: String!
+}
+
+input UserInput {
   username: String!
 }

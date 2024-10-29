@@ -1,11 +1,12 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Node } from 'src/relay';
+import { Chat } from 'src/chats/entities/chat.entity';
 
 @Entity()
 @ObjectType({ implements: Node })
 export class User implements Node {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   @Field(() => ID)
   id: string;
 
@@ -16,4 +17,10 @@ export class User implements Node {
   @Column()
   @Field()
   password: string;
+
+  @Field(() => [Chat])
+  @ManyToMany(() => Chat, (chat) => chat.participants)
+  @JoinTable()
+  chats: Chat[]
+
 }

@@ -8,9 +8,9 @@ export class UpdateChatInput extends PartialType(CreateChatInput) {
   @Field(() => ID)
   id: string;
 
-  @Column()
-  @Field(() => [User])
-  participants: User[];
+  // @Column()
+  // @Field(() => [User])
+  // participants: User[];
 
   @Column()
   @Field()

@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
 import { ChatsModule } from './chats/chats.module';
+import { Chat } from './chats/entities/chat.entity';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { ChatsModule } from './chats/chats.module';
       username: 'root',
       password: 'root',
       database: 'test',
-      entities: [User],
+      entities: [User, Chat],
       synchronize: true,
     }),
     UsersModule,
