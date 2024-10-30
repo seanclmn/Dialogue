@@ -52,7 +52,7 @@ type Query {
 input UpdateChatInput {
   id: ID!
   name: String!
-  participants: [UserInput!]
+  participants: [UserInput!]!
 }
 
 type User implements Node {
