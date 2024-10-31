@@ -2,6 +2,17 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Chat implements Node {
+  id: ID!
+  name: String!
+  participants: [User!]!
+}
+
+input CreateChatInput {
+  name: String!
+  participants: [UserInput!]!
+}
+
 input CreateUserInput {
   password: String!
   username: String!
@@ -18,9 +29,12 @@ input LoginUserInput {
 }
 
 type Mutation {
+  createChat(createChatInput: CreateChatInput!): Chat!
   createUser(createUserInput: CreateUserInput!): User!
   login(loginUserInput: LoginUserInput!): LoginResponse!
+  removeChat(id: Int!): Chat!
   signup(createUserInput: CreateUserInput!): LoginResponse!
+  updateChat(updateChatInput: UpdateChatInput!): Chat!
 }
 
 interface Node {
@@ -28,13 +42,26 @@ interface Node {
 }
 
 type Query {
+  chat(id: Int!): Chat!
+  chats: [Chat!]!
   currentUser: User!
   user(username: String!): User!
   users: [User!]!
 }
 
+input UpdateChatInput {
+  id: ID!
+  name: String!
+  participants: [UserInput!]!
+}
+
 type User implements Node {
+  chats: [Chat!]!
   id: ID!
   password: String!
+  username: String!
+}
+
+input UserInput {
   username: String!
 }

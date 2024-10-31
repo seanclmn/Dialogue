@@ -12,6 +12,7 @@
     "graphql:generate": "./scripts/pull-schema.sh"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.0",
     "@types/uuid": "^10.0.0",
     "autoprefixer": "^10.4.20",
     "path": "^0.12.7",
