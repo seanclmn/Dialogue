@@ -13,7 +13,7 @@ export class UsersResolver {
   @Query(() => User)
   @UseGuards(JwtGuard)
   currentUser(@Context() context: any) {
-    const user = context.req.user;  // User info from the cookie (handled by your authentication middleware)
+    const user = context.req.user;
 
     if (!user) {
       throw new UnauthorizedException('You are not authorized to view this profile');

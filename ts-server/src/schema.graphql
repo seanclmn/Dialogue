@@ -5,7 +5,7 @@
 type Chat implements Node {
   id: ID!
   name: String!
-  participants: [User!]!
+  participants: [User!]
 }
 
 input CreateChatInput {
@@ -56,7 +56,7 @@ input UpdateChatInput {
 }
 
 type User implements Node {
-  chats: [Chat!]!
+  chats: [Chat!]
   id: ID!
   password: String!
   username: String!

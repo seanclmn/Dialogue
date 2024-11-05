@@ -10,8 +10,8 @@ export class Chat implements Node {
   @Field(() => ID)
   id: string;
 
-  @Field(() => [User])
-  @ManyToMany(() => User, (user) => user.chats)
+  @Field(() => [User], { nullable: true })
+  @ManyToMany(() => User, (user) => user.chats, { cascade: true })
   participants: User[];
 
   @Column()

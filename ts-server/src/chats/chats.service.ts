@@ -5,6 +5,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
+import { User } from 'src/users/entities/user.entity';
+
+export interface createChatFuncInput {
+  name: String;
+  participants: User[]
+}
 
 @Injectable()
 export class ChatsService {
@@ -14,8 +20,17 @@ export class ChatsService {
     private usersService: UsersService
   ) { }
 
-  async create(createChatInput: CreateChatInput) {
-    return await this.chatsRepository.save(createChatInput)
+  async create(createChatInput: createChatFuncInput) {
+    console.log(createChatInput)
+
+    const users: User[] = await Promise.all(
+      createChatInput.participants.map(async (user) => {
+        return await this.usersService.findOne(user.username)
+      })
+    )
+
+    const chatObj: createChatFuncInput = { ...createChatInput, participants: users }
+    return await this.chatsRepository.save(chatObj)
   }
 
   async findAll() {
@@ -40,7 +55,7 @@ export class ChatsService {
     return `This action removes a #${id} chat`;
   }
 
-  async addParticipant(chatId: string, userName: string) {
+  async addParticipant(chatId: string, userName: string, currentUser: User) {
 
     const chat = await this.chatsRepository.findOne({
       where: { id: chatId },
@@ -59,7 +74,7 @@ export class ChatsService {
 
     return await this.update(chatId, {
       ...chat,
-      participants: [newParticipant]
+      participants: [newParticipant, currentUser]
     })
 
   }

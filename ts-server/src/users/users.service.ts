@@ -26,4 +26,11 @@ export class UsersService {
       },
     });
   }
+
+  // async inviteUsers(userNames: string[],) {
+  //   const users = userNames.map(async (username) => {
+  //     await this.findOne(username)
+
+  //   })
+  // }
 }

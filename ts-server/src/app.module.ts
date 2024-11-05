@@ -15,7 +15,7 @@ import { Chat } from './chats/entities/chat.entity';
       autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
       sortSchema: true,
       driver: ApolloDriver,
-      playground: true,
+      playground: false,
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',

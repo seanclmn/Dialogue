@@ -9,7 +9,6 @@ import { Avatar } from "../shared/users/Avatar";
 import img from "../../assets/jennie.jpeg";
 import { Button } from "../shared/Buttons/GenericButton";
 import { Loader } from "../shared/loaders/Loader";
-import { CreateChat } from "@components/dialogs/CreateChat";
 
 export const Content = () => {
   const [message, setMessage] = useState("");
@@ -87,8 +86,6 @@ export const Content = () => {
 };
 
 export const ChatContainer = () => {
-  const [open, setOpen] = useState(false);
-
   useEffect(() => {
 
   }, [])
@@ -96,8 +93,6 @@ export const ChatContainer = () => {
   return (
     <Suspense>
       <Content />
-      <Button onClick={() => setOpen(true)} title="create chat" />
-      <CreateChat open={open} setIsOpen={setOpen} />
     </Suspense>
   )
 }
