@@ -14,6 +14,9 @@ const query = graphql`
     currentUser {
       username
       id
+      chats {
+        id
+      }
     }
   }
 `

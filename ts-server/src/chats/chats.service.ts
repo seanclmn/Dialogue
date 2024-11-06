@@ -21,7 +21,6 @@ export class ChatsService {
   ) { }
 
   async create(createChatInput: createChatFuncInput) {
-    console.log(createChatInput)
 
     const users: User[] = await Promise.all(
       createChatInput.participants.map(async (user) => {
@@ -29,8 +28,16 @@ export class ChatsService {
       })
     )
 
-    const chatObj: createChatFuncInput = { ...createChatInput, participants: users }
-    return await this.chatsRepository.save(chatObj)
+    const chat = new Chat();
+    chat.name = createChatInput.name;
+    chat.participants = users; // Assign participants directly
+
+    // Save the chat, TypeORM will handle the join table automatically
+    const res = await this.chatsRepository.save(chat);
+
+    return await Promise.all(users.map(async (user) => {
+      await this.addParticipant(res, user)
+    }))
   }
 
   async findAll() {
@@ -55,27 +62,27 @@ export class ChatsService {
     return `This action removes a #${id} chat`;
   }
 
-  async addParticipant(chatId: string, userName: string, currentUser: User) {
+  async addParticipant(chat: Chat, user: User) {
 
-    const chat = await this.chatsRepository.findOne({
-      where: { id: chatId },
-      relations: ['participants'],
-    });
+
 
     if (!chat) {
-      throw new Error(`Chat with ID ${chatId} not found`);
+      throw new Error(`Chat with ID ${chat.id} not found`);
     }
 
-    const newParticipant = await this.usersService.findOne(userName)
+    if (chat.participants) {
+      return await this.update(chat.id, {
+        ...chat,
+        participants: [...chat.participants, user]
+      })
 
-    if (!newParticipant) {
-      throw new Error(`User with username ${userName} not found`);
     }
 
-    return await this.update(chatId, {
+    return await this.update(chat.id, {
       ...chat,
-      participants: [newParticipant, currentUser]
+      participants: [user]
     })
+
 
   }
 }
