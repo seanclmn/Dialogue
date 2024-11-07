@@ -64,8 +64,6 @@ export class ChatsService {
 
   async addParticipant(chat: Chat, user: User) {
 
-
-
     if (!chat) {
       throw new Error(`Chat with ID ${chat.id} not found`);
     }
@@ -82,7 +80,5 @@ export class ChatsService {
       ...chat,
       participants: [user]
     })
-
-
   }
 }

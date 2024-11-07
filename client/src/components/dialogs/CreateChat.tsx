@@ -26,8 +26,7 @@ export const CreateChat = ({ open, setIsOpen }: CreateChatProps) => {
     <Dialog open={open} onClose={() => setIsOpen(false)}>
       <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
         <DialogPanel className="max-w-lg space-y-4 border bg-white p-12">
-          <DialogTitle className="font-bold">Deactivate account</DialogTitle>
-          <Description>This will permanently deactivate your account</Description>
+          <DialogTitle className="font-bold">Create Chat</DialogTitle>
           <Input title={"Chat name"}
             onChange={(e) => setChatName(e.currentTarget.value)}
           />
