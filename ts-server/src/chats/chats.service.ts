@@ -33,11 +33,11 @@ export class ChatsService {
     chat.participants = users; // Assign participants directly
 
     // Save the chat, TypeORM will handle the join table automatically
-    const res = await this.chatsRepository.save(chat);
 
-    return await Promise.all(users.map(async (user) => {
-      await this.addParticipant(res, user)
-    }))
+    const res = await this.chatsRepository.save(chat).then((res) => {
+      console.log(JSON.stringify(res.id))
+    })
+
   }
 
   async findAll() {

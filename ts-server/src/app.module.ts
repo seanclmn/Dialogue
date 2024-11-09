@@ -8,6 +8,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
 import { ChatsModule } from './chats/chats.module';
 import { Chat } from './chats/entities/chat.entity';
+import { MessagesModule } from './messages/messages.module';
+import { Message } from './messages/entities/message.entity';
 
 @Module({
   imports: [
@@ -24,12 +26,13 @@ import { Chat } from './chats/entities/chat.entity';
       username: 'root',
       password: 'root',
       database: 'test',
-      entities: [User, Chat],
+      entities: [User, Chat, Message],
       synchronize: true,
     }),
     UsersModule,
     AuthModule,
     ChatsModule,
+    MessagesModule,
   ],
 })
 export class AppModule { }

@@ -11,7 +11,8 @@ export class Chat implements Node {
   id: string;
 
   @Field(() => [User], { nullable: true })
-  @ManyToMany(() => User, (user) => user.chats, { cascade: true })
+  @ManyToMany(() => User, (user) => user.chats, { cascade: true, eager: true })
+  @JoinTable()
   participants: User[];
 
   @Column()
