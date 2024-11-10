@@ -30,38 +30,27 @@ export class ChatsService {
 
     console.log(chat.participants)
 
-    const res = await this.chatsRepository.save(chat).then((res) => {
-      chat.participants.map(async (user) => {
-        const userObj: UpdateUserInput = structuredClone(user)
-
-        if (userObj.chats) {
-          userObj.chats.push(res)
-        } else {
-          userObj.chats = [res]
-        }
-        console.log(userObj)
-        return await this.usersService.update(user.id, userObj)
-      })
-    })
+    return await this.chatsRepository.save(chat)
 
   }
 
   async findAll() {
-    return await this.chatsRepository.find()
+    return await this.chatsRepository.find({
+      relations: ["participants"]
+    })
   }
 
   async findOne(id: string) {
     return await this.chatsRepository.findOne({
       where: {
         id: id
-      }
+      },
+      relations: ["participants"]
     })
   }
 
-  async update(id: string, updateChatInput: UpdateChatInput) {
-    return await this.chatsRepository.update(id, {
-      ...updateChatInput
-    })
+  async update(updateChatInput: UpdateChatInput) {
+    return await this.chatsRepository.save(updateChatInput)
   }
 
   async remove(id: string) {
@@ -75,14 +64,14 @@ export class ChatsService {
     }
 
     if (chat.participants) {
-      return await this.update(chat.id, {
+      return await this.update({
         ...chat,
         participants: [...chat.participants, user]
       })
 
     }
 
-    return await this.update(chat.id, {
+    return await this.update({
       ...chat,
       participants: [user]
     })

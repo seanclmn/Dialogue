@@ -9,11 +9,10 @@ import { UpdateUserInput } from './dto/update-user.input';
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
-
   ) { }
 
   async create(createUserInput: CreateUserInput) {
-    return await this.usersRepository.save({ ...createUserInput })
+    return await this.usersRepository.save(createUserInput)
   }
 
   async findAll() {
@@ -25,11 +24,12 @@ export class UsersService {
       where: {
         username: username,
       },
+      relations: { chats: true },
     });
   }
 
-  async update(id: string, user: UpdateUserInput) {
-    return await this.usersRepository.update(id, user)
+  async update(user: UpdateUserInput) {
+    return await this.usersRepository.save(user)
   }
 
   // async inviteUsers(userNames: string[],) {

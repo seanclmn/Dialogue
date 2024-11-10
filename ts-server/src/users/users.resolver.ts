@@ -12,14 +12,14 @@ export class UsersResolver {
 
   @Query(() => User)
   @UseGuards(JwtGuard)
-  currentUser(@Context() context: any) {
+  async currentUser(@Context() context: any) {
     const user = context.req.user;
 
     if (!user) {
       throw new UnauthorizedException('You are not authorized to view this profile');
     }
     const username = context.req.user.username;
-    return this.usersService.findOne(username)
+    return await this.usersService.findOne(username)
   }
 
   @Mutation(() => User)

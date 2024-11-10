@@ -17,7 +17,7 @@ import { Message } from './messages/entities/message.entity';
       autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
       sortSchema: true,
       driver: ApolloDriver,
-      playground: false,
+      playground: true,
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',

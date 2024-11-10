@@ -31,7 +31,21 @@ export class ChatsResolver {
       participants: [...participantObjects]
     }
 
-    return this.chatsService.create(input);
+    const res = await this.chatsService.create(input);
+
+
+    return Promise.all(res.participants.map(async (user) => {
+      const userObj: UpdateUserInput = structuredClone(user)
+
+      if (userObj.chats) {
+        userObj.chats.push(res)
+      } else {
+        userObj.chats = [res]
+      }
+      console.log(userObj)
+      return await this.usersService.update(userObj)
+    }))
+
   }
 
   @Query(() => [Chat], { name: 'chats' })
@@ -46,7 +60,7 @@ export class ChatsResolver {
 
   @Mutation(() => Chat)
   updateChat(@Args('updateChatInput') updateChatInput: UpdateChatInput) {
-    return this.chatsService.update(updateChatInput.id, updateChatInput);
+    return this.chatsService.update(updateChatInput);
   }
 
   @Mutation(() => Chat)

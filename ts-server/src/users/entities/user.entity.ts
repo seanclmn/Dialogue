@@ -20,7 +20,8 @@ export class User implements Node {
   password: string;
 
   @Field(() => [Chat], { nullable: true })
-  @ManyToMany(() => Chat, (chat) => chat.participants)
+  @ManyToMany(() => Chat, (chat) => chat.participants, { eager: true })
+  @JoinTable()
   chats: Chat[]
 
   @ManyToOne(() => Message, (message) => message.user)

@@ -3,8 +3,6 @@ import "./App.css";
 import { ChatContainer } from "./components/chat/ChatContainer";
 import { ChatGroupsContainer } from "./components/chat/ChatGroupsContainer";
 import { ChatHeader } from "./components/chat/ChatHeader";
-import { useCookies } from "react-cookie";
-import { Navigate, useRouteError } from "react-router";
 import { Suspense, useEffect } from "react";
 import { PreloadedQuery, usePreloadedQuery, useQueryLoader } from "react-relay";
 import { PageQuery } from "@generated/PageQuery.graphql";
@@ -15,7 +13,7 @@ const query = graphql`
       username
       id
       chats {
-        id
+        name
       }
     }
   }
