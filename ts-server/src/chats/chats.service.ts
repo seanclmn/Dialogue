@@ -6,10 +6,11 @@ import { Chat } from './entities/chat.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
+import { UpdateUserInput } from 'src/users/dto/update-user.input';
 
-export interface createChatFuncInput {
+export interface CreateChatFuncInput {
   name: String;
-  participants: User[]
+  participants: UpdateUserInput[]
 }
 
 @Injectable()
@@ -17,25 +18,30 @@ export class ChatsService {
 
   constructor(
     @InjectRepository(Chat) private chatsRepository: Repository<Chat>,
-    private usersService: UsersService
+    private usersService: UsersService,
   ) { }
 
-  async create(createChatInput: createChatFuncInput) {
+  async create(createChatInput: CreateChatFuncInput) {
 
-    const users: User[] = await Promise.all(
-      createChatInput.participants.map(async (user) => {
-        return await this.usersService.findOne(user.username)
-      })
-    )
+    const chat = {
+      name: createChatInput.name,
+      participants: createChatInput.participants
+    }
 
-    const chat = new Chat();
-    chat.name = createChatInput.name;
-    chat.participants = users; // Assign participants directly
-
-    // Save the chat, TypeORM will handle the join table automatically
+    console.log(chat.participants)
 
     const res = await this.chatsRepository.save(chat).then((res) => {
-      console.log(JSON.stringify(res.id))
+      chat.participants.map(async (user) => {
+        const userObj: UpdateUserInput = structuredClone(user)
+
+        if (userObj.chats) {
+          userObj.chats.push(res)
+        } else {
+          userObj.chats = [res]
+        }
+        console.log(userObj)
+        return await this.usersService.update(user.id, userObj)
+      })
     })
 
   }

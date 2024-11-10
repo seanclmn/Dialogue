@@ -8,9 +8,15 @@ type Chat implements Node {
   participants: [User!]
 }
 
+input ChatInput {
+  id: ID!
+  name: String!
+  participants: [UpdateUserInput!]!
+}
+
 input CreateChatInput {
   name: String!
-  participants: [UserInput!]!
+  participants: [String!]!
 }
 
 input CreateMessageInput {
@@ -68,7 +74,7 @@ type Query {
 input UpdateChatInput {
   id: ID!
   name: String!
-  participants: [UserInput!]!
+  participants: [UpdateUserInput!]!
 }
 
 input UpdateMessageInput {
@@ -77,13 +83,16 @@ input UpdateMessageInput {
   id: Int!
 }
 
-type User implements Node {
-  chats: Chat
+input UpdateUserInput {
+  chats: [ChatInput!]
   id: ID!
   password: String!
   username: String!
 }
 
-input UserInput {
+type User implements Node {
+  chats: [Chat!]
+  id: ID!
+  password: String!
   username: String!
 }

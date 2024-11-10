@@ -1,5 +1,5 @@
 import { Resolver, Query, Mutation, Args, Int, Context } from '@nestjs/graphql';
-import { ChatsService } from './chats.service';
+import { ChatsService, CreateChatFuncInput } from './chats.service';
 import { Chat } from './entities/chat.entity';
 import { CreateChatInput } from './dto/create-chat.input';
 import { UpdateChatInput } from './dto/update-chat.input';
@@ -7,6 +7,7 @@ import { JwtGuard } from 'src/auth/jwt-auth.guard';
 import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
+import { UpdateUserInput } from 'src/users/dto/update-user.input';
 
 @Resolver(() => Chat)
 export class ChatsResolver {
@@ -21,19 +22,13 @@ export class ChatsResolver {
     @Context() context: any
   ) {
 
-    const user = context.req.user;
-
-    if (!user) {
-      throw new UnauthorizedException('You are not authorized to view this profile');
-    }
-
-    const participantObjects: User[] = await Promise.all(createChatInput.participants.map(async (user) => {
-      return await this.usersService.findOne(user.username)
+    const participantObjects: UpdateUserInput[] = await Promise.all(createChatInput.participants.map(async (username) => {
+      return await this.usersService.findOne(username)
     }))
 
-    const input = {
+    const input: CreateChatFuncInput = {
       ...createChatInput,
-      participants: [...participantObjects, user]
+      participants: [...participantObjects]
     }
 
     return this.chatsService.create(input);

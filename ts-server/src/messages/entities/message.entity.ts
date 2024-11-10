@@ -3,7 +3,6 @@ import { Column, Entity, JoinTable, ManyToOne, PrimaryGeneratedColumn } from 'ty
 import { Node } from 'src/relay';
 import { User } from 'src/users/entities/user.entity';
 
-
 @Entity()
 @ObjectType({ implements: Node })
 export class Message implements Node {

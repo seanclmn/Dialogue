@@ -19,7 +19,7 @@ export class User implements Node {
   @Field()
   password: string;
 
-  @Field(() => Chat, { nullable: true })
+  @Field(() => [Chat], { nullable: true })
   @ManyToMany(() => Chat, (chat) => chat.participants)
   chats: Chat[]
 

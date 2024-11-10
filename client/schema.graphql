@@ -8,9 +8,20 @@ type Chat implements Node {
   participants: [User!]
 }
 
+input ChatInput {
+  id: ID!
+  name: String!
+  participants: [UpdateUserInput!]!
+}
+
 input CreateChatInput {
   name: String!
-  participants: [UserInput!]!
+  participants: [String!]!
+}
+
+input CreateMessageInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
 }
 
 input CreateUserInput {
@@ -28,13 +39,22 @@ input LoginUserInput {
   username: String!
 }
 
+type Message implements Node {
+  id: ID!
+  text: String!
+  user: User!
+}
+
 type Mutation {
   createChat(createChatInput: CreateChatInput!): Chat!
+  createMessage(createMessageInput: CreateMessageInput!): Message!
   createUser(createUserInput: CreateUserInput!): User!
   login(loginUserInput: LoginUserInput!): LoginResponse!
   removeChat(id: Int!): Chat!
+  removeMessage(id: Int!): Message!
   signup(createUserInput: CreateUserInput!): LoginResponse!
   updateChat(updateChatInput: UpdateChatInput!): Chat!
+  updateMessage(updateMessageInput: UpdateMessageInput!): Message!
 }
 
 interface Node {
@@ -45,6 +65,8 @@ type Query {
   chat(id: Int!): Chat!
   chats: [Chat!]!
   currentUser: User!
+  message(id: Int!): Message!
+  messages: [Message!]!
   user(username: String!): User!
   users: [User!]!
 }
@@ -52,16 +74,25 @@ type Query {
 input UpdateChatInput {
   id: ID!
   name: String!
-  participants: [UserInput!]!
+  participants: [UpdateUserInput!]!
+}
+
+input UpdateMessageInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateUserInput {
+  chats: [ChatInput!]
+  id: ID!
+  password: String!
+  username: String!
 }
 
 type User implements Node {
   chats: [Chat!]
   id: ID!
   password: String!
-  username: String!
-}
-
-input UserInput {
   username: String!
 }

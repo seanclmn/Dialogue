@@ -3,14 +3,15 @@ import { Column } from 'typeorm';
 import { CreateChatInput } from './create-chat.input';
 import { InputType, Field, Int, PartialType, ID } from '@nestjs/graphql';
 import { UserInput } from './userInput.input';
+import { UpdateUserInput } from 'src/users/dto/update-user.input';
 
 @InputType()
-export class UpdateChatInput extends PartialType(CreateChatInput) {
+export class UpdateChatInput {
   @Field(() => ID)
   id: string;
 
-  @Field(() => [UserInput])
-  participants: UserInput[];
+  @Field(() => [UpdateUserInput])
+  participants: UpdateUserInput[];
 
   @Column()
   @Field()

@@ -3,6 +3,7 @@ import { CreateUserInput } from './dto/create-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { UpdateUserInput } from './dto/update-user.input';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +26,10 @@ export class UsersService {
         username: username,
       },
     });
+  }
+
+  async update(id: string, user: UpdateUserInput) {
+    return await this.usersRepository.update(id, user)
   }
 
   // async inviteUsers(userNames: string[],) {

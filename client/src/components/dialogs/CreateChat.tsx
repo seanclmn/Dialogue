@@ -20,7 +20,7 @@ const mutation = graphql`
 
 export const CreateChat = ({ open, setIsOpen }: CreateChatProps) => {
   const [chatName, setChatName] = useState("")
-  const [participants, setParticipants] = useState([])
+  const [participants, setParticipants] = useState(["seanclmn"])
   const [commitMutation, isMutationInFlight] = useMutation<CreateChatMutation>(mutation)
   return (
     <Dialog open={open} onClose={() => setIsOpen(false)}>
