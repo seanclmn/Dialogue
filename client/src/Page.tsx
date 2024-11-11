@@ -14,6 +14,9 @@ const query = graphql`
       id
       chats {
         name
+        participants {
+          username
+        }
       }
     }
   }
