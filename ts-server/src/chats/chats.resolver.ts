@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, Context, ID } from '@nestjs/graphql';
 import { ChatsService, CreateChatFuncInput } from './chats.service';
 import { Chat } from './entities/chat.entity';
 import { CreateChatInput } from './dto/create-chat.input';
@@ -42,7 +42,6 @@ export class ChatsResolver {
       } else {
         userObj.chats = [res]
       }
-      console.log(userObj)
       return await this.usersService.update(userObj)
     }))
 
@@ -54,7 +53,7 @@ export class ChatsResolver {
   }
 
   @Query(() => Chat, { name: 'chat' })
-  findOne(@Args('id', { type: () => Int }) id: string) {
+  findOne(@Args('id', { type: () => ID }) id: string) {
     return this.chatsService.findOne(id);
   }
 

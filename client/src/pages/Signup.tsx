@@ -28,7 +28,6 @@ export const Signup = () => {
     <form
       className="flex flex-col items-center max-w-60 my-auto mx-auto"
       onSubmit={(e) => {
-        console.log('submit')
         e.preventDefault();
         commitMutation({
           variables: {
@@ -36,7 +35,6 @@ export const Signup = () => {
           },
           onCompleted: (data: SignupMutation$data) => {
             setCookie('accessToken', data.signup.accessToken)
-            console.log('completed')
           },
           onError: (e) => {
             console.log(e)

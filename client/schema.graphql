@@ -62,7 +62,7 @@ interface Node {
 }
 
 type Query {
-  chat(id: Int!): Chat!
+  chat(id: ID!): Chat!
   chats: [Chat!]!
   currentUser: User!
   message(id: Int!): Message!

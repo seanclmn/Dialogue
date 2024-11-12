@@ -44,21 +44,16 @@ export class AuthService {
   }
 
   async signup(createUserInput: CreateUserInput) {
-    console.log(createUserInput);
     const user = await this.usersService.findOne(createUserInput.username);
 
     if (user) throw new Error('User already Exists');
 
     const password = await hash(createUserInput.password, 10);
 
-    console.log(password);
-
     const newUser = await this.usersService.create({
       ...createUserInput,
       password,
     });
-
-    console.log(newUser);
 
     return {
       accessToken: this.jwtService.sign({

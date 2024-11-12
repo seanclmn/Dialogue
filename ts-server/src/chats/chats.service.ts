@@ -28,8 +28,6 @@ export class ChatsService {
       participants: createChatInput.participants
     }
 
-    console.log(chat.participants)
-
     return await this.chatsRepository.save(chat)
 
   }

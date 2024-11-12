@@ -6,6 +6,7 @@ import { ChatHeader } from "./components/chat/ChatHeader";
 import { Suspense, useEffect } from "react";
 import { PreloadedQuery, usePreloadedQuery, useQueryLoader } from "react-relay";
 import { PageQuery } from "@generated/PageQuery.graphql";
+import { Loader } from "@components/shared/loaders/Loader";
 
 const query = graphql`
   query PageQuery {
@@ -14,6 +15,7 @@ const query = graphql`
       id
       chats {
         name
+        id
         participants {
           username
         }
@@ -49,6 +51,7 @@ const Content = ({ queryReference }: ContentProps) => {
   useEffect(() => {
     console.log(currentUser)
   }, [currentUser.username])
+  if (!currentUser.chats) return <Loader />
 
   return (
     <div className="flex flex-row items-start h-full">
@@ -56,9 +59,9 @@ const Content = ({ queryReference }: ContentProps) => {
         <ChatGroupsContainer />
       </div>
       <div className="h-[100vh] w-[100%] flex-grow relative">
-        <ChatHeader title={"wonton"} style="absolute" />
+        <ChatHeader title={currentUser.chats[0].name} style="absolute" />
         <div className="px-2 pt-2 h-full">
-          <ChatContainer />
+          <ChatContainer id={currentUser.chats[0].id} />
         </div>
       </div>
     </div>

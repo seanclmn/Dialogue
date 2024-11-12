@@ -7,7 +7,6 @@ import { Environment, FetchFunction, Network, Observable, RecordSource, Store } 
 export const RelayProvider = ({ children }: PropsWithChildren) => {
   const [cookies,] = useCookies(['accessToken']);
   const HTTP_ENDPOINT = "http://localhost:3000/graphql";
-  console.log(cookies["accessToken"])
 
   const fetchFunction: FetchFunction = (params, variables) => {
     const response = fetch(HTTP_ENDPOINT, {
@@ -22,7 +21,6 @@ export const RelayProvider = ({ children }: PropsWithChildren) => {
     })
 
     return Observable.from(response.then((data) => {
-      console.log(data)
       return data.json()
     }));
   };

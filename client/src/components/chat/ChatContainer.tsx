@@ -9,13 +9,34 @@ import { Avatar } from "../shared/users/Avatar";
 import img from "../../assets/jennie.jpeg";
 import { Button } from "../shared/Buttons/GenericButton";
 import { Loader } from "../shared/loaders/Loader";
+import { graphql } from "relay-runtime";
+import { PreloadedQuery, usePreloadedQuery, useQueryLoader } from "react-relay";
+import { ChatContainerQuery } from "@generated/ChatContainerQuery.graphql";
 
-export const Content = () => {
+const query = graphql`
+  query ChatContainerQuery($id:ID!) {
+    chat(id: $id){
+      id
+      name      
+      participants {
+        username
+        id
+      }
+    }
+  }
+`
+
+interface ContentProps {
+  queryReference: PreloadedQuery<ChatContainerQuery>
+}
+
+export const Content = ({ queryReference }: ContentProps) => {
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [conversation, setConversation] = useState<MessageProps[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const data = usePreloadedQuery(query, queryReference).chat
+  console.log("chat container: ", data)
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       setIsTyping(false);
@@ -85,14 +106,22 @@ export const Content = () => {
   );
 };
 
-export const ChatContainer = () => {
-  useEffect(() => {
+interface ChatContainerProps {
+  id: string;
+}
 
+export const ChatContainer = ({ id }: ChatContainerProps) => {
+  const [queryReference, loadQuery] = useQueryLoader<ChatContainerQuery>(query);
+
+  useEffect(() => {
+    loadQuery({ id: id })
   }, [])
+
+  if (!queryReference) return <Loader />
 
   return (
     <Suspense>
-      <Content />
+      <Content queryReference={queryReference} />
     </Suspense>
   )
 }

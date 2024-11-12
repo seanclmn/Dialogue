@@ -6,18 +6,16 @@ import { CreateChat } from "@components/dialogs/CreateChat";
 import { graphql } from "relay-runtime";
 import { PreloadedQuery, usePreloadedQuery, useQueryLoader } from "react-relay";
 import { ChatGroupsContainerQuery } from "@generated/ChatGroupsContainerQuery.graphql";
+import { Loader } from "@components/shared/loaders/Loader";
 
 const query = graphql`
   query ChatGroupsContainerQuery {
+    currentUser {
       chats {
-        id
         name
-        participants {
-          id
-          username
-        }
+        id
       }
-    
+    }
   }
 `
 
@@ -29,15 +27,15 @@ export const Content = ({ queryReference }: ContentProps) => {
   const [, removeCookie] = useCookies(['accessToken'])
   const [open, setOpen] = useState(false);
 
-  const data = usePreloadedQuery(query, queryReference)
+  const { chats } = usePreloadedQuery(query, queryReference).currentUser
 
-  console.log(data)
+  if (!chats) return <Loader />
   return (
     <>
       <div className="absolute h-10 flex items-center justify-center px-4">
         <p>Chats</p>
       </div>
-      {data.chats.map((chat) => <ChatGroup name={chat.name} key={chat.id} />)}
+      {chats.map((chat) => <ChatGroup name={chat.name} key={chat.id} />)}
       <Button title="Log Out" styles="mt-auto" onClick={(e) => {
         e.preventDefault()
         removeCookie("accessToken", null)
