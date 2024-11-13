@@ -1,7 +1,8 @@
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
-import { Column, Entity, JoinTable, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Node } from 'src/relay';
 import { User } from 'src/users/entities/user.entity';
+import { Chat } from 'src/chats/entities/chat.entity';
 
 @Entity()
 @ObjectType({ implements: Node })
@@ -14,7 +15,19 @@ export class Message implements Node {
   @Field()
   text: string;
 
-  @Field(() => User)
-  @ManyToOne(() => User, (user) => user.messages)
-  user: User;
+  @Column()
+  @Field()
+  userId: string;
+
+  @Field(() => Chat)
+  @ManyToOne(() => Chat, (chat) => chat.messages)
+  chat: Chat;
+
+  @Field()
+  @Column()
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

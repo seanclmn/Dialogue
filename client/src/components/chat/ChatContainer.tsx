@@ -22,6 +22,20 @@ const query = graphql`
         username
         id
       }
+      messages(first: 10, after: "2024-11-01T12:34:56.789Z") {
+        edges {
+          cursor
+          node {
+            id
+            text
+            createdAt
+          }
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+      }
     }
   }
 `

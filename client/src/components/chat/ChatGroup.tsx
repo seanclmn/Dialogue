@@ -1,7 +1,5 @@
 import { Avatar } from "../shared/users/Avatar";
 import img from "../../assets/jennie.jpeg";
-import { graphql } from "relay-runtime";
-
 
 interface ChatGroupProps {
   name: string;

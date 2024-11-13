@@ -1,7 +1,8 @@
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Node } from 'src/relay';
+import { Message } from 'src/messages/entities/message.entity';
 
 @Entity()
 @ObjectType({ implements: Node })
@@ -17,5 +18,9 @@ export class Chat implements Node {
   @Column()
   @Field()
   name: String;
+
+  // @Column()
+  @OneToMany(() => Message, (message) => message.chat, { cascade: true })
+  messages: Message[];
 
 }

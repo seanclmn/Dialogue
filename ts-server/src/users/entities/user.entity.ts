@@ -24,6 +24,4 @@ export class User implements Node {
   @JoinTable()
   chats: Chat[]
 
-  @ManyToOne(() => Message, (message) => message.user)
-  messages: Message[]
 }

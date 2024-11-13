@@ -1,18 +1,20 @@
-import { Resolver, Query, Mutation, Args, Int, Context, ID } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, Context, ID, ResolveField, Parent } from '@nestjs/graphql';
 import { ChatsService, CreateChatFuncInput } from './chats.service';
 import { Chat } from './entities/chat.entity';
 import { CreateChatInput } from './dto/create-chat.input';
 import { UpdateChatInput } from './dto/update-chat.input';
 import { JwtGuard } from 'src/auth/jwt-auth.guard';
-import { UnauthorizedException, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
-import { User } from 'src/users/entities/user.entity';
 import { UpdateUserInput } from 'src/users/dto/update-user.input';
+import { MessagesService } from 'src/messages/messages.service';
+import { MessageConnection } from 'src/messages/entities/Message.Connection.entity';
 
 @Resolver(() => Chat)
 export class ChatsResolver {
   constructor(private readonly chatsService: ChatsService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private messagesService: MessagesService
   ) { }
 
   @Mutation(() => Chat)
@@ -65,5 +67,14 @@ export class ChatsResolver {
   @Mutation(() => Chat)
   removeChat(@Args('id', { type: () => Int }) id: string) {
     return this.chatsService.remove(id);
+  }
+
+  @ResolveField('messages', () => MessageConnection)
+  async messages(
+    @Parent() chat: Chat,
+    @Args('first', { type: () => Int, nullable: true }) first?: number,
+    @Args('after', { type: () => String, nullable: true }) after?: Date
+  ): Promise<MessageConnection> {
+    return await this.messagesService.getMessagesForChat(chat.id, first, after);
   }
 }

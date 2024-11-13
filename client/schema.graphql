@@ -4,6 +4,7 @@
 
 type Chat implements Node {
   id: ID!
+  messages(after: String, first: Int): MessageConnection!
   name: String!
   participants: [User!]
 }
@@ -20,14 +21,19 @@ input CreateChatInput {
 }
 
 input CreateMessageInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  text: String!
+  userId: String!
 }
 
 input CreateUserInput {
   password: String!
   username: String!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type LoginResponse {
   accessToken: String!
@@ -40,9 +46,21 @@ input LoginUserInput {
 }
 
 type Message implements Node {
+  chat: Chat!
+  createdAt: DateTime!
   id: ID!
   text: String!
-  user: User!
+  userId: String!
+}
+
+type MessageConnection {
+  edges: [MessageEdge!]!
+  pageInfo: PageInfo!
+}
+
+type MessageEdge {
+  cursor: String!
+  node: Message!
 }
 
 type Mutation {
@@ -51,7 +69,6 @@ type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   login(loginUserInput: LoginUserInput!): LoginResponse!
   removeChat(id: Int!): Chat!
-  removeMessage(id: Int!): Message!
   signup(createUserInput: CreateUserInput!): LoginResponse!
   updateChat(updateChatInput: UpdateChatInput!): Chat!
   updateMessage(updateMessageInput: UpdateMessageInput!): Message!
@@ -61,12 +78,16 @@ interface Node {
   id: ID!
 }
 
+type PageInfo {
+  endCursor: String!
+  hasNextPage: Boolean!
+}
+
 type Query {
   chat(id: ID!): Chat!
   chats: [Chat!]!
   currentUser: User!
   message(id: Int!): Message!
-  messages: [Message!]!
   user(username: String!): User!
   users: [User!]!
 }
@@ -78,9 +99,9 @@ input UpdateChatInput {
 }
 
 input UpdateMessageInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  id: String!
+  text: String!
+  userId: String!
 }
 
 input UpdateUserInput {
