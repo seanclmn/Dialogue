@@ -40,6 +40,17 @@ const query = graphql`
   }
 `
 
+const mutation = graphql`
+  mutation ChatContainerMutation($text: String!, $userId: String!) {
+    createMessage(createMessageInput:{text: $text, userId: $userId}){
+      createdAt
+      id 
+      text 
+      userId 
+    }
+  }
+`
+
 interface ContentProps {
   queryReference: PreloadedQuery<ChatContainerQuery>
 }
