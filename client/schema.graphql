@@ -21,6 +21,7 @@ input CreateChatInput {
 }
 
 input CreateMessageInput {
+  chatId: String!
   text: String!
   userId: String!
 }
@@ -99,6 +100,7 @@ input UpdateChatInput {
 }
 
 input UpdateMessageInput {
+  chatId: String
   id: String!
   text: String!
   userId: String!

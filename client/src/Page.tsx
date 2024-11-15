@@ -59,10 +59,12 @@ const Content = ({ queryReference }: ContentProps) => {
         <ChatGroupsContainer />
       </div>
       <div className="h-[100vh] w-[100%] flex-grow relative">
-        <ChatHeader title={currentUser.chats[0].name} style="absolute" />
-        <div className="px-2 pt-2 h-full">
-          <ChatContainer id={currentUser.chats[0].id} />
-        </div>
+        {currentUser.chats.length > 0 ? <>
+          <ChatHeader title={currentUser?.chats[0]?.name} style="absolute" />
+          <div className="px-2 pt-2 h-full">
+            <ChatContainer id={currentUser.chats[0]?.id} />
+          </div> </> : null
+        }
       </div>
     </div>
   );

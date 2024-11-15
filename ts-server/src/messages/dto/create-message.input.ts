@@ -7,4 +7,7 @@ export class CreateMessageInput {
 
   @Field()
   userId: string;
+
+  @Field()
+  chatId: string;
 }

@@ -7,11 +7,11 @@ import { ChatSendButton } from "../shared/Buttons/ChatSendButton";
 import { Typing } from "./Typing";
 import { Avatar } from "../shared/users/Avatar";
 import img from "../../assets/jennie.jpeg";
-import { Button } from "../shared/Buttons/GenericButton";
 import { Loader } from "../shared/loaders/Loader";
 import { graphql } from "relay-runtime";
-import { PreloadedQuery, usePreloadedQuery, useQueryLoader } from "react-relay";
+import { PreloadedQuery, useMutation, usePreloadedQuery, useQueryLoader } from "react-relay";
 import { ChatContainerQuery } from "@generated/ChatContainerQuery.graphql";
+import { ChatContainerMutation } from "@generated/ChatContainerMutation.graphql";
 
 const query = graphql`
   query ChatContainerQuery($id:ID!) {
@@ -41,8 +41,8 @@ const query = graphql`
 `
 
 const mutation = graphql`
-  mutation ChatContainerMutation($text: String!, $userId: String!) {
-    createMessage(createMessageInput:{text: $text, userId: $userId}){
+  mutation ChatContainerMutation($text: String!, $userId: String!, $chatId: String!) {
+    createMessage(createMessageInput:{text: $text, userId: $userId, chatId: $chatId}){
       createdAt
       id 
       text 
@@ -52,14 +52,15 @@ const mutation = graphql`
 `
 
 interface ContentProps {
-  queryReference: PreloadedQuery<ChatContainerQuery>
+  queryReference: PreloadedQuery<ChatContainerQuery>;
+  chatId: string;
 }
 
-export const Content = ({ queryReference }: ContentProps) => {
+export const Content = ({ queryReference, chatId }: ContentProps) => {
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [conversation, setConversation] = useState<MessageProps[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [commitMutation, isMutationInFlight] = useMutation<ChatContainerMutation>(mutation)
   const data = usePreloadedQuery(query, queryReference).chat
   console.log("chat container: ", data)
   useEffect(() => {
@@ -70,36 +71,28 @@ export const Content = ({ queryReference }: ContentProps) => {
     return () => clearTimeout(delayDebounceFn);
   }, [isTyping]);
 
+  const viewer = store.getRootField('viewer');
+
   return (
     <div className="h-full flex flex-col justify-between">
-      {loading ? (
-        <Loader styles="mx-auto my-auto" />
-      ) : (
-        <div className="flex flex-col items-start grow overflow-auto mt-12">
-          <Message text={"henlo"} id={"asdfasdf"} key={"asdfasdf"} first />
-          {conversation.map((messageObj) => (
-            <Message
-              text={messageObj.text}
-              id={messageObj.id}
-              key={messageObj.id}
-              senderIsMe
-              first
-            />
-          ))}
-          {isTyping ? (
-            <div className="flex flex-row">
-              <Avatar src={img} />
-              <Typing />
-            </div>
-          ) : null}
-        </div>
-      )}
-      <Button
-        title={"load"}
-        onClick={() => {
-          setLoading(false);
-        }}
-      />
+      <div className="flex flex-col items-start grow overflow-auto mt-12">
+        <Message text={"henlo"} id={"asdfasdf"} key={"asdfasdf"} first />
+        {conversation.map((messageObj) => (
+          <Message
+            text={messageObj.text}
+            id={messageObj.id}
+            key={messageObj.id}
+            senderIsMe
+            first
+          />
+        ))}
+        {isTyping ? (
+          <div className="flex flex-row">
+            <Avatar src={img} />
+            <Typing />
+          </div>
+        ) : null}
+      </div>
       <form
         className="border-[1px] rounded-[15px] 
          my-2 px-[1rem] py-[4px] 
@@ -125,7 +118,14 @@ export const Content = ({ queryReference }: ContentProps) => {
             setMessage(e.currentTarget.value);
           }}
         />
-        <ChatSendButton disabled={message.length === 0} />
+        <ChatSendButton disabled={message.length === 0} onClick={() => commitMutation({
+          variables: {
+            text: "",
+            userId: "",
+            chatId: chatId
+
+          }
+        }).dispose()} />
       </form>
     </div>
   );
@@ -146,7 +146,7 @@ export const ChatContainer = ({ id }: ChatContainerProps) => {
 
   return (
     <Suspense>
-      <Content queryReference={queryReference} />
+      <Content queryReference={queryReference} chatId={id} />
     </Suspense>
   )
 }
