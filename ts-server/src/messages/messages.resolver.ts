@@ -1,16 +1,21 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, Subscription } from '@nestjs/graphql';
 import { MessagesService } from './messages.service';
 import { Message } from './entities/message.entity';
 import { CreateMessageInput } from './dto/create-message.input';
 import { UpdateMessageInput } from './dto/update-message.input';
+import { PubSub } from 'graphql-subscriptions';
+
+const pubSub = new PubSub()
 
 @Resolver(() => Message)
 export class MessagesResolver {
   constructor(private readonly messagesService: MessagesService) { }
 
   @Mutation(() => Message)
-  createMessage(@Args('createMessageInput') createMessageInput: CreateMessageInput) {
-    return this.messagesService.create(createMessageInput);
+  async createMessage(@Args('createMessageInput') createMessageInput: CreateMessageInput) {
+    const newMessage = await this.messagesService.create(createMessageInput);
+    await pubSub.publish('newMessage', { messageAdded: newMessage })
+    return newMessage
   }
 
   @Query(() => Message, { name: 'message' })
@@ -21,5 +26,13 @@ export class MessagesResolver {
   @Mutation(() => Message)
   updateMessage(@Args('updateMessageInput') updateMessageInput: UpdateMessageInput) {
     return this.messagesService.update(updateMessageInput);
+  }
+
+  @Subscription(() => Message, {
+    resolve: (payload) => payload.messageAdded,
+    filter: (payload, variables) => payload.messageAdded.chat.id === variables.chatId,
+  })
+  addMessage(@Args('chatId') chatId: string) {
+    return pubSub.asyncIterableIterator('newMessage')
   }
 }

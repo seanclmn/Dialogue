@@ -3,10 +3,11 @@ import "./App.css";
 import { ChatContainer } from "./components/chat/ChatContainer";
 import { ChatGroupsContainer } from "./components/chat/ChatGroupsContainer";
 import { ChatHeader } from "./components/chat/ChatHeader";
-import { Suspense, useEffect } from "react";
+import { Suspense, useContext, useEffect } from "react";
 import { PreloadedQuery, usePreloadedQuery, useQueryLoader } from "react-relay";
 import { PageQuery } from "@generated/PageQuery.graphql";
 import { Loader } from "@components/shared/loaders/Loader";
+import { UserContext } from "./UserContext";
 
 const query = graphql`
   query PageQuery {
@@ -47,9 +48,11 @@ type ContentProps = {
 const Content = ({ queryReference }: ContentProps) => {
 
   const { currentUser } = usePreloadedQuery(query, queryReference)
+  const userContext = useContext(UserContext)
 
   useEffect(() => {
     console.log(currentUser)
+    userContext?.setUser({ id: currentUser.id })
   }, [currentUser.username])
   if (!currentUser.chats) return <Loader />
 

@@ -93,6 +93,10 @@ type Query {
   users: [User!]!
 }
 
+type Subscription {
+  addMessage(chatId: String!): Message!
+}
+
 input UpdateChatInput {
   id: ID!
   name: String!

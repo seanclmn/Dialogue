@@ -10,6 +10,7 @@ import { UpdateUserInput } from 'src/users/dto/update-user.input';
 import { MessagesService } from 'src/messages/messages.service';
 import { MessageConnection } from 'src/messages/entities/Message.Connection.entity';
 
+
 @Resolver(() => Chat)
 export class ChatsResolver {
   constructor(private readonly chatsService: ChatsService,

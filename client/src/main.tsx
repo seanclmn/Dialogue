@@ -5,13 +5,16 @@ import "./index.css";
 import { CookiesProvider } from "react-cookie";
 import { RelayProvider } from "./RelayProvider.tsx";
 import { Loader } from "@components/shared/loaders/Loader.tsx";
+import { UserProvider } from "./UserContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <CookiesProvider>
       <RelayProvider>
         <Suspense fallback={<Loader />}>
-          <App />
+          <UserProvider>
+            <App />
+          </UserProvider>
         </Suspense>
       </RelayProvider>
     </CookiesProvider>

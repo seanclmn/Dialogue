@@ -6,15 +6,26 @@ import { Message } from './entities/message.entity';
 import { MoreThan, Repository } from 'typeorm';
 import { MessageEdge } from './entities/message.edge.entity';
 import { MessageConnection, PageInfo } from './entities/Message.Connection.entity';
+import { Chat } from 'src/chats/entities/chat.entity';
 
 @Injectable()
 export class MessagesService {
   constructor(
-    @InjectRepository(Message) private messagesRepository: Repository<Message>
+    @InjectRepository(Message) private messagesRepository: Repository<Message>,
+    @InjectRepository(Chat) private chatsRepository: Repository<Chat>,
   ) { }
 
   async create(createMessageInput: CreateMessageInput) {
-    return await this.messagesRepository.save(createMessageInput)
+
+    const chat = await this.chatsRepository.findOne({
+      where: { id: createMessageInput.chatId }
+    })
+
+    return await this.messagesRepository.save({
+      text: createMessageInput.text,
+      chat: chat,
+      userId: createMessageInput.userId
+    })
   }
 
   async findAll() {

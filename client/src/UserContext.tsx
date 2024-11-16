@@ -1,37 +1,21 @@
-import React, { createContext, ReactNode, useState } from 'react'
-import { useCookies } from 'react-cookie';
+import { createContext, ReactNode, useState } from 'react'
 
-interface UserContextType {
-  user: string | null;
-  setUser: (user: string | null) => void;
-  accessToken: string | undefined;
-  login: (token: string, user: string) => void;
-  logout: () => void;
+interface User {
+  id: string | null;
 }
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
+export interface UserContextType {
+  user: User | null;
+  setUser: (user: User | null) => void;
+}
 
+export const UserContext = createContext<UserContextType>({ user: null, setUser: () => { return; } });
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<string | null>(null);
-  const [cookies, setCookie, removeCookie] = useCookies(['accessToken']);
-
-  const accessToken = cookies.accessToken;
-
-  const login = (token: string, user: string) => {
-    setCookie('accessToken', token);
-    setUser(user);
-  };
-
-  const logout = () => {
-    removeCookie('accessToken');
-    setUser(null);
-  };
-
-  console.log(user)
+  const [user, setUser] = useState<User | null>(null);
 
   return (
-    <UserContext.Provider value={{ user, setUser, accessToken, login, logout }}>
+    <UserContext.Provider value={{ user, setUser }}>
       {children}
     </UserContext.Provider>
   );

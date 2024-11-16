@@ -1,12 +1,34 @@
+// @ts-nocheck
+
 import { RelayEnvironmentProvider } from "react-relay";
 import { PropsWithChildren } from "react";
 import { useCookies } from "react-cookie";
 
-import { Environment, FetchFunction, Network, Observable, RecordSource, Store } from "relay-runtime";
+import { Environment, FetchFunction, Network, Observable, PayloadData, RecordSource, Store, SubscribeFunction } from "relay-runtime";
+import { createClient, ExecutionResult, Sink } from "graphql-ws";
+import { PayloadExtensions } from "relay-runtime/lib/network/RelayNetworkTypes";
 
 export const RelayProvider = ({ children }: PropsWithChildren) => {
   const [cookies,] = useCookies(['accessToken']);
   const HTTP_ENDPOINT = "http://localhost:3000/graphql";
+
+  const wsClient = createClient({
+    url: 'ws://localhost:3000/graphql',
+  });
+
+  const subscribe: SubscribeFunction = (operation, variables) => {
+    return Observable.create((sink: Sink<ExecutionResult<PayloadData | null, PayloadExtensions>>) => {
+      return wsClient.subscribe(
+        {
+          operationName: operation.name,
+          query: operation.text ?? "",
+          variables,
+        },
+        sink,
+      );
+    });
+  }
+
 
   const fetchFunction: FetchFunction = (params, variables) => {
     const response = fetch(HTTP_ENDPOINT, {
@@ -26,7 +48,7 @@ export const RelayProvider = ({ children }: PropsWithChildren) => {
   };
 
   function createEnvironment() {
-    const network = Network.create(fetchFunction);
+    const network = Network.create(fetchFunction, subscribe);
     const store = new Store(new RecordSource());
     return new Environment({ store, network });
   }

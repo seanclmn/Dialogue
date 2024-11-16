@@ -18,6 +18,9 @@ import { Message } from './messages/entities/message.entity';
       sortSchema: true,
       driver: ApolloDriver,
       playground: true,
+      subscriptions: {
+        'graphql-ws': true
+      },
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
