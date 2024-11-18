@@ -1,10 +1,9 @@
 import { Message } from "@components/shared/Messages/Message";
 import { Messages_chat$key } from "@generated/Messages_chat.graphql";
 import { useContext } from "react";
-import { usePaginationFragment, useRefetchableFragment } from "react-relay";
+import { usePaginationFragment } from "react-relay";
 import { graphql } from "relay-runtime";
 import { UserContext } from "../../UserContext";
-
 
 const fragment = graphql`
   fragment Messages_chat on Chat

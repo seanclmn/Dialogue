@@ -4,6 +4,8 @@ import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
 import Page from "./Page";
 import { useCookies } from "react-cookie";
+import { ChatContainer } from "@components/chat/ChatContainer";
+import { Loader } from "@components/shared/loaders/Loader";
 
 export const RouterParent = () => {
 
@@ -14,6 +16,12 @@ export const RouterParent = () => {
       path: "/",
       element: !cookies['accessToken'] ? <Login /> : <Page />,
       errorElement: <ErrorPage />,
+      children: [
+        {
+          path: "chats/:id",
+          element: <ChatContainer />,
+        }
+      ]
     },
     {
       path: "/login",

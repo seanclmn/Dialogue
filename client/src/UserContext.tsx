@@ -2,6 +2,7 @@ import { createContext, ReactNode, useState } from 'react'
 
 interface User {
   id: string | null;
+  username: string | null;
 }
 
 export interface UserContextType {

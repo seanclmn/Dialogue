@@ -8,14 +8,14 @@ import { Typing } from "./Typing";
 import { Avatar } from "../shared/users/Avatar";
 import img from "../../assets/jennie.jpeg";
 import { Loader } from "../shared/loaders/Loader";
-import { ConnectionHandler, Disposable, graphql, GraphQLSubscriptionConfig, IEnvironment, requestSubscription } from "relay-runtime";
+import { ConnectionHandler, graphql, GraphQLSubscriptionConfig } from "relay-runtime";
 import { PreloadedQuery, useMutation, usePreloadedQuery, useQueryLoader, useSubscription } from "react-relay";
 import { ChatContainerQuery } from "@generated/ChatContainerQuery.graphql";
 import { ChatContainerMutation } from "@generated/ChatContainerMutation.graphql";
 import { UserContext } from "../../UserContext";
 import { ChatContainerSubscription, ChatContainerSubscription$data } from "@generated/ChatContainerSubscription.graphql";
-import { getConnection } from "relay-runtime/lib/handlers/connection/ConnectionHandler";
 import { Messages } from "./Messages";
+import { useParams } from "react-router";
 
 const query = graphql`
   query ChatContainerQuery($id:ID!) {
@@ -83,7 +83,6 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     subscription: subscription,
     variables: { chatId },
     onNext: (res) => {
-      console.log(res)
       if (res?.addMessage) {
         console.log(res.addMessage)
       }
@@ -193,17 +192,17 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   );
 };
 
-interface ChatContainerProps {
-  id: string;
-}
-
-export const ChatContainer = ({ id }: ChatContainerProps) => {
+export const ChatContainer = () => {
+  const { id } = useParams()
+  console.log(id)
   const [queryReference, loadQuery] = useQueryLoader<ChatContainerQuery>(query);
 
   useEffect(() => {
-    loadQuery({ id: id })
-  }, [])
+    if (id)
+      loadQuery({ id: id })
+  }, [id])
 
+  if (!id) return null
   if (!queryReference) return <Loader />
 
   return (

@@ -35,7 +35,7 @@ export const Content = ({ queryReference }: ContentProps) => {
       <div className="absolute h-10 flex items-center justify-center px-4">
         <p>Chats</p>
       </div>
-      {chats.map((chat) => <ChatGroup name={chat.name} key={chat.id} />)}
+      {chats.map((chat) => <ChatGroup name={chat.name} key={chat.id} chatId={chat.id} />)}
       <Button title="Log Out" styles="mt-auto" onClick={(e) => {
         e.preventDefault()
         removeCookie("accessToken", null)

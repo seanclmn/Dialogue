@@ -52,7 +52,7 @@ const Content = ({ queryReference }: ContentProps) => {
 
   useEffect(() => {
     console.log(currentUser)
-    userContext?.setUser({ id: currentUser.id })
+    userContext?.setUser({ id: currentUser.id, username: currentUser.username })
   }, [currentUser.username])
   if (!currentUser.chats) return <Loader />
 
@@ -65,7 +65,7 @@ const Content = ({ queryReference }: ContentProps) => {
         {currentUser.chats.length > 0 ? <>
           <ChatHeader title={currentUser?.chats[0]?.name} style="absolute" />
           <div className="px-2 pt-2 h-full">
-            <ChatContainer id={currentUser.chats[0]?.id} />
+            <ChatContainer />
           </div> </> : null
         }
       </div>

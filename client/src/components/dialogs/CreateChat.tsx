@@ -1,9 +1,10 @@
 import { Input } from "@components/shared/Inputs/GenericInput";
 import { CreateChatMutation } from "@generated/CreateChatMutation.graphql";
 import { Description, Dialog, DialogPanel, DialogTitle } from "@headlessui/react"
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useMutation } from "react-relay";
 import { graphql } from "relay-runtime";
+import { UserContext } from "../../UserContext";
 
 interface CreateChatProps {
   open: boolean;
@@ -20,8 +21,10 @@ const mutation = graphql`
 
 export const CreateChat = ({ open, setIsOpen }: CreateChatProps) => {
   const [chatName, setChatName] = useState("")
-  const [participants, setParticipants] = useState(["seanclmn"])
+  const currentUserName = useContext(UserContext).user?.username
+  const [participants, setParticipants] = useState<string[]>(currentUserName ? [currentUserName] : [])
   const [commitMutation, isMutationInFlight] = useMutation<CreateChatMutation>(mutation)
+  if (!currentUserName) return null
   return (
     <Dialog open={open} onClose={() => setIsOpen(false)}>
       <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
@@ -30,18 +33,24 @@ export const CreateChat = ({ open, setIsOpen }: CreateChatProps) => {
           <Input title={"Chat name"}
             onChange={(e) => setChatName(e.currentTarget.value)}
           />
+          <Input title={"Friend name"}
+            onChange={(e) => setParticipants([currentUserName, e.currentTarget.value])}
+          />
           <div className="flex gap-4">
             <button onClick={() => setIsOpen(false)}>Cancel</button>
-            <button onClick={() => commitMutation(
-              {
-                variables: {
-                  input: {
-                    name: chatName,
-                    participants: participants
+            <button onClick={() => {
+              if (participants.length)
+                commitMutation(
+                  {
+                    variables: {
+                      input: {
+                        name: chatName,
+                        participants: participants
+                      }
+                    }
                   }
-                }
-              }
-            )}>Create</button>
+                )
+            }}>Create</button>
           </div>
         </DialogPanel>
       </div>
