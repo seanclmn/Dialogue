@@ -1,20 +1,13 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { MessageEdge } from './message.edge.entity';
-
-@ObjectType()
-export class PageInfo {
-  @Field()
-  endCursor: string;
-
-  @Field()
-  hasNextPage: boolean;
-}
+import { PageInfo } from 'src/relay';
 
 @ObjectType()
 export class MessageConnection {
   @Field(() => [MessageEdge])
   edges: MessageEdge[];
 
-  @Field()
+  @Field(() => PageInfo)
   pageInfo: PageInfo;
 }
+

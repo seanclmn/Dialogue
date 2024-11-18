@@ -82,6 +82,8 @@ interface Node {
 type PageInfo {
   endCursor: String!
   hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String!
 }
 
 type Query {
@@ -89,6 +91,7 @@ type Query {
   chats: [Chat!]!
   currentUser: User!
   message(id: Int!): Message!
+  node(id: ID!): Node
   user(username: String!): User!
   users: [User!]!
 }

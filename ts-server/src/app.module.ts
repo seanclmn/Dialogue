@@ -10,6 +10,7 @@ import { ChatsModule } from './chats/chats.module';
 import { Chat } from './chats/entities/chat.entity';
 import { MessagesModule } from './messages/messages.module';
 import { Message } from './messages/entities/message.entity';
+import { NodeResolver } from './node/node.resolver';
 
 @Module({
   imports: [
@@ -37,5 +38,6 @@ import { Message } from './messages/entities/message.entity';
     ChatsModule,
     MessagesModule,
   ],
+  providers: [NodeResolver],
 })
 export class AppModule { }

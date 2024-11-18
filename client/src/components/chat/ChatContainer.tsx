@@ -8,36 +8,26 @@ import { Typing } from "./Typing";
 import { Avatar } from "../shared/users/Avatar";
 import img from "../../assets/jennie.jpeg";
 import { Loader } from "../shared/loaders/Loader";
-import { Disposable, graphql, GraphQLSubscriptionConfig, IEnvironment, requestSubscription } from "relay-runtime";
+import { ConnectionHandler, Disposable, graphql, GraphQLSubscriptionConfig, IEnvironment, requestSubscription } from "relay-runtime";
 import { PreloadedQuery, useMutation, usePreloadedQuery, useQueryLoader, useSubscription } from "react-relay";
 import { ChatContainerQuery } from "@generated/ChatContainerQuery.graphql";
 import { ChatContainerMutation } from "@generated/ChatContainerMutation.graphql";
 import { UserContext } from "../../UserContext";
 import { ChatContainerSubscription, ChatContainerSubscription$data } from "@generated/ChatContainerSubscription.graphql";
+import { getConnection } from "relay-runtime/lib/handlers/connection/ConnectionHandler";
+import { Messages } from "./Messages";
 
 const query = graphql`
   query ChatContainerQuery($id:ID!) {
-    chat(id: $id){
-      id
-      name      
-      participants {
-        username
+    node(id: $id){
+      ... on Chat {
         id
-      }
-      messages(first: 1000, after: "2024-11-01T12:34:56.789Z") {
-        edges {
-          cursor
-          node {
-            id
-            text
-            createdAt
-            userId
-          }
+        name      
+        participants {
+          username
+          id
         }
-        pageInfo {
-          endCursor
-          hasNextPage
-        }
+        ...Messages_chat
       }
     }
   }
@@ -73,20 +63,20 @@ interface ContentProps {
 
 export const Content = ({ queryReference, chatId }: ContentProps) => {
   const [message, setMessage] = useState("");
-  // const [isTyping, setIsTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const [conversation, setConversation] = useState<MessageProps[]>([]);
   const { user } = useContext(UserContext)
   const [commitMutation, isMutationInFlight] = useMutation<ChatContainerMutation>(mutation)
 
-  const data = usePreloadedQuery(query, queryReference).chat
+  const data = usePreloadedQuery(query, queryReference)
   const [newMessages, setNewMessages] = useState<ChatContainerSubscription$data["addMessage"][]>([])
-  // useEffect(() => {
-  //   const delayDebounceFn = setTimeout(() => {
-  //     setIsTyping(false);
-  //   }, 2000);
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      setIsTyping(false);
+    }, 2000);
 
-  //   return () => clearTimeout(delayDebounceFn);
-  // }, [isTyping]);
+    return () => clearTimeout(delayDebounceFn);
+  }, [isTyping]);
 
 
   const config: GraphQLSubscriptionConfig<ChatContainerSubscription> = useMemo(() => ({
@@ -95,9 +85,27 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     onNext: (res) => {
       console.log(res)
       if (res?.addMessage) {
-        console.log(newMessages)
-        setNewMessages([...newMessages, res?.addMessage])
+        console.log(res.addMessage)
       }
+    },
+    updater: (store) => {
+
+      const payload = store.getRootField("addMessage")
+
+      const chatRecord = store.get(chatId);
+      if (!chatRecord) return;
+
+      const connection = ConnectionHandler.getConnection(chatRecord, "Messages_messages")
+      if (!connection) return;
+
+      const newEdge = ConnectionHandler.createEdge(
+        store,
+        connection,
+        payload,
+        'MessageEdge'
+      );
+
+      ConnectionHandler.insertEdgeAfter(connection, newEdge);
     },
     onError: (e) => {
       console.log(e)
@@ -106,14 +114,6 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
       console.log("completed")
     }
   }), [chatId]);
-
-
-  // useEffect(()=> {
-  //   const subscription = subscribeToMessages(chatId);
-  //   return () => {
-  //     subscription.dispose(); // Clean up the subscription
-  //   };
-  // },[chatId])
 
 
   useSubscription(config)
@@ -132,14 +132,9 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
             first
           />
         ))}
-        {data.messages.edges.map((edge) => (
-          <Message
-            text={edge.node.text}
-            id={edge.node.id}
-            senderIsMe={user?.id === edge.node.userId}
-            key={edge.node.id}
-          />)
-        )}
+
+        {data.node ? <Messages fragmentKey={data.node} /> : null}
+
         {newMessages.map((msg) => (
           <Message
             text={msg.text}
@@ -148,12 +143,12 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
             key={msg.id}
           />)
         )}
-        {/* {isTyping ? (
+        {isTyping ? (
           <div className="flex flex-row">
             <Avatar src={img} />
             <Typing />
           </div>
-        ) : null} */}
+        ) : null}
       </div>
       <form
         className="border-[1px] rounded-[15px] 
@@ -168,14 +163,14 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
               { text: message, id: uuidv4(), senderIsMe: true },
             ]);
             setMessage("");
-            // setIsTyping(false);
+            setIsTyping(false);
           }
         }}
       >
         <ChatInput
           value={message}
           onChange={(e: React.FormEvent<HTMLTextAreaElement>) => {
-            // setIsTyping(true);
+            setIsTyping(true);
             e.preventDefault();
             setMessage(e.currentTarget.value);
           }}
@@ -190,6 +185,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
                 chatId: chatId
               }
             }).dispose()
+            setMessage("")
           }
         }} />
       </form>

@@ -5,8 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Message } from './entities/message.entity';
 import { MoreThan, Repository } from 'typeorm';
 import { MessageEdge } from './entities/message.edge.entity';
-import { MessageConnection, PageInfo } from './entities/Message.Connection.entity';
+import { MessageConnection } from './entities/Message.Connection.entity';
 import { Chat } from 'src/chats/entities/chat.entity';
+import { PageInfo } from 'src/relay';
 
 @Injectable()
 export class MessagesService {
@@ -61,7 +62,9 @@ export class MessagesService {
     }));
 
     const pageInfo: PageInfo = {
+      startCursor: edges[0]?.cursor,
       endCursor: edges[edges.length - 1]?.cursor || '',
+      hasPreviousPage: first > 0,
       hasNextPage: messages.length > first,
     };
 

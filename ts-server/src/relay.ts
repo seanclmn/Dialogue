@@ -1,4 +1,4 @@
-import { Field, ID, InterfaceType } from "@nestjs/graphql";
+import { Field, ID, InterfaceType, ObjectType } from "@nestjs/graphql";
 
 @InterfaceType()
 export abstract class Node {
@@ -6,7 +6,7 @@ export abstract class Node {
   id: string
 }
 
-@InterfaceType()
+@ObjectType()
 export class PageInfo {
   @Field(() => Boolean)
   hasNextPage: boolean;
@@ -14,11 +14,11 @@ export class PageInfo {
   @Field(() => Boolean)
   hasPreviousPage: boolean;
 
-  @Field(() => String, { nullable: true })
-  startCursor?: string;
+  @Field()
+  startCursor: string;
 
-  @Field(() => String, { nullable: true })
-  endCursor?: string;
+  @Field()
+  endCursor: string;
 }
 
 // @InterfaceType()
