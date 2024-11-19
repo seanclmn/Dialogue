@@ -13,9 +13,9 @@ import { PreloadedQuery, useMutation, usePreloadedQuery, useQueryLoader, useSubs
 import { ChatContainerQuery } from "@generated/ChatContainerQuery.graphql";
 import { ChatContainerMutation } from "@generated/ChatContainerMutation.graphql";
 import { UserContext } from "../../UserContext";
-import { ChatContainerSubscription, ChatContainerSubscription$data } from "@generated/ChatContainerSubscription.graphql";
 import { Messages } from "./Messages";
 import { useParams } from "react-router";
+import { ChatHeader } from "./ChatHeader";
 
 const query = graphql`
   query ChatContainerQuery($id:ID!) {
@@ -23,10 +23,6 @@ const query = graphql`
       ... on Chat {
         id
         name      
-        participants {
-          username
-          id
-        }
         ...Messages_chat
       }
     }
@@ -44,16 +40,6 @@ const mutation = graphql`
   }
 `
 
-const subscription = graphql`
-  subscription ChatContainerSubscription($chatId: String!) {
-    addMessage(chatId: $chatId) {
-      createdAt
-      id
-      text
-      userId
-    }
-  }
-`
 
 interface ContentProps {
   queryReference: PreloadedQuery<ChatContainerQuery>;
@@ -69,7 +55,6 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   const [commitMutation, isMutationInFlight] = useMutation<ChatContainerMutation>(mutation)
 
   const data = usePreloadedQuery(query, queryReference)
-  const [newMessages, setNewMessages] = useState<ChatContainerSubscription$data["addMessage"][]>([])
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       setIsTyping(false);
@@ -78,70 +63,12 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     return () => clearTimeout(delayDebounceFn);
   }, [isTyping]);
 
-
-  const config: GraphQLSubscriptionConfig<ChatContainerSubscription> = useMemo(() => ({
-    subscription: subscription,
-    variables: { chatId },
-    onNext: (res) => {
-      if (res?.addMessage) {
-        console.log(res.addMessage)
-      }
-    },
-    updater: (store) => {
-
-      const payload = store.getRootField("addMessage")
-
-      const chatRecord = store.get(chatId);
-      if (!chatRecord) return;
-
-      const connection = ConnectionHandler.getConnection(chatRecord, "Messages_messages")
-      if (!connection) return;
-
-      const newEdge = ConnectionHandler.createEdge(
-        store,
-        connection,
-        payload,
-        'MessageEdge'
-      );
-
-      ConnectionHandler.insertEdgeAfter(connection, newEdge);
-    },
-    onError: (e) => {
-      console.log(e)
-    },
-    onCompleted: () => {
-      console.log("completed")
-    }
-  }), [chatId]);
-
-
-  useSubscription(config)
-
-
   return (
     <div className="h-full flex flex-col justify-between">
+      <ChatHeader title={data.node?.name ?? "(unnamed chat)"} style="absolute" />
+
       <div className="flex flex-col items-start grow overflow-auto mt-12">
-        <Message text={"henlo"} id={"asdfasdf"} key={"asdfasdf"} first />
-        {conversation.map((messageObj) => (
-          <Message
-            text={messageObj.text}
-            id={messageObj.id}
-            key={messageObj.id}
-            senderIsMe
-            first
-          />
-        ))}
-
         {data.node ? <Messages fragmentKey={data.node} /> : null}
-
-        {newMessages.map((msg) => (
-          <Message
-            text={msg.text}
-            id={msg.id}
-            senderIsMe={user?.id === msg.userId}
-            key={msg.id}
-          />)
-        )}
         {isTyping ? (
           <div className="flex flex-row">
             <Avatar src={img} />

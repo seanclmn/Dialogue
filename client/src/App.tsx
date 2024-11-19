@@ -5,7 +5,6 @@ import { Signup } from "./pages/Signup";
 import Page from "./Page";
 import { useCookies } from "react-cookie";
 import { ChatContainer } from "@components/chat/ChatContainer";
-import { Loader } from "@components/shared/loaders/Loader";
 
 export const RouterParent = () => {
 

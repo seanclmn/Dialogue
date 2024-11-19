@@ -3,16 +3,31 @@
 # ------------------------------------------------------
 
 type Chat implements Node {
+  createdAt: DateTime!
   id: ID!
   messages(after: String, first: Int): MessageConnection!
   name: String!
-  participants: [User!]
+}
+
+type ChatConnection {
+  edges: [ChatEdge!]!
+  pageInfo: PageInfo!
+}
+
+type ChatEdge {
+  cursor: String!
+  node: Chat!
 }
 
 input ChatInput {
   id: ID!
   name: String!
   participants: [UpdateUserInput!]!
+}
+
+type ChatUpdate {
+  chatId: String!
+  newMessage: Message!
 }
 
 input CreateChatInput {
@@ -97,7 +112,8 @@ type Query {
 }
 
 type Subscription {
-  addMessage(chatId: String!): Message!
+  addMessage(chatIds: [ID!]!): Message!
+  newMessage(chatIds: [ID!]!): ChatUpdate!
 }
 
 input UpdateChatInput {
@@ -121,7 +137,7 @@ input UpdateUserInput {
 }
 
 type User implements Node {
-  chats: [Chat!]
+  chats(after: String, first: Int): ChatConnection!
   id: ID!
   password: String!
   username: String!

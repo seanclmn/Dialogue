@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int, Context, ID, ResolveField, Parent } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, Context, ID, ResolveField, Parent, Subscription } from '@nestjs/graphql';
 import { ChatsService, CreateChatFuncInput } from './chats.service';
 import { Chat } from './entities/chat.entity';
 import { CreateChatInput } from './dto/create-chat.input';
@@ -9,7 +9,8 @@ import { UsersService } from 'src/users/users.service';
 import { UpdateUserInput } from 'src/users/dto/update-user.input';
 import { MessagesService } from 'src/messages/messages.service';
 import { MessageConnection } from 'src/messages/entities/Message.Connection.entity';
-
+import { ChatUpdate } from './dto/chatUpdate';
+import { pubSub } from 'src/messages/messages.resolver';
 
 @Resolver(() => Chat)
 export class ChatsResolver {
@@ -77,5 +78,13 @@ export class ChatsResolver {
     @Args('after', { type: () => String, nullable: true }) after?: Date
   ): Promise<MessageConnection> {
     return await this.messagesService.getMessagesForChat(chat.id, first, after);
+  }
+
+  @Subscription(() => ChatUpdate, {
+    resolve: (payload) => payload.messageAdded,
+    filter: (payload, variables) => variables.chatId.includes(payload.messageAdded.chat.id),
+  })
+  newMessage(@Args('chatIds', { type: () => [ID] }) chatIds: string[]) {
+    return pubSub.asyncIterableIterator('newMessage')
   }
 }

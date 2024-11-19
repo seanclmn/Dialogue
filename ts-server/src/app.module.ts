@@ -29,7 +29,7 @@ import { NodeResolver } from './node/node.resolver';
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'test',
+      database: 'chat',
       entities: [User, Chat, Message],
       synchronize: true,
     }),

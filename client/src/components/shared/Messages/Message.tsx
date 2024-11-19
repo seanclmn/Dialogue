@@ -13,9 +13,8 @@ export const Message = ({ text, senderIsMe, first }: MessageProps) => {
     <div className={`flex w-full items-start justify-start`}>
       {first && !senderIsMe ? <Avatar src={img} /> : null}
       <div
-        className={`${
-          senderIsMe ? "bg-purple-700 ml-auto max-w-[70%]" : "bg-gray-200"
-        } my-[1px] p-1 rounded-[10px] inline-flex`}
+        className={`${senderIsMe ? "bg-blue-500 ml-auto max-w-[70%]" : "bg-gray-200"
+          } my-[1px] p-1 rounded-[20px] inline-flex`}
       >
         <p
           lang="en"

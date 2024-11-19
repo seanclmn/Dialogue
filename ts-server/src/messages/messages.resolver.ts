@@ -1,11 +1,11 @@
-import { Resolver, Query, Mutation, Args, Int, Subscription } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, Subscription, ID } from '@nestjs/graphql';
 import { MessagesService } from './messages.service';
 import { Message } from './entities/message.entity';
 import { CreateMessageInput } from './dto/create-message.input';
 import { UpdateMessageInput } from './dto/update-message.input';
 import { PubSub } from 'graphql-subscriptions';
 
-const pubSub = new PubSub()
+export const pubSub = new PubSub()
 
 @Resolver(() => Message)
 export class MessagesResolver {
@@ -30,9 +30,9 @@ export class MessagesResolver {
 
   @Subscription(() => Message, {
     resolve: (payload) => payload.messageAdded,
-    filter: (payload, variables) => payload.messageAdded.chat.id === variables.chatId,
+    filter: (payload, variables) => variables.chatId.includes(payload.messageAdded.chat.id),
   })
-  addMessage(@Args('chatId') chatId: string) {
+  addMessage(@Args('chatIds', { type: () => [ID] }) chatIds: string[]) {
     return pubSub.asyncIterableIterator('newMessage')
   }
 }

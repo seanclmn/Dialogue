@@ -10,7 +10,7 @@ interface ChatGroupProps {
 export const ChatGroup = ({ name, chatId }: ChatGroupProps) => {
   return (
     <Link to={`chats/${chatId}`} >
-      <div className="mt-10 flex flex-row items-center justify-start border-y-[1px] p-2">
+      <div className="flex flex-row items-center justify-start border-y-[0.5px] p-2">
         <Avatar src={img} />
         <p className="">{name}</p>
       </div>

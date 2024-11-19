@@ -1,15 +1,20 @@
-import { Resolver, Query, Mutation, Args, Int, Context, Subscription } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, Context, Subscription, Parent, ResolveField } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/jwt-auth.guard';
+import { Chat } from 'src/chats/entities/chat.entity';
+import { ChatConnection } from 'src/chats/entities/chat.connection.entity';
+import { ChatsService } from 'src/chats/chats.service';
 
 
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(
+    private readonly usersService: UsersService,
+  ) { }
 
   @Query(() => User)
   @UseGuards(JwtGuard)
@@ -38,6 +43,15 @@ export class UsersResolver {
   @UseGuards(JwtGuard)
   findOne(@Args('username', { type: () => String }) username: string) {
     return this.usersService.findOne(username);
+  }
+
+  @ResolveField('chats', () => ChatConnection)
+  async chats(
+    @Parent() user: User,
+    @Args('first', { type: () => Int, nullable: true }) first?: number,
+    @Args('after', { type: () => String, nullable: true }) after?: Date
+  ): Promise<ChatConnection> {
+    return await this.usersService.getChatsForUser(user.id, first, after);
   }
 
 
