@@ -16,7 +16,10 @@
       ],
       "@generated/*": [
         "./__generated__/*"
-      ]
+      ],
+      "@assets/*": [
+        "./src/assets/*"
+      ],
     },
   }
 }

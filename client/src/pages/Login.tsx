@@ -6,6 +6,8 @@ import { useMutation } from "react-relay";
 import { useCookies } from "react-cookie";
 import { Navigate } from "react-router";
 import { LoginMutation, LoginMutation$data } from "@generated/LoginMutation.graphql";
+import { Link } from "react-router-dom";
+import img from "../assets/rimowa.png"
 
 const mutation = graphql`
   mutation LoginMutation($username: String!, $password: String!){
@@ -28,7 +30,7 @@ export const Login = () => {
 
   return (
     <form
-      className="flex flex-col items-center max-w-60 my-auto mx-auto"
+      className="flex flex-col items-center max-w-60 mx-auto"
       onSubmit={(e) => {
         e.preventDefault();
         commitMutation({
@@ -44,6 +46,8 @@ export const Login = () => {
         })
       }}
     >
+      <img src={img} />
+      <h1 className="my-4">Chat</h1>
       <Input
         styles="mb-2 text-sm py-[5px]"
         title="Username"
@@ -57,6 +61,8 @@ export const Login = () => {
         }
       />
       <Button title="Log in" type="submit" styles="text-sm py-[5px]" />
+
+      <Link to="/signup"><p className="my-2">Sign up here</p></Link>
     </form>
   );
 };

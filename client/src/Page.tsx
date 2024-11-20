@@ -16,7 +16,7 @@ const query = graphql`
     currentUser {
       username
       id
-      # ...ChatGroupsContainer_user
+      ...ChatGroupsContainer_user
     }
   }
 `
@@ -105,7 +105,7 @@ const Content = ({ queryReference }: ContentProps) => {
     <div className="flex flex-row items-start h-full">
       <div className="h-[100vh] border-solid border-r-[1px] w-40">
         <Suspense fallback={<Loader />}>
-          {/* <ChatGroupsContainer fragmentKey={currentUser} /> */}
+          <ChatGroupsContainer fragmentKey={currentUser} />
         </Suspense>
       </div>
       <div className="h-[100vh] w-[100%] flex-grow relative">

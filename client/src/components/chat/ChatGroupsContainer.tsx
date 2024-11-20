@@ -38,6 +38,8 @@ export const ChatGroupsContainer = ({ fragmentKey }: ChatGroupsContainerProps) =
 
   const { data } = usePaginationFragment(fragment, fragmentKey)
 
+  console.log(data)
+
   if (!data.chats) return <Loader />
   return (
     <>

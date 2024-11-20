@@ -8,7 +8,7 @@ import { ChatsModule } from 'src/chats/chats.module';
 import { ChatsService } from 'src/chats/chats.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User, Chat])],
   providers: [UsersResolver, UsersService],
   exports: [UsersService],
 })

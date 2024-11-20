@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserInput } from './dto/create-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { MoreThan, Repository } from 'typeorm';
+import { Any, MoreThan, Repository } from 'typeorm';
 import { UpdateUserInput } from './dto/update-user.input';
 import { ChatEdge } from 'src/chats/entities/chat.edge.entity';
 import { Chat } from 'src/chats/entities/chat.entity';
@@ -12,7 +12,7 @@ import { PageInfo } from 'src/relay';
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
-    @InjectRepository(User) private chatsRepository: Repository<Chat>,
+    @InjectRepository(Chat) private chatsRepository: Repository<Chat>,
 
   ) { }
 
@@ -38,6 +38,7 @@ export class UsersService {
   }
 
   async getChatsForUser(id: string, first?: number, after?: Date) {
+
     const where = after
       ? { participants: { id: id }, createdAt: MoreThan(after) }
       : { participants: { id: id } };

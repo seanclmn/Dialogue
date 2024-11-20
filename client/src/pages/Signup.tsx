@@ -6,6 +6,7 @@ import { useMutation } from "react-relay";
 import { useCookies } from "react-cookie";
 import { Navigate } from "react-router";
 import { SignupMutation, SignupMutation$data } from "@generated/SignupMutation.graphql";
+import { Link } from "react-router-dom";
 
 const mutation = graphql`
   mutation SignupMutation($username: String!, $password: String!){
@@ -26,7 +27,7 @@ export const Signup = () => {
   if (cookies['accessToken']) return <Navigate to='/' />
   return (
     <form
-      className="flex flex-col items-center max-w-60 my-auto mx-auto"
+      className="flex flex-col items-center max-w-60 mx-auto"
       onSubmit={(e) => {
         e.preventDefault();
         commitMutation({
@@ -42,6 +43,7 @@ export const Signup = () => {
         })
       }}
     >
+      <h1 className="my-4">Chat</h1>
       <Input
         styles="mb-2 text-sm py-[5px]"
         title="Username"
@@ -55,6 +57,7 @@ export const Signup = () => {
         }
       />
       <Button title="Sign up" type="submit" styles="text-sm py-[5px]" />
+      <Link to="/login"><p className="my-2">Log in here</p></Link>
     </form>
   );
 };
