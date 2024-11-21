@@ -2,6 +2,6 @@
 
 **Tools:**
 - UI: Typescript, ReactJS, React-Relay, Tailwind
-- API: Typescript, NestJS, GraphQL
-- Database: MySQL, TypeORM
+- API: Typescript, NestJS, GraphQL, TypeORM
+- Database: MySQL
 
