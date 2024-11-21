@@ -1,12 +1,13 @@
-import { Suspense, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button } from "../shared/Buttons/GenericButton";
 import { ChatGroup } from "./ChatGroup";
 import { useCookies } from "react-cookie";
 import { CreateChat } from "@components/dialogs/CreateChat";
 import { graphql } from "relay-runtime";
-import { PreloadedQuery, usePaginationFragment, usePreloadedQuery, useQueryLoader } from "react-relay";
+import { usePaginationFragment } from "react-relay";
 import { Loader } from "@components/shared/loaders/Loader";
 import { ChatGroupsContainer_user$key } from "@generated/ChatGroupsContainer_user.graphql";
+import { UserContext } from "../../UserContext";
 
 const fragment = graphql`
   fragment ChatGroupsContainer_user on User
@@ -36,9 +37,15 @@ export const ChatGroupsContainer = ({ fragmentKey }: ChatGroupsContainerProps) =
   const [, removeCookie] = useCookies(['accessToken'])
   const [open, setOpen] = useState(false);
 
-  const { data } = usePaginationFragment(fragment, fragmentKey)
+  const { user, setUser } = useContext(UserContext)
 
+  const { data } = usePaginationFragment(fragment, fragmentKey)
   console.log(data)
+  useEffect(() => {
+    const chatIds: string[] = data.chats.edges.map((chat) => chat.node.id)
+    console.log(chatIds)
+    setUser({ ...user, chatIds: chatIds })
+  }, [user?.id])
 
   if (!data.chats) return <Loader />
   return (

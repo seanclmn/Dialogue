@@ -1,4 +1,4 @@
-import { ConnectionHandler, graphql, GraphQLSubscriptionConfig, RecordProxy } from "relay-runtime";
+import { ConnectionHandler, graphql, GraphQLSubscriptionConfig, RecordProxy, RecordSourceProxy } from "relay-runtime";
 import "./App.css";
 import { ChatContainer } from "./components/chat/ChatContainer";
 import { ChatGroupsContainer } from "./components/chat/ChatGroupsContainer";
@@ -10,6 +10,7 @@ import { Loader } from "@components/shared/loaders/Loader";
 import { UserContext } from "./UserContext";
 import { Outlet, useParams } from "react-router";
 import { RenderErrorBoundary } from "react-router/dist/lib/hooks";
+import { PageChatsSubscription, PageChatsSubscription$data } from "@generated/PageChatsSubscription.graphql";
 
 const query = graphql`
   query PageQuery {
@@ -21,16 +22,19 @@ const query = graphql`
   }
 `
 
-// const subscription = graphql`
-//   subscription PageChatsSubscription($chatIds: [ID!]!) {
-//     newMessage(chatIds: $chatIds) {
-//       createdAt
-//       id
-//       text
-//       userId
-//     }
-//   }
-// `
+const subscription = graphql`
+  subscription PageChatsSubscription($chatIds: [ID!]!) {
+    newMessage(chatIds: $chatIds) {
+      chatId   
+      newMessage {
+        createdAt
+        id
+        text
+        userId
+      }
+    }
+  }
+`
 
 const Page = () => {
   const [queryReference, loadQuery] = useQueryLoader<PageQuery>(query);
@@ -55,49 +59,48 @@ type ContentProps = {
 const Content = ({ queryReference }: ContentProps) => {
 
   const { currentUser } = usePreloadedQuery(query, queryReference)
-  const userContext = useContext(UserContext)
-  // const config: GraphQLSubscriptionConfig<ChatContainerSubscription> = useMemo(() => ({
-  //   subscription: subscription,
-  //   variables: { chatIds },
-  //   onNext: (res) => {
-  //     if (res?.addMessage) {
-  //       console.log(res.addMessage)
-  //     }
-  //   },
-  //   updater: (store) => {
+  const { user, setUser } = useContext(UserContext)
+  const config: GraphQLSubscriptionConfig<PageChatsSubscription> = useMemo(() => ({
+    subscription: subscription,
+    variables: { chatIds: user.chatIds },
+    onNext: (res) => {
+      if (res?.newMessage) {
+        console.log(res.newMessage)
+      }
+    },
+    updater: (store) => {
+      const newMessageField = store.getRootField('newMessage');
+      if (!newMessageField) return;
 
-  //     const payload: RecordProxy<PageChatsSubscription$data> = store.getRootField("addMessage")
+      const chatId = newMessageField.getValue('chatId') as string;
+      const newMessageNode = newMessageField.getLinkedRecord('newMessage');
+      if (!chatId || !newMessageNode) return;
 
-  //     const chatRecord = store.get(payload);
-  //     if (!chatRecord) return;
+      const chatRecord = store.get(chatId);
+      if (!chatRecord) return;
 
-  //     const connection = ConnectionHandler.getConnection(chatRecord, "Messages_messages")
-  //     if (!connection) return;
+      const messagesConnection = ConnectionHandler.getConnection(chatRecord, "Messages_messages");
+      if (!messagesConnection) return;
 
-  //     const newEdge = ConnectionHandler.createEdge(
-  //       store,
-  //       connection,
-  //       payload,
-  //       'MessageEdge'
-  //     );
+      const newEdge = ConnectionHandler.createEdge(store, messagesConnection, newMessageNode, 'MessageEdge')
 
-  //     ConnectionHandler.insertEdgeAfter(connection, newEdge);
-  //   },
-  //   onError: (e) => {
-  //     console.log(e)
-  //   },
-  //   onCompleted: () => {
-  //     console.log("completed")
-  //   }
-  // }), [chatIds]);
+      ConnectionHandler.insertEdgeAfter(messagesConnection, newEdge)
+    },
+    onError: (e) => {
+      console.log(e)
+    },
+    onCompleted: () => {
+      console.log("completed")
+    }
+  }), [user?.chatIds]);
 
 
-  // useSubscription(config)
+  useSubscription(config)
 
 
   useEffect(() => {
     console.log(currentUser)
-    userContext?.setUser({ id: currentUser.id, username: currentUser.username })
+    setUser({ ...user, id: currentUser.id, username: currentUser.username })
   }, [currentUser.username])
   if (!currentUser.id) return <Loader />
 

@@ -14,7 +14,12 @@ export class MessagesResolver {
   @Mutation(() => Message)
   async createMessage(@Args('createMessageInput') createMessageInput: CreateMessageInput) {
     const newMessage = await this.messagesService.create(createMessageInput);
-    await pubSub.publish('newMessage', { messageAdded: newMessage })
+    await pubSub.publish('newMessage', {
+      messageAdded: {
+        chatId: createMessageInput.chatId,
+        newMessage: newMessage
+      }
+    })
     return newMessage
   }
 
@@ -28,11 +33,4 @@ export class MessagesResolver {
     return this.messagesService.update(updateMessageInput);
   }
 
-  @Subscription(() => Message, {
-    resolve: (payload) => payload.messageAdded,
-    filter: (payload, variables) => variables.chatId.includes(payload.messageAdded.chat.id),
-  })
-  addMessage(@Args('chatIds', { type: () => [ID] }) chatIds: string[]) {
-    return pubSub.asyncIterableIterator('newMessage')
-  }
 }

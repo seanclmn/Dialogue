@@ -113,7 +113,6 @@ type Query {
 }
 
 type Subscription {
-  addMessage(chatIds: [ID!]!): Message!
   newMessage(chatIds: [ID!]!): ChatUpdate!
 }
 

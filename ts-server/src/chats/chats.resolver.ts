@@ -81,10 +81,10 @@ export class ChatsResolver {
   }
 
   @Subscription(() => ChatUpdate, {
-    resolve: (payload) => payload.messageAdded,
-    filter: (payload, variables) => variables.chatId.includes(payload.messageAdded.chat.id),
+    resolve: (payload: { messageAdded: ChatUpdate }) => payload.messageAdded,
+    filter: (payload: { messageAdded: ChatUpdate }, variables) => variables.chatIds.includes(payload.messageAdded.chatId),
   })
-  newMessage(@Args('chatIds', { type: () => [ID] }) chatIds: string[]) {
+  newMessage(@Args('chatIds', { type: () => [ID!]! }) chatIds: string[]) {
     return pubSub.asyncIterableIterator('newMessage')
   }
 }
