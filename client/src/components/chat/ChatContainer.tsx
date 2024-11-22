@@ -1,4 +1,4 @@
-import { Suspense, useContext, useEffect, useMemo, useState } from "react";
+import { Suspense, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { Message, MessageProps } from "../shared/Messages/Message";
@@ -67,7 +67,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     <div className="h-full flex flex-col justify-between">
       <ChatHeader title={data.node?.name ?? "(unnamed chat)"} style="absolute" />
 
-      <div className="flex flex-col items-start grow overflow-auto mt-12">
+      <div className="flex flex-col items-start grow overflow-auto mt-11 px-2 pt-4">
         {data.node ? <Messages fragmentKey={data.node} /> : null}
         {isTyping ? (
           <div className="flex flex-row">
@@ -103,7 +103,6 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
         />
         <ChatSendButton disabled={message.length === 0} onClick={() => {
           if (user?.id) {
-            console.log("commit mutation", chatId, user.id, message)
             commitMutation({
               variables: {
                 text: message,
@@ -121,7 +120,6 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
 
 export const ChatContainer = () => {
   const { id } = useParams()
-  console.log(id)
   const [queryReference, loadQuery] = useQueryLoader<ChatContainerQuery>(query);
 
   useEffect(() => {

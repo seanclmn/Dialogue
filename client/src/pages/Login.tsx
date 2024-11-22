@@ -7,8 +7,7 @@ import { useCookies } from "react-cookie";
 import { Navigate } from "react-router";
 import { LoginMutation, LoginMutation$data } from "@generated/LoginMutation.graphql";
 import { Link } from "react-router-dom";
-import img from "../assets/rimowa.png"
-
+import logo from "../assets/logo.png"
 const mutation = graphql`
   mutation LoginMutation($username: String!, $password: String!){
     login(loginUserInput: {username: $username, password: $password}){
@@ -22,7 +21,6 @@ const mutation = graphql`
 
 export const Login = () => {
   const [creds, setCreds] = useState({ username: "", password: "" });
-  // const navigate = useNavigate();
   const [cookies, setCookie] = useCookies(['accessToken']);
   const [commitMutation,] = useMutation<LoginMutation>(mutation);
 
@@ -30,7 +28,7 @@ export const Login = () => {
 
   return (
     <form
-      className="flex flex-col items-center max-w-60 mx-auto"
+      className="flex flex-col items-center max-w-60 mx-auto pt-32"
       onSubmit={(e) => {
         e.preventDefault();
         commitMutation({
@@ -46,8 +44,7 @@ export const Login = () => {
         })
       }}
     >
-      <img src={img} />
-      <h1 className="my-4">Chat</h1>
+      <img src={logo} className="h-16 my-2" />
       <Input
         styles="mb-2 text-sm py-[5px]"
         title="Username"

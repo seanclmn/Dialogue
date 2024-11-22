@@ -1,6 +1,7 @@
 import { ReactElement } from "react";
 import { Avatar } from "../shared/users/Avatar";
 import img from "../../assets/jennie.jpeg";
+import UserMenu from "@components/dialogs/UserMenu";
 
 interface ChatHeaderProps {
   title: string;
@@ -9,13 +10,15 @@ interface ChatHeaderProps {
 
 export const ChatHeader = ({ title, style }: ChatHeaderProps): ReactElement => {
   return (
-    <>
-      <div
-        className={`bg-white w-full flex items-center border-b-[1px] py-1 px-2 ${style} `}
-      >
+    <div
+      className={`bg-white w-full flex justify-between items-center border-b-[1px] px-2 h-12 ${style}`}
+    >
+      <div className="flex items-center">
         <Avatar src={img} />
         <p>{title}</p>
       </div>
-    </>
+
+      <UserMenu />
+    </div>
   );
 };

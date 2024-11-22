@@ -1,16 +1,13 @@
 import { ConnectionHandler, graphql, GraphQLSubscriptionConfig, RecordProxy, RecordSourceProxy } from "relay-runtime";
 import "./App.css";
-import { ChatContainer } from "./components/chat/ChatContainer";
 import { ChatGroupsContainer } from "./components/chat/ChatGroupsContainer";
-import { ChatHeader } from "./components/chat/ChatHeader";
 import { Suspense, useContext, useEffect, useMemo } from "react";
 import { PreloadedQuery, usePreloadedQuery, useQueryLoader, useSubscription } from "react-relay";
 import { PageQuery } from "@generated/PageQuery.graphql";
 import { Loader } from "@components/shared/loaders/Loader";
 import { UserContext } from "./UserContext";
-import { Outlet, useParams } from "react-router";
-import { RenderErrorBoundary } from "react-router/dist/lib/hooks";
-import { PageChatsSubscription, PageChatsSubscription$data } from "@generated/PageChatsSubscription.graphql";
+import { Outlet } from "react-router";
+import { PageChatsSubscription } from "@generated/PageChatsSubscription.graphql";
 
 const query = graphql`
   query PageQuery {
@@ -57,17 +54,11 @@ type ContentProps = {
 }
 
 const Content = ({ queryReference }: ContentProps) => {
-
   const { currentUser } = usePreloadedQuery(query, queryReference)
   const { user, setUser } = useContext(UserContext)
   const config: GraphQLSubscriptionConfig<PageChatsSubscription> = useMemo(() => ({
     subscription: subscription,
     variables: { chatIds: user.chatIds },
-    onNext: (res) => {
-      if (res?.newMessage) {
-        console.log(res.newMessage)
-      }
-    },
     updater: (store) => {
       const newMessageField = store.getRootField('newMessage');
       if (!newMessageField) return;
@@ -94,19 +85,21 @@ const Content = ({ queryReference }: ContentProps) => {
     }
   }), [user?.chatIds]);
 
-
   useSubscription(config)
 
-
   useEffect(() => {
-    console.log(currentUser)
-    setUser({ ...user, id: currentUser.id, username: currentUser.username })
+    setUser({
+      ...user,
+      id: currentUser.id,
+      username: currentUser.username
+    })
   }, [currentUser.username])
+
   if (!currentUser.id) return <Loader />
 
   return (
     <div className="flex flex-row items-start h-full">
-      <div className="h-[100vh] border-solid border-r-[1px] w-40">
+      <div className="h-[100vh] border-solid border-r-[1px] w-80">
         <Suspense fallback={<Loader />}>
           <ChatGroupsContainer fragmentKey={currentUser} />
         </Suspense>

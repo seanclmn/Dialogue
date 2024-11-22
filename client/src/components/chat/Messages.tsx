@@ -1,6 +1,6 @@
 import { Message } from "@components/shared/Messages/Message";
 import { Messages_chat$key } from "@generated/Messages_chat.graphql";
-import { useContext } from "react";
+import { DOMElement, useContext, useEffect, useRef } from "react";
 import { usePaginationFragment } from "react-relay";
 import { graphql } from "relay-runtime";
 import { UserContext } from "../../UserContext";
@@ -39,6 +39,13 @@ type MessagesProps = {
 export const Messages = ({ fragmentKey }: MessagesProps) => {
   const { data } = usePaginationFragment(fragment, fragmentKey)
   const userContext = useContext(UserContext)
+  const endMessagesRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (endMessagesRef.current)
+      endMessagesRef.current.scrollIntoView({ behavior: "auto" })
+  }, [data.messages.edges.length])
+
   return (
     <>
       {data.messages.edges.map((edge) => {
@@ -51,6 +58,7 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
           />
         )
       })}
+      <div ref={endMessagesRef} />
     </>
   )
 }
