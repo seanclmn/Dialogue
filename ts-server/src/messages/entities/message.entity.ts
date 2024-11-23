@@ -11,7 +11,7 @@ export class Message implements Node {
   @Field(() => ID)
   id: string;
 
-  @Column()
+  @Column("longtext")
   @Field()
   text: string;
 

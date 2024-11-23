@@ -22,8 +22,9 @@ const mutation = graphql`
 
 export const Signup = () => {
   const [creds, setCreds] = useState({ username: "", password: "" });
+  const [errors, setErrors] = useState("")
   const [cookies, setCookie,] = useCookies(['accessToken']);
-  const [commitMutation,] = useMutation<SignupMutation>(mutation);
+  const [commitMutation, isMutationInFlight] = useMutation<SignupMutation>(mutation);
 
   if (cookies['accessToken']) return <Navigate to='/' />
   return (
@@ -40,6 +41,7 @@ export const Signup = () => {
           },
           onError: (e) => {
             console.log(e)
+            setErrors("This user already exists")
           }
         })
       }}
@@ -57,7 +59,12 @@ export const Signup = () => {
           setCreds({ ...creds, password: e.currentTarget.value })
         }
       />
-      <Button title="Sign up" type="submit" styles="text-sm py-[5px]" />
+      <p>{errors}</p>
+      <Button
+        title="Sign up"
+        type="submit"
+        styles="text-sm py-[5px]"
+      />
       <Link to="/login"><p className="my-2">Log in here</p></Link>
     </form>
   );

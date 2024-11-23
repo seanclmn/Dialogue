@@ -9,6 +9,7 @@ export interface MessageProps extends React.DOMAttributes<HTMLElement> {
 }
 
 export const Message = ({ text, senderIsMe, first }: MessageProps) => {
+  if (!text) return null
   return (
     <div className={`flex w-full items-start justify-start`}>
       {first && !senderIsMe ? <Avatar src={img} /> : null}

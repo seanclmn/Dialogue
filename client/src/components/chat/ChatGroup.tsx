@@ -17,7 +17,7 @@ export const ChatGroup = ({ name, chatId, lastMessage }: ChatGroupProps) => {
         justify-start border-y-[0.5px] p-2 h-18 
         hover:${id === chatId ? "bg-gray-200" : "bg-gray-100"} 
         ${id === chatId ? "bg-gray-200" : ""}`}>
-        <Avatar src={img} containerStyle="h-12" />
+        <Avatar src={img} containerStyle="h-14" />
         <div className="mx-2 h-full flex flex-col justify-between">
           <p className="text-sm font-bold mb-1">{name}</p>
           <p className="text-xs">{lastMessage}</p>

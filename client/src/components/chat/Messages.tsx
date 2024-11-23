@@ -1,6 +1,6 @@
 import { Message } from "@components/shared/Messages/Message";
 import { Messages_chat$key } from "@generated/Messages_chat.graphql";
-import { DOMElement, useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { usePaginationFragment } from "react-relay";
 import { graphql } from "relay-runtime";
 import { UserContext } from "../../UserContext";

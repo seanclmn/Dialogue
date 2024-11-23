@@ -8,6 +8,7 @@ import { Navigate } from "react-router";
 import { LoginMutation, LoginMutation$data } from "@generated/LoginMutation.graphql";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png"
+import { InputError } from "@components/error/InputError";
 const mutation = graphql`
   mutation LoginMutation($username: String!, $password: String!){
     login(loginUserInput: {username: $username, password: $password}){
@@ -22,7 +23,8 @@ const mutation = graphql`
 export const Login = () => {
   const [creds, setCreds] = useState({ username: "", password: "" });
   const [cookies, setCookie] = useCookies(['accessToken']);
-  const [commitMutation,] = useMutation<LoginMutation>(mutation);
+  const [commitMutation, isMutationInFlight] = useMutation<LoginMutation>(mutation);
+  const [errors, setErrors] = useState("")
 
   if (cookies["accessToken"]) return <Navigate to="/" />
 
@@ -33,31 +35,44 @@ export const Login = () => {
         e.preventDefault();
         commitMutation({
           variables: {
-            username: creds.username, password: creds.password
+            username: creds.username,
+            password: creds.password
           },
           onCompleted: (data: LoginMutation$data) => {
             setCookie('accessToken', data.login.accessToken)
           },
           onError: (e) => {
             console.log(e)
+            setErrors("Username or password was invalid")
           }
         })
       }}
     >
       <img src={logo} className="h-16 my-2" />
       <Input
-        styles="mb-2 text-sm py-[5px]"
+        styles="my-1 text-sm py-[5px]"
         title="Username"
         onChange={(e) => setCreds({ ...creds, username: e.currentTarget.value })}
       />
+      <InputError message={"wonton"} />
+
       <Input
-        styles="mb-2 text-sm py-[5px]"
+        styles="my-1 text-sm py-[5px]"
         title="Password"
         onChange={(e) =>
           setCreds({ ...creds, password: e.currentTarget.value })
         }
       />
-      <Button title="Log in" type="submit" styles="text-sm py-[5px]" />
+      <InputError message={"wonton"} />
+
+      <p>{errors}</p>
+      <Button
+        title="Log in"
+        type="submit"
+        styles="text-sm py-[5px] my-2"
+        loading={isMutationInFlight}
+        disabled={isMutationInFlight}
+      />
 
       <Link to="/signup"><p className="my-2">Sign up here</p></Link>
     </form>
