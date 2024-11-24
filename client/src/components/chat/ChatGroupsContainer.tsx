@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import { Button } from "../shared/Buttons/GenericButton";
 import { ChatGroup } from "./ChatGroup";
 import { CreateChat } from "@components/dialogs/CreateChat";
 import { graphql } from "relay-runtime";
@@ -8,6 +7,7 @@ import { Loader } from "@components/shared/loaders/Loader";
 import { ChatGroupsContainer_user$key } from "@generated/ChatGroupsContainer_user.graphql";
 import { UserContext } from "../../UserContext";
 import img from "../../assets/logo.png"
+import { CreateChatButton } from "./CreateChatButton";
 
 const fragment = graphql`
   fragment ChatGroupsContainer_user on User
@@ -47,14 +47,11 @@ export const ChatGroupsContainer = ({ fragmentKey }: ChatGroupsContainerProps) =
   if (!data.chats) return <Loader />
   return (
     <>
-      <div className="absolute h-12 flex items-center justify-center px-4">
-        {/* <h1 className="text-xl">Dialogue</h1> */}
-        <img src={img} className="h-10" />
-      </div>
-      <div className="mt-12">
+      <img src={img} className="h-14 my-4" />
+      <CreateChatButton onClick={() => setOpen(true)} />
+      <div className="flex-grow overflow-y-scroll w-full">
         {data.chats.edges.map((edge) => <ChatGroup name={edge.node.name} key={edge.node.id} chatId={edge.node.id} lastMessage={"last message"} />)}
       </div>
-      <Button onClick={() => setOpen(true)} title="create chat" />
       <CreateChat open={open} setIsOpen={setOpen} />
     </>
   );

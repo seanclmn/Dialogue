@@ -67,11 +67,11 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     <div className="h-full flex flex-col justify-between">
       <ChatHeader title={data.node?.name ?? "(unnamed chat)"} style="absolute" />
 
-      <div className="flex flex-col items-start grow overflow-auto mt-11 px-2 pt-4">
+      <div className="flex flex-col items-start grow mt-11 px-2 pt-4">
         {data.node ? <Messages fragmentKey={data.node} /> : null}
         {isTyping ? (
           <div className="flex flex-row">
-            <Avatar src={img} />
+            <Avatar src={img} containerStyle="h-8" />
             <Typing />
           </div>
         ) : null}

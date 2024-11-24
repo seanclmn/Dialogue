@@ -8,7 +8,6 @@ import {
   Square2StackIcon,
   TrashIcon,
 } from '@heroicons/react/16/solid'
-import { CogIcon } from '@heroicons/react/20/solid'
 import { UserCircleIcon } from '@heroicons/react/24/solid'
 import { useCookies } from 'react-cookie'
 
@@ -33,21 +32,21 @@ export default function UserMenu() {
           className="
           w-52 origin-top-right 
           rounded-xl border border-white/5 
-          bg-gray-100 p-1 text-sm/6
+          bg-bgd-color p-1 text-sm/6
           transition duration-100 ease-out 
           [--anchor-gap:var(--spacing-1)] 
           focus:outline-none 
-          data-[closed]:scale-95 "
+          data-[closed]:scale-95"
         >
           <MenuItem>
-            <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10">
+            <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-bgd-highlight">
               <PencilIcon className="size-4" />
               Edit
             </button>
           </MenuItem>
           <MenuItem>
             <button
-              className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10"
+              className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-bgd-highlight"
               onClick={(e) => {
                 e.preventDefault()
                 removeCookie("accessToken", null)

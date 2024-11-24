@@ -98,8 +98,8 @@ const Content = ({ queryReference }: ContentProps) => {
   if (!currentUser.id) return <Loader />
 
   return (
-    <div className="flex flex-row items-start h-full">
-      <div className="h-[100vh] border-solid border-r-[1px] w-80">
+    <div className="flex flex-row items-start h-[100vh]">
+      <div className="border-brd-color border-r-[1px] w-80 h-[100vh] flex flex-col items-center">
         <Suspense fallback={<Loader />}>
           <ChatGroupsContainer fragmentKey={currentUser} />
         </Suspense>
