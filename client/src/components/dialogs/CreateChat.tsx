@@ -28,11 +28,11 @@ export const CreateChat = ({ open, setIsOpen }: CreateChatProps) => {
   return (
     <Dialog open={open} onClose={() => setIsOpen(false)}>
       <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-        <DialogPanel className="max-w-lg space-y-4 border bg-white p-12">
+        <DialogPanel className="max-w-lg space-y-4 border-brd-color border-2 rounded-lg bg-white p-12">
           <DialogTitle className="font-bold">Create Chat</DialogTitle>
-          <Input title={"Chat name"}
+          {/* <Input title={"Chat name"}
             onChange={(e) => setChatName(e.currentTarget.value)}
-          />
+          /> */}
           <Input title={"Friend name"}
             onChange={(e) => setParticipants([currentUserName, e.currentTarget.value])}
           />

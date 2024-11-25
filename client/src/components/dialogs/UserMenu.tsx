@@ -15,7 +15,7 @@ export default function UserMenu() {
   const [, removeCookie] = useCookies(['accessToken'])
 
   return (
-    <div className=" text-right">
+    <div className="text-right">
       <Menu>
         <MenuButton className="
           inline-flex items-center gap-2 
@@ -31,7 +31,7 @@ export default function UserMenu() {
           anchor="bottom end"
           className="
           w-52 origin-top-right 
-          rounded-xl border border-white/5 
+          rounded-xl border border-brd-color
           bg-bgd-color p-1 text-sm/6
           transition duration-100 ease-out 
           [--anchor-gap:var(--spacing-1)] 
