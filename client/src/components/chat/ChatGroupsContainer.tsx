@@ -8,6 +8,7 @@ import { ChatGroupsContainer_user$key } from "@generated/ChatGroupsContainer_use
 import { UserContext } from "../../UserContext";
 import img from "../../assets/logo.png"
 import { CreateChatButton } from "./CreateChatButton";
+import { Link } from "react-router-dom";
 
 const fragment = graphql`
   fragment ChatGroupsContainer_user on User
@@ -47,7 +48,9 @@ export const ChatGroupsContainer = ({ fragmentKey }: ChatGroupsContainerProps) =
   if (!data.chats) return <Loader />
   return (
     <>
-      <img src={img} className="h-14 my-2" />
+      <Link to={"/"} className="cursor-pointer">
+        <img src={img} className="h-14 my-2" />
+      </Link>
       <CreateChatButton onClick={() => setOpen(true)} />
       <div className="flex-grow overflow-y-scroll w-full">
         {data.chats.edges.map((edge) =>

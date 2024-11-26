@@ -6,8 +6,9 @@ import { PreloadedQuery, usePreloadedQuery, useQueryLoader, useSubscription } fr
 import { PageQuery } from "@generated/PageQuery.graphql";
 import { Loader } from "@components/shared/loaders/Loader";
 import { UserContext } from "./UserContext";
-import { Outlet } from "react-router";
+import { Outlet, useParams } from "react-router";
 import { PageChatsSubscription } from "@generated/PageChatsSubscription.graphql";
+import { EmptyChat } from "@components/chat/EmptyChat";
 
 const query = graphql`
   query PageQuery {
@@ -95,6 +96,8 @@ const Content = ({ queryReference }: ContentProps) => {
     })
   }, [currentUser.username])
 
+  const { id: chatId } = useParams();
+
   if (!currentUser.id) return <Loader />
 
   return (
@@ -105,7 +108,8 @@ const Content = ({ queryReference }: ContentProps) => {
         </Suspense>
       </div>
       <div className="h-[100vh] w-[100%] flex-grow relative">
-        <Outlet />
+        {chatId ?
+          <Outlet /> : <EmptyChat />}
       </div>
     </div>
   );
