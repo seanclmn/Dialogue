@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
 import { User } from 'src/users/entities/user.entity';
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Node } from 'src/relay';
 import { Message } from 'src/messages/entities/message.entity';
 
@@ -30,5 +30,8 @@ export class Chat implements Node {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Field(() => Message)
+  lastMessage: Message;
 
 }

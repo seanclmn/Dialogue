@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserInput } from './dto/create-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Any, MoreThan, Repository } from 'typeorm';
+import { ILike, MoreThan, Repository } from 'typeorm';
 import { UpdateUserInput } from './dto/update-user.input';
 import { ChatEdge } from 'src/chats/entities/chat.edge.entity';
 import { Chat } from 'src/chats/entities/chat.entity';
@@ -22,6 +22,13 @@ export class UsersService {
 
   async findAll() {
     return await this.usersRepository.find();
+  }
+
+  async searchUsers(username: string) {
+
+    return await this.usersRepository.find({
+      where: { username: ILike(`%${username}%`) },
+    });
   }
 
   async findOne(username: string) {

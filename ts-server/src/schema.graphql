@@ -5,6 +5,7 @@
 type Chat implements Node {
   createdAt: DateTime!
   id: ID!
+  lastMessage: Message!
   messages(after: String, first: Int): MessageConnection!
   name: String!
   participants: [User!]
@@ -109,7 +110,7 @@ type Query {
   message(id: Int!): Message!
   node(id: ID!): Node
   user(username: String!): User!
-  users: [User!]!
+  users(username: String!): [User!]!
 }
 
 type Subscription {

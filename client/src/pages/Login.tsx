@@ -9,6 +9,7 @@ import { LoginMutation, LoginMutation$data } from "@generated/LoginMutation.grap
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png"
 import { InputError } from "@components/error/InputError";
+import { Controller, useForm } from "react-hook-form";
 const mutation = graphql`
   mutation LoginMutation($username: String!, $password: String!){
     login(loginUserInput: {username: $username, password: $password}){
@@ -20,11 +21,22 @@ const mutation = graphql`
   }
 `
 
+type Inputs = {
+  username: string
+  password: string
+}
+
 export const Login = () => {
   const [creds, setCreds] = useState({ username: "", password: "" });
   const [cookies, setCookie] = useCookies(['accessToken']);
   const [commitMutation, isMutationInFlight] = useMutation<LoginMutation>(mutation);
-  const [errors, setErrors] = useState("")
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<Inputs>()
 
   if (cookies["accessToken"]) return <Navigate to="/" />
 
@@ -43,7 +55,7 @@ export const Login = () => {
           },
           onError: (e) => {
             console.log(e)
-            setErrors("Username or password was invalid")
+            // setErrors("Username or password was invalid")
           }
         })
       }}
@@ -52,20 +64,21 @@ export const Login = () => {
       <Input
         styles="my-1 text-sm py-[5px]"
         title="Username"
+        {...register("username", { required: true })}
         onChange={(e) => setCreds({ ...creds, username: e.currentTarget.value })}
       />
-      <InputError message={"wonton"} />
+      {errors.username ? <InputError message={"wonton"} /> : null}
 
       <Input
         styles="my-1 text-sm py-[5px]"
         title="Password"
+        {...register("password", { required: true })}
         onChange={(e) =>
           setCreds({ ...creds, password: e.currentTarget.value })
         }
       />
-      <InputError message={"wonton"} />
+      {errors.password ? <InputError message={"wonton"} /> : null}
 
-      <p>{errors}</p>
       <Button
         title="Log in"
         type="submit"

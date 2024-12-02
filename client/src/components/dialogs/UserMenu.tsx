@@ -10,6 +10,7 @@ import {
 } from '@heroicons/react/16/solid'
 import { UserCircleIcon } from '@heroicons/react/24/solid'
 import { useCookies } from 'react-cookie'
+import { Link } from 'react-router-dom'
 
 export default function UserMenu() {
   const [, removeCookie] = useCookies(['accessToken'])
@@ -39,10 +40,10 @@ export default function UserMenu() {
           data-[closed]:scale-95"
         >
           <MenuItem>
-            <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-bgd-highlight">
+            <Link className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-bgd-highlight" to="/editprofile">
               <PencilIcon className="size-4" />
               Edit
-            </button>
+            </Link>
           </MenuItem>
           <MenuItem>
             <button
