@@ -11,7 +11,7 @@ interface ChatGroupProps {
 export const ChatGroup = ({ name, chatId, lastMessage }: ChatGroupProps) => {
   const { id } = useParams()
   return (
-    <Link to={`chats/${chatId}`} >
+    <Link to={`/chats/${chatId}`} >
       <div className={`
         flex flex-row items-center 
         justify-start p-2 h-18 

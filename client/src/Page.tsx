@@ -9,6 +9,7 @@ import { UserContext } from "./UserContext";
 import { Outlet, useParams } from "react-router";
 import { PageChatsSubscription } from "@generated/PageChatsSubscription.graphql";
 import { EmptyChat } from "@components/chat/EmptyChat";
+import { Nav } from "@components/nav/Nav";
 
 const query = graphql`
   query PageQuery {
@@ -100,6 +101,7 @@ const Content = ({ queryReference }: ContentProps) => {
 
   return (
     <div className="flex flex-row items-start h-[100vh]">
+      <Nav />
       <Outlet />
     </div>
   );
