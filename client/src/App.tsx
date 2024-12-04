@@ -7,6 +7,7 @@ import { useCookies } from "react-cookie";
 import { ChatContainer } from "@components/chat/ChatContainer";
 import { EditProfile } from "./pages/EditProfile";
 import { Chats } from "./pages/Chats";
+import { UserSearch } from "@components/users/UserSearch";
 
 export const RouterParent = () => {
 
@@ -20,18 +21,32 @@ export const RouterParent = () => {
       errorElement: <ErrorPage />,
       children: [
         {
-          path: "chats",
+          path: "/",
           element: <Chats />,
           children: [
             {
-              path: ":id",
+              path: "chats/:id",
               element: <ChatContainer />,
             },
           ]
         },
         {
+          path: "/chats",
+          element: <Chats />,
+        },
+        {
           path: "editprofile",
           element: <EditProfile />,
+          errorElement: <ErrorPage />,
+        },
+        {
+          path: "friends",
+          element: <EditProfile />,
+          errorElement: <ErrorPage />,
+        },
+        {
+          path: "search",
+          element: <UserSearch />,
           errorElement: <ErrorPage />,
         },
       ]

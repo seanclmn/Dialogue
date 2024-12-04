@@ -1,50 +1,58 @@
 import { Input, InputProps } from "@components/shared/Inputs/GenericInput"
-import { useState } from "react"
-import { useLazyLoadQuery, useRefetchableFragment } from "react-relay"
-import { graphql } from "relay-runtime"
+import { UserSearchQuery, UserSearchQuery$data } from "@generated/UserSearchQuery.graphql"
+import { useCallback, useEffect, useState } from "react"
+import { useRelayEnvironment } from "react-relay"
+import { fetchQuery, graphql } from "relay-runtime"
 
 
 const query = graphql`
     query UserSearchQuery($username:String!) {
     users(username: $username) {
       id
+      username
     }
   }
 `
-
-const fragment = graphql`
-  fragment UserSearchFragment on Query @refetchable(queryName: "UserSearchRefetchQuery") {
-    users(username: $username) {
-      id
-    }
-  }
-`
-
-interface UserSearchComponentProps {
-  setInput: (message: string) => void;
-  data: 
-}
-
-const UserSearchComponent = ({ setInput }: UserSearchComponentProps) => {
-  const data = useRefetchableFragment(fragment)
-  return (
-    <Input
-      title={"search users"}
-      onChange={(e) => {
-        setInput(e.currentTarget.value)
-      }} />
-
-  )
-}
 
 export const UserSearch = () => {
-  const [input, setInput] = useState("")
-  const data = useLazyLoadQuery(query, { username: input })
+  const env = useRelayEnvironment()
+  const [input, setInput] = useState<string>("")
+  const [isTyping, setIsTyping] = useState<boolean>(false)
+  const [res, setRes] = useState<ReadonlyArray<{ id: string, username: string }>>([])
+
+  const fetch = useCallback((username: string) => {
+    if (username === "") return null
+    console.log(username)
+    return fetchQuery<UserSearchQuery>(
+      env,
+      query,
+      { username: username },
+    ).toPromise().then((result) => result)
+  }, [input])
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      setIsTyping(false);
+    }, 2000)
+
+    return () => clearTimeout(delayDebounceFn)
+  }, [isTyping])
+
   return (
     <div>
-      <UserSearchComponent
-        setInput={setInput}
+      <Input
+        title={"search users"}
+        onChange={async (e) => {
+          const result = await fetch(e.currentTarget.value)
+          if (result?.users) {
+            setRes(result.users)
+            return;
+          }
+          setRes([])
+
+        }}
       />
+      {res ? res.map((user) => (<p key={user.id}>{user.username}</p>)) : null}
     </div>
   )
 }

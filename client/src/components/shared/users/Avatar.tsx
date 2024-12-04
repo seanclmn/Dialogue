@@ -8,6 +8,6 @@ export const Avatar = ({ src, containerStyle }: AvatarProps): ReactElement => {
   return (
     <img
       src={src}
-      className={"rounded-full m-1 " + containerStyle}
+      className={"rounded-full " + containerStyle}
     />);
 };

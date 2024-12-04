@@ -1,6 +1,5 @@
 import { ConnectionHandler, graphql, GraphQLSubscriptionConfig, RecordProxy, RecordSourceProxy } from "relay-runtime";
 import "./App.css";
-import { ChatGroupsContainer } from "./components/chat/ChatGroupsContainer";
 import { Suspense, useContext, useEffect, useMemo } from "react";
 import { PreloadedQuery, usePreloadedQuery, useQueryLoader, useSubscription } from "react-relay";
 import { PageQuery } from "@generated/PageQuery.graphql";
@@ -8,8 +7,9 @@ import { Loader } from "@components/shared/loaders/Loader";
 import { UserContext } from "./UserContext";
 import { Outlet, useParams } from "react-router";
 import { PageChatsSubscription } from "@generated/PageChatsSubscription.graphql";
-import { EmptyChat } from "@components/chat/EmptyChat";
 import { Nav } from "@components/nav/Nav";
+import { Link } from "react-router-dom";
+import img from "../src/assets/logo.png"
 
 const query = graphql`
   query PageQuery {
@@ -100,10 +100,16 @@ const Content = ({ queryReference }: ContentProps) => {
   if (!currentUser.id) return <Loader />
 
   return (
-    <div className="flex flex-row items-start h-[100vh]">
-      <Nav />
-      <Outlet />
-    </div>
+    <>
+      {/* <Link to={"/"} className="cursor-pointer">
+        <img src={img} className="h-14 my-2 mx-auto" />
+      </Link> */}
+      <div className="flex flex-row items-start h-[100vh]">
+        <Nav />
+        <Outlet />
+      </div>
+
+    </>
   );
 }
 
