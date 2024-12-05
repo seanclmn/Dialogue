@@ -1,15 +1,15 @@
-import { Suspense, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useContext, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import { Message, MessageProps } from "../shared/Messages/Message";
+import { MessageProps } from "../shared/Messages/Message";
 import { ChatInput } from "../shared/Inputs/ChatInput";
 import { ChatSendButton } from "../shared/Buttons/ChatSendButton";
 import { Typing } from "./Typing";
 import { Avatar } from "../shared/users/Avatar";
 import img from "../../assets/jennie.jpeg";
 import { Loader } from "../shared/loaders/Loader";
-import { ConnectionHandler, graphql, GraphQLSubscriptionConfig } from "relay-runtime";
-import { PreloadedQuery, useMutation, usePreloadedQuery, useQueryLoader, useSubscription } from "react-relay";
+import { graphql } from "relay-runtime";
+import { PreloadedQuery, useMutation, usePreloadedQuery, useQueryLoader } from "react-relay";
 import { ChatContainerQuery } from "@generated/ChatContainerQuery.graphql";
 import { ChatContainerMutation } from "@generated/ChatContainerMutation.graphql";
 import { UserContext } from "../../UserContext";
