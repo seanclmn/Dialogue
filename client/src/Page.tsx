@@ -101,12 +101,16 @@ const Content = ({ queryReference }: ContentProps) => {
 
   return (
     <>
-      {/* <Link to={"/"} className="cursor-pointer">
-        <img src={img} className="h-14 my-2 mx-auto" />
-      </Link> */}
-      <div className="flex flex-row items-start h-[100vh]">
-        <Nav />
-        <Outlet />
+
+      <div className="flex flex-col h-[100vh] items-left">
+        <Link to={"/"} className="cursor-pointer px-4 border-b-[1px] border-brd-color">
+          <img src={img} className="h-12 my-2 mr-auto" />
+        </Link>
+        <div className="flex flex-row items-start flex-grow flex-1 h-1">
+          <Nav />
+          <Outlet />
+        </div>
+
       </div>
 
     </>

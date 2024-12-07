@@ -65,9 +65,9 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
 
   return (
     <div className="h-full flex flex-col justify-between">
-      <ChatHeader title={data.node?.name ?? "(unnamed chat)"} style="absolute" />
+      <ChatHeader title={data.node?.name ?? "(unnamed chat)"} />
 
-      <div className="flex flex-col items-start grow mt-11 px-2 pt-4">
+      <div className="flex flex-col items-start grow px-2 pt-4 h-1 overflow-auto">
         {data.node ? <Messages fragmentKey={data.node} /> : null}
         {isTyping ? (
           <div className="flex flex-row">

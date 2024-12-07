@@ -48,8 +48,8 @@ export const ChatGroupsContainer = ({ fragmentKey }: ChatGroupsContainerProps) =
   if (!data.chats) return <Loader />
   return (
     <>
-      <CreateChatButton onClick={() => setOpen(true)} />
-      <div className="flex-grow overflow-y-scroll w-full">
+      {/* <CreateChatButton onClick={() => setOpen(true)} /> */}
+      <div className="overflow-auto w-full h-full">
         {data.chats.edges.map((edge) =>
           <ChatGroup
             name={edge.node.name}
@@ -57,6 +57,7 @@ export const ChatGroupsContainer = ({ fragmentKey }: ChatGroupsContainerProps) =
             chatId={edge.node.id}
             lastMessage={"last message"}
           />)}
+
       </div>
       <CreateChat open={open} setIsOpen={setOpen} />
     </>

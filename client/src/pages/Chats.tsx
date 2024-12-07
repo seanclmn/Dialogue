@@ -28,12 +28,12 @@ const Content = ({ queryReference }: ChatsProps) => {
 
   return (
     <>
-      <div className="border-brd-color border-r-[1px] w-80 h-[100vh] flex flex-col items-center">
+      <div className="border-brd-color border-r-[1px] w-80 h-full flex flex-col items-center">
         <Suspense fallback={<Loader />}>
           <ChatGroupsContainer fragmentKey={data.currentUser} />
         </Suspense>
       </div>
-      <div className="h-[100vh] w-[100%] flex-grow relative">
+      <div className="w-[100%] h-full flex-grow relative">
         {chatId ?
           <Outlet /> : <EmptyChat />}
       </div>
