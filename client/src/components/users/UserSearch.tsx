@@ -1,8 +1,9 @@
-import { Input, InputProps } from "@components/shared/Inputs/GenericInput"
-import { UserSearchQuery, UserSearchQuery$data } from "@generated/UserSearchQuery.graphql"
+import { Input } from "@components/shared/Inputs/GenericInput"
+import { UserSearchQuery } from "@generated/UserSearchQuery.graphql"
 import { useCallback, useEffect, useState } from "react"
 import { useRelayEnvironment } from "react-relay"
 import { fetchQuery, graphql } from "relay-runtime"
+import { UserSearchItem } from "./UserSearchItem"
 
 
 const query = graphql`
@@ -39,20 +40,31 @@ export const UserSearch = () => {
   }, [isTyping])
 
   return (
-    <div>
+    <>
       <Input
         title={"search users"}
         onChange={async (e) => {
+          setInput(e.currentTarget.value)
           const result = await fetch(e.currentTarget.value)
           if (result?.users) {
             setRes(result.users)
             return;
           }
           setRes([])
-
         }}
       />
-      {res ? res.map((user) => (<p key={user.id}>{user.username}</p>)) : null}
-    </div>
+      {res.length > 0 ?
+        res.map((user) => (<UserSearchItem id={user.id} username={user.username} />)) :
+        <>
+          {
+            input ?
+              <div className="w-full flex flex-col items-center py-4">
+                <p>No users with that username...</p>
+              </div>
+              : null
+          }
+        </>
+      }
+    </>
   )
 }

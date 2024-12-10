@@ -8,6 +8,7 @@ import { ChatContainer } from "@components/chat/ChatContainer";
 import { EditProfile } from "./pages/EditProfile";
 import { Chats } from "./pages/Chats";
 import { UserSearch } from "@components/users/UserSearch";
+import { SearchUsers } from "./pages/SearchUsers";
 
 export const RouterParent = () => {
 
@@ -46,7 +47,7 @@ export const RouterParent = () => {
         },
         {
           path: "search",
-          element: <UserSearch />,
+          element: <SearchUsers />,
           errorElement: <ErrorPage />,
         },
       ]
