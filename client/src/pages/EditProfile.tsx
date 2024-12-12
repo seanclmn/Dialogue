@@ -1,5 +1,5 @@
 import { Input } from "@components/shared/Inputs/GenericInput"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useState } from "react"
 import { UserContext } from "../UserContext"
 import { Avatar } from "@components/shared/users/Avatar"
 import img from "../assets/jennie.jpeg"
@@ -8,10 +8,6 @@ export const EditProfile = () => {
 
   const data = useContext(UserContext)
   const [username, setUsername] = useState(data.user.username)
-
-  useEffect(() => {
-    console.log(data)
-  }, [data])
 
   return (
     <div className="w-full flex flex-col items-center py-2">
