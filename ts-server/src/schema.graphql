@@ -5,7 +5,7 @@
 type Chat implements Node {
   createdAt: DateTime!
   id: ID!
-  lastMessage: Message!
+  lastMessage: Message
   messages(after: String, first: Int): MessageConnection!
   name: String!
   participants: [User!]

@@ -6,9 +6,6 @@ import { usePaginationFragment } from "react-relay";
 import { Loader } from "@components/shared/loaders/Loader";
 import { ChatGroupsContainer_user$key } from "@generated/ChatGroupsContainer_user.graphql";
 import { UserContext } from "../../UserContext";
-import img from "../../assets/logo.png"
-import { CreateChatButton } from "./CreateChatButton";
-import { Link } from "react-router-dom";
 
 const fragment = graphql`
   fragment ChatGroupsContainer_user on User
@@ -24,6 +21,10 @@ const fragment = graphql`
         node {
           id
           name
+          lastMessage {
+            text
+            
+          }
         }
       }
     }
@@ -36,28 +37,29 @@ type ChatGroupsContainerProps = {
 
 export const ChatGroupsContainer = ({ fragmentKey }: ChatGroupsContainerProps) => {
   const [open, setOpen] = useState(false);
-
   const { user, setUser } = useContext(UserContext)
-
   const { data } = usePaginationFragment(fragment, fragmentKey)
+
   useEffect(() => {
     const chatIds: string[] = data.chats.edges.map((chat) => chat.node.id)
     setUser({ ...user, chatIds: chatIds })
   }, [user?.id])
 
   if (!data.chats) return <Loader />
+
+  console.log(data.chats)
+
   return (
     <>
-      {/* <CreateChatButton onClick={() => setOpen(true)} /> */}
       <div className="overflow-auto w-full h-full">
         {data.chats.edges.map((edge) =>
           <ChatGroup
             name={edge.node.name}
             key={edge.node.id}
             chatId={edge.node.id}
-            lastMessage={"last message"}
-          />)}
-
+            lastMessage={edge.node.lastMessage?.text ?? "last message"}
+          />
+        )}
       </div>
       <CreateChat open={open} setIsOpen={setOpen} />
     </>

@@ -22,11 +22,18 @@ export class MessagesService {
       where: { id: createMessageInput.chatId }
     })
 
-    return await this.messagesRepository.save({
+    const newMessage = await this.messagesRepository.save({
       text: createMessageInput.text,
       chat: chat,
       userId: createMessageInput.userId
     })
+
+    await this.chatsRepository.save({
+      ...chat,
+      lastMessage: newMessage
+    })
+
+    return newMessage;
   }
 
   async findAll() {
