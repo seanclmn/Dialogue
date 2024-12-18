@@ -72,7 +72,7 @@ const Content = ({ queryReference }: ContentProps) => {
       const chatRecord = store.get(chatId);
       if (!chatRecord) return;
 
-      // chatRecord?.setValue({ ...chatRecord, lastMessage: newMessageNode }, 'Chat')
+      chatRecord?.setLinkedRecord(newMessageNode, 'lastMessage')
 
       const messagesConnection = ConnectionHandler.getConnection(chatRecord, "Messages_messages");
       if (!messagesConnection) return;
