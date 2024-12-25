@@ -48,20 +48,27 @@ interface ContentProps {
 
 
 export const Content = ({ queryReference, chatId }: ContentProps) => {
+  const [messageMap, setMessageMap] = useState<Record<string, string>>({})
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [conversation, setConversation] = useState<MessageProps[]>([]);
   const { user } = useContext(UserContext)
   const [commitMutation, isMutationInFlight] = useMutation<ChatContainerMutation>(mutation)
-
   const data = usePreloadedQuery(query, queryReference)
+
   useEffect(() => {
+    console.log(chatId)
+    if (!messageMap[chatId]) {
+      const obj = messageMap
+      obj[chatId] = ""
+      setMessageMap(obj)
+    }
     const delayDebounceFn = setTimeout(() => {
       setIsTyping(false);
     }, 2000);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [isTyping]);
+  }, [isTyping, chatId]);
 
   return (
     <div className="h-full flex flex-col justify-between">
@@ -83,13 +90,15 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
         "
         onSubmit={(e: React.KeyboardEvent<HTMLFormElement>) => {
           e.preventDefault();
-          if (message.length > 0) {
-            setConversation([
-              ...conversation,
-              { text: message, id: uuidv4(), senderIsMe: true },
-            ]);
-            setMessage("");
-            setIsTyping(false);
+          if (user?.id) {
+            commitMutation({
+              variables: {
+                text: message,
+                userId: user.id,
+                chatId: chatId
+              }
+            }).dispose()
+            setMessage("")
           }
         }}
       >
@@ -101,7 +110,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
             setMessage(e.currentTarget.value);
           }}
         />
-        <ChatSendButton disabled={message.length === 0} onClick={() => {
+        {/* <ChatSendButton disabled={message.length === 0} onClick={() => {
           if (user?.id) {
             commitMutation({
               variables: {
@@ -112,7 +121,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
             }).dispose()
             setMessage("")
           }
-        }} />
+        }} /> */}
       </form>
     </div>
   );

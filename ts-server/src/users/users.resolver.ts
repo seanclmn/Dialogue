@@ -5,6 +5,9 @@ import { CreateUserInput } from './dto/create-user.input';
 import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/jwt-auth.guard';
 import { ChatConnection } from 'src/chats/entities/chat.connection.entity';
+import { UserConnection } from './entities/user.connection.entity';
+import { FriendRequest } from './entities/friendRequests.entity';
+import { FriendRequestInput } from './dto/send-friendRequest.input';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -27,6 +30,11 @@ export class UsersResolver {
   @Mutation(() => User)
   createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.usersService.create(createUserInput);
+  }
+
+  @Mutation(() => User)
+  async sendFriendRequest(@Args('friendRequestInput') friendRequestInput: FriendRequestInput) {
+    return await this.usersService.sendFriendRequest(friendRequestInput.senderId, friendRequestInput.receiverId);
   }
 
   @Query(() => [User], { name: 'users' })
@@ -52,11 +60,22 @@ export class UsersResolver {
     return await this.usersService.getChatsForUser(user.id, first, after);
   }
 
+  @ResolveField('friends', () => UserConnection)
+  async friends(
+    @Parent() user: User,
+    @Args('first', { type: () => Int, nullable: true }) first?: number,
+    @Args('after', { type: () => String, nullable: true }) after?: number
+  ): Promise<UserConnection> {
+    return await this.usersService.getFriendsForUser(user.id, first, after);
+  }
 
-  // @Mutation(() => User)
-  // updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-  //   return this.usersService.update(updateUserInput.id, updateUserInput);
-  // }
+  @ResolveField('friendRequests', () => FriendRequest)
+  async friendRequests(
+    @Parent() user: User,
+    @Args('receiverId', { type: () => Int, nullable: true }) receiverId?: string,
+  ): Promise<FriendRequest[]> {
+    return await this.usersService.getFriendRequests(receiverId);
+  }
 
   // @Mutation(() => User)
   // removeUser(@Args('id', { type: () => Int }) id: number) {

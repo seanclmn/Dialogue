@@ -1,4 +1,4 @@
-import { Navigate, useRouteError } from "react-router-dom";
+import { Navigate, useRouteError } from "react-router";
 import img from "../assets/rimowa.png";
 
 export default function ErrorPage() {

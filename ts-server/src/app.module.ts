@@ -11,6 +11,7 @@ import { Chat } from './chats/entities/chat.entity';
 import { MessagesModule } from './messages/messages.module';
 import { Message } from './messages/entities/message.entity';
 import { NodeResolver } from './node/node.resolver';
+import { FriendRequest } from './users/entities/friendRequests.entity';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { NodeResolver } from './node/node.resolver';
       username: 'root',
       password: 'root',
       database: 'chat',
-      entities: [User, Chat, Message],
+      entities: [User, Chat, Message, FriendRequest],
       synchronize: true,
     }),
     UsersModule,

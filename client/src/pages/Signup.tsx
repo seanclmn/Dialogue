@@ -4,9 +4,8 @@ import { Input } from "../components/shared/Inputs/GenericInput";
 import { graphql } from "relay-runtime";
 import { useMutation } from "react-relay";
 import { useCookies } from "react-cookie";
-import { Navigate } from "react-router";
+import { Link, Navigate } from "react-router";
 import { SignupMutation, SignupMutation$data } from "@generated/SignupMutation.graphql";
-import { Link } from "react-router-dom";
 import logo from "../assets/logo.png"
 
 const mutation = graphql`

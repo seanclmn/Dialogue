@@ -10,7 +10,7 @@ import {
 } from '@heroicons/react/16/solid'
 import { UserCircleIcon } from '@heroicons/react/24/solid'
 import { useCookies } from 'react-cookie'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 export default function UserMenu() {
   const [, removeCookie] = useCookies(['accessToken'])

@@ -8,7 +8,7 @@ import { UserContext } from "./UserContext";
 import { Outlet, useParams } from "react-router";
 import { PageChatsSubscription } from "@generated/PageChatsSubscription.graphql";
 import { Nav } from "@components/nav/Nav";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import img from "../src/assets/logo.png"
 
 const query = graphql`
@@ -16,6 +16,13 @@ const query = graphql`
     currentUser {
       username
       id
+      friends {
+        edges {
+          node {
+            id
+          }
+        }
+      }
       ...ChatGroupsContainer_user
     }
   }

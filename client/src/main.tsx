@@ -8,16 +8,16 @@ import { Loader } from "@components/shared/loaders/Loader.tsx";
 import { UserProvider } from "./UserContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <CookiesProvider>
-      <RelayProvider>
-        <Suspense fallback={<Loader />}>
-          <UserProvider>
-            <App />
-          </UserProvider>
-        </Suspense>
-      </RelayProvider>
-    </CookiesProvider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <CookiesProvider>
+    <RelayProvider>
+      <Suspense fallback={<Loader />}>
+        <UserProvider>
+          <App />
+        </UserProvider>
+      </Suspense>
+    </RelayProvider>
+  </CookiesProvider>
+  // </React.StrictMode>
 
 );

@@ -7,12 +7,16 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { ChatEdge } from 'src/chats/entities/chat.edge.entity';
 import { Chat } from 'src/chats/entities/chat.entity';
 import { PageInfo } from 'src/relay';
+import { UserEdge } from './entities/user.edge.entity';
+import { FriendRequest } from './entities/friendRequests.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(Chat) private chatsRepository: Repository<Chat>,
+    @InjectRepository(FriendRequest) private friendRequestsRepository: Repository<FriendRequest>,
+
 
   ) { }
 
@@ -70,6 +74,82 @@ export class UsersService {
     };
 
     return { edges, pageInfo };
+  }
+
+  async getFriendRequests(receiverId: string) {
+    const requests = await this.friendRequestsRepository.find({
+      where: {
+        receiver: {
+          id: receiverId
+        }
+      }
+    })
+
+    return requests
+  }
+
+  async getFriendsForUser(id: string, first?: number, after?: number) {
+
+    const where = after
+      ? { friends: { id: id }, skip: after }
+      : { friends: { id: id } };
+
+    const take = first ? first + 1 : null
+
+    const friends = await this.usersRepository.find({
+      where,
+      relations: ['friends'],
+      take: take, // Fetch one extra to determine if there's a next page
+    });
+
+    const edges: UserEdge[] = friends ? friends.slice(0, first).map((user) => ({
+      cursor: btoa(user.id), // Use createdAt as cursor
+      node: user,
+    })) : []
+
+    const pageInfo: PageInfo = {
+      startCursor: edges[0]?.cursor,
+      endCursor: edges[edges.length - 1]?.cursor || '',
+      hasPreviousPage: first > 0,
+      hasNextPage: friends.length > first,
+    };
+
+    return { edges, pageInfo };
+  }
+
+  async sendFriendRequest(senderId: string, receiverId: string) {
+    const sender = await this.usersRepository.findOne({ where: { id: senderId } })
+    const receiver = await this.usersRepository.findOne({ where: { id: receiverId } })
+
+    console.log("merp")
+
+    const friendRequestInput = {
+      sender: sender,
+      receiver: receiver
+    }
+    const newFriendRequest = await this.friendRequestsRepository.save(friendRequestInput)
+    await this.usersRepository.save(
+      {
+        ...receiver,
+        sentRequests: receiver.sentRequests ?
+          [
+            ...receiver.sentRequests,
+            newFriendRequest
+          ] :
+          [newFriendRequest]
+
+      })
+    return await this.usersRepository.save(
+      {
+        ...sender,
+        sentRequests: sender.sentRequests ?
+          [
+            ...sender.sentRequests,
+            newFriendRequest
+          ] :
+          [newFriendRequest]
+
+      })
   }
 
   // async inviteUsers(userNames: string[],) {

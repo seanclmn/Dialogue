@@ -6,7 +6,7 @@ import { useMutation } from "react-relay";
 import { useCookies } from "react-cookie";
 import { Navigate } from "react-router";
 import { LoginMutation, LoginMutation$data } from "@generated/LoginMutation.graphql";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import logo from "../assets/logo.png"
 import { InputError } from "@components/error/InputError";
 import { Controller, useForm } from "react-hook-form";

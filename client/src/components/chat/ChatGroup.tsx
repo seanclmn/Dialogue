@@ -1,6 +1,6 @@
 import { Avatar } from "../shared/users/Avatar";
 import img from "../../assets/jennie.jpeg";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router";
 
 interface ChatGroupProps {
   name: string;
@@ -20,7 +20,7 @@ export const ChatGroup = ({ name, chatId, lastMessage }: ChatGroupProps) => {
         <Avatar src={img} containerStyle="h-14" />
         <div className="mx-2 h-full flex flex-col justify-between">
           <p className="text-sm font-bold mb-1">{name}</p>
-          <p className="text-xs">{lastMessage}</p>
+          <p className="text-xs">{lastMessage.length > 20 ? lastMessage.slice(0, 20) + "..." : lastMessage}</p>
         </div>
       </div>
     </Link>

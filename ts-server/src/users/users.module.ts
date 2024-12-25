@@ -6,9 +6,10 @@ import { User } from './entities/user.entity';
 import { Chat } from 'src/chats/entities/chat.entity';
 import { ChatsModule } from 'src/chats/chats.module';
 import { ChatsService } from 'src/chats/chats.service';
+import { FriendRequest } from './entities/friendRequests.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Chat])],
+  imports: [TypeOrmModule.forFeature([User, Chat, FriendRequest])],
   providers: [UsersResolver, UsersService],
   exports: [UsersService],
 })
