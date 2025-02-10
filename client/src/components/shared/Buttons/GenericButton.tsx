@@ -1,6 +1,5 @@
 import { Loader } from "../loaders/Loader";
 
-
 export interface ButtonProps extends React.DOMAttributes<HTMLButtonElement> {
   styles?: string;
   title: string;
@@ -9,7 +8,14 @@ export interface ButtonProps extends React.DOMAttributes<HTMLButtonElement> {
   disabled?: boolean;
 }
 
-export const Button = ({ styles, type, title, loading, disabled, onClick }: ButtonProps) => {
+export const Button = ({
+  styles,
+  type,
+  title,
+  loading,
+  disabled,
+  onClick,
+}: ButtonProps) => {
   return (
     <button
       type={type}

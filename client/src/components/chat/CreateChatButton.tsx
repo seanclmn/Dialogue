@@ -1,7 +1,7 @@
-import { PlusCircleIcon } from "@heroicons/react/24/outline"
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
 
 interface CreateChatButtonProps {
-  onClick: () => void
+  onClick: () => void;
 }
 
 export const CreateChatButton = ({ onClick }: CreateChatButtonProps) => {
@@ -9,5 +9,5 @@ export const CreateChatButton = ({ onClick }: CreateChatButtonProps) => {
     <button onClick={onClick} className="w-full my-2">
       <PlusCircleIcon className="text-bgd-highlight text-center h-6 w-6 ml-auto mr-auto hover:text-txt-color" />
     </button>
-  )
-}
+  );
+};

@@ -1,4 +1,4 @@
-import { Button } from "@components/shared/Buttons/GenericButton"
+import { Button } from "@components/shared/Buttons/GenericButton";
 
 export const EmptyChat = () => {
   return (
@@ -6,5 +6,5 @@ export const EmptyChat = () => {
       <p>Send a message to start a dialogue.</p>
       <Button title={"Send Message"} />
     </div>
-  )
-}
+  );
+};

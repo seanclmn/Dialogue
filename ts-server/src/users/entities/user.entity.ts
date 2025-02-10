@@ -32,10 +32,10 @@ export class User implements Node {
   })
   friends: User[]
 
-  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.sender, { nullable: true, eager: true })
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.sender, { nullable: true })
   sentRequests: FriendRequest[]
 
-  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.receiver, { nullable: true, eager: true })
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.receiver, { nullable: true })
   incomingRequests: FriendRequest[]
 
 }

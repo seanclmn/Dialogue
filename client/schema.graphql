@@ -2,6 +2,10 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input AcceptFriendRequestInput {
+  friendRequestId: String!
+}
+
 type Chat implements Node {
   createdAt: DateTime!
   id: ID!
@@ -53,13 +57,16 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type FriendRequest {
-  id: String!
+input DeclineFriendRequestInput {
+  friendRequestId: String!
 }
 
-input FriendRequestInput {
-  receiverId: String!
-  senderId: String!
+type FriendRequest {
+  accepted: Boolean!
+  declined: Boolean!
+  id: String!
+  receiver: User!
+  sender: User!
 }
 
 type LoginResponse {
@@ -91,12 +98,18 @@ type MessageEdge {
 }
 
 type Mutation {
+  acceptFriendRequest(
+    acceptFriendRequestInput: AcceptFriendRequestInput!
+  ): User!
   createChat(createChatInput: CreateChatInput!): Chat!
   createMessage(createMessageInput: CreateMessageInput!): Message!
   createUser(createUserInput: CreateUserInput!): User!
+  declineFriendRequest(
+    declineFriendRequestInput: DeclineFriendRequestInput!
+  ): User!
   login(loginUserInput: LoginUserInput!): LoginResponse!
   removeChat(id: Int!): Chat!
-  sendFriendRequest(friendRequestInput: FriendRequestInput!): User!
+  sendFriendRequest(sendFriendRequestInput: SendFriendRequestInput!): User!
   signup(createUserInput: CreateUserInput!): LoginResponse!
   updateChat(updateChatInput: UpdateChatInput!): Chat!
   updateMessage(updateMessageInput: UpdateMessageInput!): Message!
@@ -121,6 +134,11 @@ type Query {
   node(id: ID!): Node
   user(username: String!): User!
   users(username: String!): [User!]!
+}
+
+input SendFriendRequestInput {
+  receiverId: String!
+  senderId: String!
 }
 
 type Subscription {
@@ -149,7 +167,7 @@ input UpdateUserInput {
 
 type User implements Node {
   chats(after: String, first: Int): ChatConnection!
-  friendRequests(receiverId: Int): FriendRequest!
+  friendRequests(receiverId: String): [FriendRequest!]!
   friends(after: String, first: Int): UserConnection!
   id: ID!
   password: String!

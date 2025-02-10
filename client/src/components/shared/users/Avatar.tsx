@@ -5,9 +5,5 @@ interface AvatarProps extends React.AllHTMLAttributes<HTMLImageElement> {
 }
 
 export const Avatar = ({ src, containerStyle }: AvatarProps): ReactElement => {
-  return (
-    <img
-      src={src}
-      className={"rounded-full " + containerStyle}
-    />);
+  return <img src={src} className={"rounded-full " + containerStyle} />;
 };

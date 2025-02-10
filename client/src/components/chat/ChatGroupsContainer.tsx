@@ -4,64 +4,75 @@ import { CreateChat } from "@components/dialogs/CreateChat";
 import { graphql } from "relay-runtime";
 import { usePaginationFragment } from "react-relay";
 import { Loader } from "@components/shared/loaders/Loader";
-import { ChatGroupsContainer_user$key } from "@generated/ChatGroupsContainer_user.graphql";
-import { UserContext } from "../../UserContext";
+import {
+  ChatGroupsContainer_user$data,
+  ChatGroupsContainer_user$key,
+} from "@generated/ChatGroupsContainer_user.graphql";
+import { UserContext } from "../../contexts/UserContext";
+import {
+  ChatGroupsContainerRefetchQuery,
+  ChatGroupsContainerRefetchQuery$data,
+  ChatGroupsContainerRefetchQuery$variables,
+} from "@generated/ChatGroupsContainerRefetchQuery.graphql";
 
 const fragment = graphql`
   fragment ChatGroupsContainer_user on User
   @argumentDefinitions(
-    first: {type: "Int", defaultValue: 300},
-    after: {type: "String"}
+    first: { type: "Int", defaultValue: 300 }
+    after: { type: "String" }
   )
   @refetchable(queryName: "ChatGroupsContainerRefetchQuery") {
-    chats(first: $first, after: $after)
-    @connection(key: "Chats_chats") {
+    chats(first: $first, after: $after) @connection(key: "Chats_chats") {
       edges {
-        cursor 
+        cursor
         node {
           id
           name
           lastMessage {
             text
-            
+            userId
           }
         }
       }
     }
   }
-`
+`;
 
 type ChatGroupsContainerProps = {
-  fragmentKey: ChatGroupsContainer_user$key
-}
+  fragmentKey: ChatGroupsContainer_user$key;
+};
 
-export const ChatGroupsContainer = ({ fragmentKey }: ChatGroupsContainerProps) => {
+export const ChatGroupsContainer = ({
+  fragmentKey,
+}: ChatGroupsContainerProps) => {
   const [open, setOpen] = useState(false);
-  const { user, setUser } = useContext(UserContext)
-  const { data } = usePaginationFragment(fragment, fragmentKey)
+  const { user, setUser } = useContext(UserContext);
+  const { data } = usePaginationFragment(fragment, fragmentKey);
 
   useEffect(() => {
-    const chatIds: string[] = data.chats.edges.map((chat) => chat.node.id)
-    setUser({ ...user, chatIds: chatIds })
-  }, [user?.id])
+    const chatIds: string[] = data.chats.edges.map((chat) => chat.node.id);
+    setUser({ ...user, chatIds: chatIds });
+  }, [user?.id]);
 
-  if (!data.chats) return <Loader />
+  if (!data.chats) return <Loader />;
 
-  console.log(data.chats)
+  console.log(data.chats);
+
+  if (data.chats.edges.length === 0) return null;
 
   return (
-    <>
+    <div className="border-brd-color border-r-[1px] min-w-60 h-full flex flex-col items-center">
       <div className="overflow-auto w-full h-full">
-        {data.chats.edges.map((edge) =>
+        {data.chats.edges.map((edge) => (
           <ChatGroup
             name={edge.node.name}
             key={edge.node.id}
             chatId={edge.node.id}
-            lastMessage={edge.node.lastMessage?.text ?? "last message"}
+            lastMessage={edge.node.lastMessage}
           />
-        )}
+        ))}
       </div>
       <CreateChat open={open} setIsOpen={setOpen} />
-    </>
+    </div>
   );
 };

@@ -1,5 +1,5 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 
 
@@ -10,10 +10,20 @@ export class FriendRequest {
   @Field()
   id: string
 
-  @ManyToOne(() => User, (user) => user.sentRequests)
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.sentRequests, { eager: true })
   sender: User
 
-  @ManyToOne(() => User, (user) => user.incomingRequests)
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.incomingRequests, { eager: true })
   receiver: User
+
+  @Column()
+  @Field(() => Boolean)
+  accepted: boolean
+
+  @Column()
+  @Field(() => Boolean)
+  declined: boolean
 
 }

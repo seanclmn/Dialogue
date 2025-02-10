@@ -1,13 +1,12 @@
-import { Input } from "@components/shared/Inputs/GenericInput"
-import { useContext, useState } from "react"
-import { UserContext } from "../UserContext"
-import { Avatar } from "@components/shared/users/Avatar"
-import img from "../assets/jennie.jpeg"
+import { Input } from "@components/shared/Inputs/GenericInput";
+import { useContext, useState } from "react";
+import { UserContext } from "@contexts/UserContext";
+import { Avatar } from "@components/shared/users/Avatar";
+import img from "../assets/jennie.jpeg";
 
 export const EditProfile = () => {
-
-  const data = useContext(UserContext)
-  const [username, setUsername] = useState(data.user.username)
+  const data = useContext(UserContext);
+  const [username, setUsername] = useState(data.user.username);
 
   return (
     <div className="w-full flex flex-col items-center py-2">
@@ -19,5 +18,5 @@ export const EditProfile = () => {
         onChange={(e) => setUsername(e.currentTarget.value)}
       />
     </div>
-  )
-}
+  );
+};

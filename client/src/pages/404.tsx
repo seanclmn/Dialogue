@@ -3,7 +3,7 @@ import img from "../assets/rimowa.png";
 
 export default function ErrorPage() {
   const error = useRouteError();
-  if (error.message === "Unauthorized") return <Navigate to="/login" />
+  if (error.message === "Unauthorized") return <Navigate to="/login" />;
 
   return (
     <div className="flex flex-col items-center">

@@ -3,18 +3,17 @@ import { Messages_chat$key } from "@generated/Messages_chat.graphql";
 import { useContext, useEffect, useRef } from "react";
 import { usePaginationFragment } from "react-relay";
 import { graphql } from "relay-runtime";
-import { UserContext } from "../../UserContext";
+import { UserContext } from "../../contexts/UserContext";
 
 const fragment = graphql`
   fragment Messages_chat on Chat
   @argumentDefinitions(
-    first: {type: "Int", defaultValue: 300},
-    after: {type: "String"}
+    first: { type: "Int", defaultValue: 300 }
+    after: { type: "String" }
   )
   @refetchable(queryName: "MessagesRefetchQuery") {
     messages(first: $first, after: $after)
-    @connection(key: "Messages_messages")
-    {
+      @connection(key: "Messages_messages") {
       edges {
         cursor
         node {
@@ -30,21 +29,21 @@ const fragment = graphql`
       }
     }
   }
-`
+`;
 
 type MessagesProps = {
-  fragmentKey: Messages_chat$key
-}
+  fragmentKey: Messages_chat$key;
+};
 
 export const Messages = ({ fragmentKey }: MessagesProps) => {
-  const { data } = usePaginationFragment(fragment, fragmentKey)
-  const userContext = useContext(UserContext)
-  const endMessagesRef = useRef<HTMLDivElement | null>(null)
+  const { data } = usePaginationFragment(fragment, fragmentKey);
+  const userContext = useContext(UserContext);
+  const endMessagesRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (endMessagesRef.current)
-      endMessagesRef.current.scrollIntoView({ behavior: "auto" })
-  }, [data.messages.edges.length])
+      endMessagesRef.current.scrollIntoView({ behavior: "auto" });
+  }, [data.messages.edges.length]);
 
   return (
     <>
@@ -56,9 +55,9 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
             key={edge.node.id}
             senderIsMe={userContext.user?.id === edge.node.userId}
           />
-        )
+        );
       })}
       <div ref={endMessagesRef} />
     </>
-  )
-}
+  );
+};

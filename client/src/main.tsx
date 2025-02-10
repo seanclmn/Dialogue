@@ -5,7 +5,7 @@ import "./index.css";
 import { CookiesProvider } from "react-cookie";
 import { RelayProvider } from "./RelayProvider.tsx";
 import { Loader } from "@components/shared/loaders/Loader.tsx";
-import { UserProvider } from "./UserContext.tsx";
+import { UserProvider } from "./contexts/UserContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   // <React.StrictMode>
@@ -17,7 +17,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         </UserProvider>
       </Suspense>
     </RelayProvider>
-  </CookiesProvider>
+  </CookiesProvider>,
   // </React.StrictMode>
-
 );

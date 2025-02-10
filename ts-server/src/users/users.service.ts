@@ -16,8 +16,6 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(Chat) private chatsRepository: Repository<Chat>,
     @InjectRepository(FriendRequest) private friendRequestsRepository: Repository<FriendRequest>,
-
-
   ) { }
 
   async create(createUserInput: CreateUserInput) {
@@ -77,6 +75,7 @@ export class UsersService {
   }
 
   async getFriendRequests(receiverId: string) {
+    console.log(receiverId)
     const requests = await this.friendRequestsRepository.find({
       where: {
         receiver: {
@@ -84,6 +83,8 @@ export class UsersService {
         }
       }
     })
+
+    if (!requests) return []
 
     return requests
   }
@@ -121,24 +122,26 @@ export class UsersService {
     const sender = await this.usersRepository.findOne({ where: { id: senderId } })
     const receiver = await this.usersRepository.findOne({ where: { id: receiverId } })
 
-    console.log("merp")
-
     const friendRequestInput = {
       sender: sender,
-      receiver: receiver
+      receiver: receiver,
+      accepted: false,
+      declined: false
     }
+
     const newFriendRequest = await this.friendRequestsRepository.save(friendRequestInput)
     await this.usersRepository.save(
       {
         ...receiver,
-        sentRequests: receiver.sentRequests ?
+        incomingRequests: receiver.incomingRequests ?
           [
-            ...receiver.sentRequests,
+            ...receiver.incomingRequests,
             newFriendRequest
           ] :
           [newFriendRequest]
 
       })
+
     return await this.usersRepository.save(
       {
         ...sender,
@@ -151,6 +154,48 @@ export class UsersService {
 
       })
   }
+
+  async acceptFriendRequest(friendRequestId: string) {
+
+    const friendRequest = await this.friendRequestsRepository.findOne({ where: { id: friendRequestId } })
+
+    if (!friendRequest) {
+      throw new Error("Error processing friend request")
+    }
+
+    const sender = await this.usersRepository.findOne({ where: { id: friendRequest.sender.id } })
+    const receiver = await this.usersRepository.findOne({ where: { id: friendRequest.receiver.id } })
+
+    if (!receiver || !sender) {
+      throw new Error("There was an error sending your friend request")
+    }
+
+    if (sender.friends) {
+      await this.usersRepository.save({ ...sender, friends: [...sender.friends, receiver] })
+    } else {
+      await this.usersRepository.save({ ...sender, friends: [receiver] })
+    }
+
+    if (receiver.friends) {
+      await this.usersRepository.save({ ...receiver, friends: [...receiver.friends, sender] })
+    } else {
+      await this.usersRepository.save({ ...receiver, friends: [sender] })
+    }
+
+    return await this.friendRequestsRepository.save({ ...friendRequest, accepted: true })
+  }
+
+
+  async declineFriendRequest(friendRequestId: string) {
+    const friendRequest = await this.friendRequestsRepository.findOne({ where: { id: friendRequestId } })
+
+    if (!friendRequest) {
+      throw new Error("Server Error")
+    }
+
+    return await this.friendRequestsRepository.save({ ...friendRequest, declined: true })
+  }
+
 
   // async inviteUsers(userNames: string[],) {
   //   const users = userNames.map(async (username) => {

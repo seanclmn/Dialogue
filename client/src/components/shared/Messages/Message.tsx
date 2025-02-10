@@ -9,13 +9,14 @@ export interface MessageProps extends React.DOMAttributes<HTMLElement> {
 }
 
 export const Message = ({ text, senderIsMe, first }: MessageProps) => {
-  if (!text) return null
+  if (!text) return null;
   return (
     <div className={`flex w-full items-start justify-start`}>
       {first && !senderIsMe ? <Avatar src={img} /> : null}
       <div
-        className={`${senderIsMe ? "bg-primary ml-auto max-w-[70%]" : "bg-secondary"
-          } my-[1px] p-2 rounded-[20px] inline-flex`}
+        className={`${
+          senderIsMe ? "bg-primary ml-auto max-w-[70%]" : "bg-secondary"
+        } my-[1px] p-1 rounded-[10px] inline-flex`}
       >
         <p
           lang="en"

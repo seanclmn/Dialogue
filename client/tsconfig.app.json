@@ -4,11 +4,7 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2020",
     "useDefineForClassFields": true,
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     /* Bundler mode */
@@ -26,19 +22,13 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": "./",
     "paths": {
-      "@components/*": [
-        "./src/components/*"
-      ],
-      "@generated/*": [
-        "./__generated__/*"
-      ],
-      "@assets/*": [
-        "./src/assets/*"
-      ],
+      "@components/*": ["./src/components/*"],
+      "@generated/*": ["./__generated__/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@contexts/*": ["./src/contexts/*"],
+      "@pages/*": ["./src/pages/*"]
     }
   },
-  "include": [
-    "src",
-    "__generated__"
-  ],
+  "include": ["src", "__generated__"]
 }

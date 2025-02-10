@@ -7,7 +7,7 @@ import { JwtGuard } from 'src/auth/jwt-auth.guard';
 import { ChatConnection } from 'src/chats/entities/chat.connection.entity';
 import { UserConnection } from './entities/user.connection.entity';
 import { FriendRequest } from './entities/friendRequests.entity';
-import { FriendRequestInput } from './dto/send-friendRequest.input';
+import { AcceptFriendRequestInput, DeclineFriendRequestInput, SendFriendRequestInput } from './dto/friendRequest.input';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -33,8 +33,18 @@ export class UsersResolver {
   }
 
   @Mutation(() => User)
-  async sendFriendRequest(@Args('friendRequestInput') friendRequestInput: FriendRequestInput) {
+  async sendFriendRequest(@Args('sendFriendRequestInput') friendRequestInput: SendFriendRequestInput) {
     return await this.usersService.sendFriendRequest(friendRequestInput.senderId, friendRequestInput.receiverId);
+  }
+
+  @Mutation(() => User)
+  async acceptFriendRequest(@Args('acceptFriendRequestInput') friendRequestInput: AcceptFriendRequestInput) {
+    return await this.usersService.acceptFriendRequest(friendRequestInput.friendRequestId);
+  }
+
+  @Mutation(() => User)
+  async declineFriendRequest(@Args('declineFriendRequestInput') friendRequestInput: DeclineFriendRequestInput) {
+    return await this.usersService.declineFriendRequest(friendRequestInput.friendRequestId);
   }
 
   @Query(() => [User], { name: 'users' })
@@ -69,10 +79,10 @@ export class UsersResolver {
     return await this.usersService.getFriendsForUser(user.id, first, after);
   }
 
-  @ResolveField('friendRequests', () => FriendRequest)
+  @ResolveField('friendRequests', () => [FriendRequest])
   async friendRequests(
     @Parent() user: User,
-    @Args('receiverId', { type: () => Int, nullable: true }) receiverId?: string,
+    @Args('receiverId', { type: () => String, nullable: true }) receiverId?: string,
   ): Promise<FriendRequest[]> {
     return await this.usersService.getFriendRequests(receiverId);
   }

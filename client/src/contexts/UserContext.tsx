@@ -1,9 +1,9 @@
-import { createContext, ReactNode, useState } from 'react'
+import { createContext, ReactNode, useState } from "react";
 
 interface User {
   id: string | null;
   username: string | null;
-  chatIds: string[]
+  chatIds: string[];
 }
 
 export interface UserContextType {
@@ -14,10 +14,15 @@ export interface UserContextType {
 const defaultUser = {
   id: null,
   username: null,
-  chatIds: []
-}
+  chatIds: [],
+};
 
-export const UserContext = createContext<UserContextType>({ user: defaultUser, setUser: () => { return; } });
+export const UserContext = createContext<UserContextType>({
+  user: defaultUser,
+  setUser: () => {
+    return;
+  },
+});
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User>(defaultUser);

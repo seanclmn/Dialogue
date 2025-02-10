@@ -1,11 +1,11 @@
-import { ChatGroupsContainer } from "@components/chat/ChatGroupsContainer"
-import { EmptyChat } from "@components/chat/EmptyChat"
-import { Loader } from "@components/shared/loaders/Loader"
-import { Suspense, useEffect } from "react"
-import { Outlet, useParams } from "react-router"
-import { graphql } from "relay-runtime"
-import { PreloadedQuery, usePreloadedQuery, useQueryLoader } from "react-relay"
-import { ChatsQuery } from "@generated/ChatsQuery.graphql"
+import { ChatGroupsContainer } from "@components/chat/ChatGroupsContainer";
+import { EmptyChat } from "@components/chat/EmptyChat";
+import { Loader } from "@components/shared/loaders/Loader";
+import { Suspense, useEffect } from "react";
+import { Outlet, useParams } from "react-router";
+import { graphql } from "relay-runtime";
+import { PreloadedQuery, usePreloadedQuery, useQueryLoader } from "react-relay";
+import { ChatsQuery } from "@generated/ChatsQuery.graphql";
 
 const query = graphql`
   query ChatsQuery {
@@ -13,46 +13,42 @@ const query = graphql`
       ...ChatGroupsContainer_user
     }
   }
-`
-
+`;
 
 interface ChatsProps {
-  queryReference: PreloadedQuery<ChatsQuery>
+  queryReference: PreloadedQuery<ChatsQuery>;
 }
 
 const Content = ({ queryReference }: ChatsProps) => {
   const { id: chatId } = useParams();
-  const data = usePreloadedQuery<ChatsQuery>(query, queryReference)
+  const data = usePreloadedQuery<ChatsQuery>(query, queryReference);
 
-  if (!data.currentUser) return <Loader />
+  if (!data.currentUser) return <Loader />;
 
   return (
     <>
-      <div className="border-brd-color border-r-[1px] w-80 h-full flex flex-col items-center">
-        <Suspense fallback={<Loader />}>
-          <ChatGroupsContainer fragmentKey={data.currentUser} />
-        </Suspense>
-      </div>
+      <Suspense fallback={<Loader />}>
+        <ChatGroupsContainer fragmentKey={data.currentUser} />
+      </Suspense>
       <div className="w-[100%] h-full flex-grow relative">
-        {chatId ?
-          <Outlet /> : <EmptyChat />}
+        {chatId ? <Outlet /> : <EmptyChat />}
       </div>
     </>
-  )
-}
+  );
+};
 
 export const Chats = () => {
   const [queryReference, loadQuery] = useQueryLoader<ChatsQuery>(query);
 
   useEffect(() => {
-    loadQuery({})
-  }, [])
+    loadQuery({});
+  }, []);
 
-  if (!queryReference) return null
+  if (!queryReference) return null;
 
   return (
     <Suspense fallback={<div />}>
       <Content queryReference={queryReference} />
     </Suspense>
-  )
-}
+  );
+};

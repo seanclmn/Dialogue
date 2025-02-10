@@ -5,40 +5,44 @@ import { graphql } from "relay-runtime";
 import { useMutation } from "react-relay";
 import { useCookies } from "react-cookie";
 import { Navigate } from "react-router";
-import { LoginMutation, LoginMutation$data } from "@generated/LoginMutation.graphql";
+import {
+  LoginMutation,
+  LoginMutation$data,
+} from "@generated/LoginMutation.graphql";
 import { Link } from "react-router";
-import logo from "../assets/logo.png"
+import logo from "../assets/logo.png";
 import { InputError } from "@components/error/InputError";
 import { Controller, useForm } from "react-hook-form";
 const mutation = graphql`
-  mutation LoginMutation($username: String!, $password: String!){
-    login(loginUserInput: {username: $username, password: $password}){
-      user{
+  mutation LoginMutation($username: String!, $password: String!) {
+    login(loginUserInput: { username: $username, password: $password }) {
+      user {
         username
       }
       accessToken
     }
   }
-`
+`;
 
 type Inputs = {
-  username: string
-  password: string
-}
+  username: string;
+  password: string;
+};
 
 export const Login = () => {
   const [creds, setCreds] = useState({ username: "", password: "" });
-  const [cookies, setCookie] = useCookies(['accessToken']);
-  const [commitMutation, isMutationInFlight] = useMutation<LoginMutation>(mutation);
+  const [cookies, setCookie] = useCookies(["accessToken"]);
+  const [commitMutation, isMutationInFlight] =
+    useMutation<LoginMutation>(mutation);
 
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<Inputs>()
+  } = useForm<Inputs>();
 
-  if (cookies["accessToken"]) return <Navigate to="/" />
+  if (cookies["accessToken"]) return <Navigate to="/" />;
 
   return (
     <form
@@ -48,16 +52,16 @@ export const Login = () => {
         commitMutation({
           variables: {
             username: creds.username,
-            password: creds.password
+            password: creds.password,
           },
           onCompleted: (data: LoginMutation$data) => {
-            setCookie('accessToken', data.login.accessToken)
+            setCookie("accessToken", data.login.accessToken);
           },
           onError: (e) => {
-            console.log(e)
+            console.log(e);
             // setErrors("Username or password was invalid")
-          }
-        })
+          },
+        });
       }}
     >
       <img src={logo} className="h-16 my-2" />
@@ -65,7 +69,9 @@ export const Login = () => {
         styles="my-1 text-sm py-[5px]"
         title="Username"
         {...register("username", { required: true })}
-        onChange={(e) => setCreds({ ...creds, username: e.currentTarget.value })}
+        onChange={(e) =>
+          setCreds({ ...creds, username: e.currentTarget.value })
+        }
       />
       {errors.username ? <InputError message={"wonton"} /> : null}
 
@@ -87,7 +93,9 @@ export const Login = () => {
         disabled={isMutationInFlight}
       />
 
-      <Link to="/signup"><p className="my-2">Sign up here</p></Link>
+      <Link to="/signup">
+        <p className="my-2">Sign up here</p>
+      </Link>
     </form>
   );
 };

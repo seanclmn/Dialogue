@@ -3,19 +3,19 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     screens: {
-      sm: '480px',
-      md: '768px',
-      lg: '976px',
-      xl: '1440px',
+      sm: "480px",
+      md: "768px",
+      lg: "976px",
+      xl: "1440px",
     },
     colors: {
-      'primary': 'var(--primary-color)', // #2B66DD
-      'secondary': 'var(--secondary-color)', // #692bdd
-      'bgd-color': 'var(--bg-color)', // #ffffff
-      'bgd-highlight': 'var(--bg-highlight-color)', // #fafafad0
-      'brd-color': 'var(--border-color)', // #fafafad0
-      'txt-color': 'var(--text-color)', // #000000
-      'my-txt-color': 'var(--my-text-color)', // #ffffff
+      primary: "var(--primary-color)", // #2B66DD
+      secondary: "var(--secondary-color)", // #692bdd
+      "bgd-color": "var(--bg-color)", // #ffffff
+      "bgd-highlight": "var(--bg-highlight-color)", // #fafafad0
+      "brd-color": "var(--border-color)", // #fafafad0
+      "txt-color": "var(--text-color)", // #000000
+      "my-txt-color": "var(--my-text-color)", // #ffffff
     },
     // fontFamily: {
     //   sans: ['Graphik', 'sans-serif'],
@@ -23,13 +23,13 @@ export default {
     // },
     extend: {
       spacing: {
-        '128': '32rem',
-        '144': '36rem',
+        128: "32rem",
+        144: "36rem",
       },
       borderRadius: {
-        '4xl': '2rem',
-      }
-    }
+        "4xl": "2rem",
+      },
+    },
   },
   plugins: [],
 };

@@ -1,68 +1,69 @@
 import { Suspense, useContext, useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-
 import { MessageProps } from "../shared/Messages/Message";
 import { ChatInput } from "../shared/Inputs/ChatInput";
-import { ChatSendButton } from "../shared/Buttons/ChatSendButton";
 import { Typing } from "./Typing";
 import { Avatar } from "../shared/users/Avatar";
 import img from "../../assets/jennie.jpeg";
 import { Loader } from "../shared/loaders/Loader";
 import { graphql } from "relay-runtime";
-import { PreloadedQuery, useMutation, usePreloadedQuery, useQueryLoader } from "react-relay";
+import {
+  PreloadedQuery,
+  useMutation,
+  usePreloadedQuery,
+  useQueryLoader,
+} from "react-relay";
 import { ChatContainerQuery } from "@generated/ChatContainerQuery.graphql";
 import { ChatContainerMutation } from "@generated/ChatContainerMutation.graphql";
-import { UserContext } from "../../UserContext";
+import { UserContext } from "../../contexts/UserContext";
 import { Messages } from "./Messages";
 import { useParams } from "react-router";
 import { ChatHeader } from "./ChatHeader";
 
 const query = graphql`
-  query ChatContainerQuery($id:ID!) {
-    node(id: $id){
+  query ChatContainerQuery($id: ID!) {
+    node(id: $id) {
       ... on Chat {
         id
-        name      
+        name
         ...Messages_chat
       }
     }
   }
-`
+`;
 
 const mutation = graphql`
-  mutation ChatContainerMutation($text: String!, $userId: String!, $chatId: String!) {
-    createMessage(createMessageInput:{text: $text, userId: $userId, chatId: $chatId}){
+  mutation ChatContainerMutation(
+    $text: String!
+    $userId: String!
+    $chatId: String!
+  ) {
+    createMessage(
+      createMessageInput: { text: $text, userId: $userId, chatId: $chatId }
+    ) {
       createdAt
-      id 
-      text 
-      userId 
+      id
+      text
+      userId
     }
   }
-`
-
+`;
 
 interface ContentProps {
   queryReference: PreloadedQuery<ChatContainerQuery>;
   chatId: string;
 }
 
-
 export const Content = ({ queryReference, chatId }: ContentProps) => {
-  const [messageMap, setMessageMap] = useState<Record<string, string>>({})
+  const [messageMap, setMessageMap] = useState<Record<string, string>>({});
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [conversation, setConversation] = useState<MessageProps[]>([]);
-  const { user } = useContext(UserContext)
-  const [commitMutation, isMutationInFlight] = useMutation<ChatContainerMutation>(mutation)
-  const data = usePreloadedQuery(query, queryReference)
+  const { user } = useContext(UserContext);
+  const [commitMutation, isMutationInFlight] =
+    useMutation<ChatContainerMutation>(mutation);
+  const data = usePreloadedQuery(query, queryReference);
 
   useEffect(() => {
-    console.log(chatId)
-    if (!messageMap[chatId]) {
-      const obj = messageMap
-      obj[chatId] = ""
-      setMessageMap(obj)
-    }
     const delayDebounceFn = setTimeout(() => {
       setIsTyping(false);
     }, 2000);
@@ -85,7 +86,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
       </div>
       <form
         className="border-[1px] rounded-[15px] 
-         my-2 px-[1rem] py-[4px] 
+         m-2 px-[1rem] py-[4px] 
         border-black flex items-center
         "
         onSubmit={(e: React.KeyboardEvent<HTMLFormElement>) => {
@@ -95,19 +96,21 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
               variables: {
                 text: message,
                 userId: user.id,
-                chatId: chatId
-              }
-            }).dispose()
-            setMessage("")
+                chatId: chatId,
+              },
+            }).dispose();
+            setMessage("");
           }
         }}
       >
         <ChatInput
-          value={message}
+          value={messageMap[chatId] ?? ""}
           onChange={(e: React.FormEvent<HTMLTextAreaElement>) => {
             setIsTyping(true);
             e.preventDefault();
-            setMessage(e.currentTarget.value);
+            const obj = { ...messageMap };
+            obj[chatId] = e.currentTarget.value;
+            setMessageMap(obj);
           }}
         />
         {/* <ChatSendButton disabled={message.length === 0} onClick={() => {
@@ -128,20 +131,19 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
 };
 
 export const ChatContainer = () => {
-  const { id } = useParams()
+  const { id } = useParams();
   const [queryReference, loadQuery] = useQueryLoader<ChatContainerQuery>(query);
 
   useEffect(() => {
-    if (id)
-      loadQuery({ id: id })
-  }, [id])
+    if (id) loadQuery({ id: id });
+  }, [id]);
 
-  if (!id) return null
-  if (!queryReference) return <Loader />
+  if (!id) return null;
+  if (!queryReference) return <Loader />;
 
   return (
     <Suspense>
       <Content queryReference={queryReference} chatId={id} />
     </Suspense>
-  )
-}
+  );
+};

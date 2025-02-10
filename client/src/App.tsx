@@ -9,16 +9,15 @@ import { EditProfile } from "./pages/EditProfile";
 import { Chats } from "./pages/Chats";
 import { SearchUsers } from "./pages/SearchUsers";
 import { UserProfile } from "./pages/UserProfile";
+import { Notifications } from "./pages/Notifications";
 
 export const RouterParent = () => {
-
-  const [cookies,] = useCookies(['accessToken']);
+  const [cookies] = useCookies(["accessToken"]);
 
   const router = createBrowserRouter([
-
     {
       path: "/",
-      element: !cookies['accessToken'] ? <Login /> : <Page />,
+      element: !cookies["accessToken"] ? <Login /> : <Page />,
       errorElement: <ErrorPage />,
       children: [
         {
@@ -29,7 +28,7 @@ export const RouterParent = () => {
               path: "chats/:id",
               element: <ChatContainer />,
             },
-          ]
+          ],
         },
         {
           path: "/chats",
@@ -52,9 +51,13 @@ export const RouterParent = () => {
         },
         {
           path: "/u/:username",
-          element: <UserProfile />
-        }
-      ]
+          element: <UserProfile />,
+        },
+        {
+          path: "/notifications",
+          element: <Notifications />,
+        },
+      ],
     },
     {
       path: "/login",
@@ -65,16 +68,11 @@ export const RouterParent = () => {
       path: "/signup",
       element: <Signup />,
       errorElement: <ErrorPage />,
-    }
+    },
   ]);
-  return (
-    <RouterProvider router={router} />
-  )
-}
+  return <RouterProvider router={router} />;
+};
 
 export const App = () => {
-
-  return (
-    <RouterParent />
-  )
-}
+  return <RouterParent />;
+};
