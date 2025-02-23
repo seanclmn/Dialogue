@@ -18,6 +18,7 @@ import { UserContext } from "../../contexts/UserContext";
 import { Messages } from "./Messages";
 import { useParams } from "react-router";
 import { ChatHeader } from "./ChatHeader";
+import { ChatSendButton } from "@components/shared/Buttons/ChatSendButton";
 
 const query = graphql`
   query ChatContainerQuery($id: ID!) {
@@ -113,18 +114,18 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
             setMessageMap(obj);
           }}
         />
-        {/* <ChatSendButton disabled={message.length === 0} onClick={() => {
+        <ChatSendButton disabled={messageMap[chatId]?.length === 0} onClick={() => {
           if (user?.id) {
             commitMutation({
               variables: {
-                text: message,
+                text: messageMap[chatId],
                 userId: user.id,
                 chatId: chatId
               }
             }).dispose()
-            setMessage("")
+            setMessageMap({ ...messageMap, [chatId]: "" })
           }
-        }} /> */}
+        }} />
       </form>
     </div>
   );
