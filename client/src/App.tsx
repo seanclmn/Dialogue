@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import ErrorPage from "./pages/404";
 import { Login } from "./pages/Login";
@@ -12,7 +13,16 @@ import { UserProfile } from "./pages/UserProfile";
 import { Notifications } from "./pages/Notifications";
 
 export const RouterParent = () => {
-  const [cookies] = useCookies(["accessToken"]);
+  const [cookies, setCookies] = useCookies(["accessToken", "theme"]);
+  useEffect(() => {
+    if (!cookies["theme"]) {
+      setCookies("theme", "light")
+      document.documentElement.setAttribute("data-theme", "light")
+    }
+    else {
+      document.documentElement.setAttribute("data-theme", cookies["theme"])
+    }
+  }, [])
 
   const router = createBrowserRouter([
     {

@@ -1,7 +1,6 @@
 import js from "@eslint/js";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
-import jsxA11y from "eslint-plugin-jsx-a11y";
 import importPlugin from "eslint-plugin-import";
 import typescript from "eslint-plugin-typescript";
 import unusedImports from "eslint-plugin-unused-imports";
@@ -25,7 +24,6 @@ export default [
     plugins: {
       react,
       reactHooks,
-      jsxA11y,
       importPlugin,
     },
     rules: {

@@ -9,8 +9,8 @@ export default {
       xl: "1440px",
     },
     colors: {
-      primary: "var(--primary-color)", // #2B66DD
-      secondary: "var(--secondary-color)", // #692bdd
+      "primary": "var(--primary-color)", // #2B66DD
+      "secondary": "var(--secondary-color)", // #692bdd
       "bgd-color": "var(--bg-color)", // #ffffff
       "bgd-highlight": "var(--bg-highlight-color)", // #fafafad0
       "brd-color": "var(--border-color)", // #fafafad0

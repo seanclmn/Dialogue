@@ -6,12 +6,26 @@ html,
 body,
 #root {
   height: 100%;
+}
 
-  --primary-color: #3b82f6;
-  --secondary-color: #692bdd;
-  --bg-color: #ffffff;
-  --bg-highlight-color: #e1e1e1d0;
-  --border-color: #e8e8e8d0;
-  --text-color: #000000;
-  --my-text-color: #ffffff;
+@layer base {
+  :root[data-theme="light"] {
+    --primary-color: #3b82f6;
+    --secondary-color: #692bdd;
+    --bg-color: #ffffff;
+    --bg-highlight-color: #e1e1e1d0;
+    --border-color: #e8e8e8d0;
+    --text-color: #000000;
+    --my-text-color: #ffffff;
+  }
+
+  :root[data-theme="dark"] {
+    --primary-color: #3b82f6;
+    --secondary-color: #9a6eff;
+    --bg-color: #121212;
+    --bg-highlight-color: #1e1e1e;
+    --border-color: #333333;
+    --text-color: #ffffff;
+    --my-text-color: #000000;
+  }
 }

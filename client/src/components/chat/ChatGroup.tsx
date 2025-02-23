@@ -27,7 +27,7 @@ export const ChatGroup = ({ name, chatId, lastMessage }: ChatGroupProps) => {
       >
         <Avatar src={img} containerStyle="h-14" />
         <div className="mx-2 h-full flex flex-col justify-between">
-          <p className="text-sm font-bold mb-1">{name}</p>
+          <p className="text-sm font-bold mb-1 text-txt-color">{name}</p>
           {lastMessage ? (
             <p className="text-xs">
               {userContext.user.id === lastMessage.userId ? <b>Me: </b> : null}

@@ -33,6 +33,9 @@ const Content = ({ queryReference }: ContentProps) => {
   const data = usePreloadedQuery(query, queryReference);
   return (
     <>
+      {data.currentUser.friendRequests.length === 0 && (
+        <p className="text-center text-txt-color p-4">No New notifications!</p>)}
+
       {data.currentUser.friendRequests.map((friendRequest) => (
         <FriendRequest key={friendRequest.id} data={friendRequest} />
       ))}

@@ -11,7 +11,6 @@ import {
 } from "react-relay";
 import {
   UserProfileQuery,
-  UserProfileQuery$data,
 } from "@generated/UserProfileQuery.graphql";
 import { Loader } from "@components/shared/loaders/Loader";
 import { Button } from "@components/shared/Buttons/GenericButton";
