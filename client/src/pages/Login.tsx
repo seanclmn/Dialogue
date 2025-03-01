@@ -39,56 +39,70 @@ export const Login = () => {
     register,
     handleSubmit,
     watch,
+    control,
     formState: { errors },
   } = useForm<Inputs>();
 
   if (cookies["accessToken"]) return <Navigate to="/" />;
 
+  const onSubmit = (creds: Inputs) => {
+    commitMutation({
+      variables: {
+        username: creds.username,
+        password: creds.password,
+      },
+      onCompleted: (data: LoginMutation$data) => {
+        setCookie("accessToken", data.login.accessToken);
+      },
+      onError: (e) => {
+        console.log(e);
+        // setErrors("Username or password was invalid")
+      },
+    });
+  }
+
+  console.log(errors)
+
   return (
     <form
       className="flex flex-col items-center max-w-60 mx-auto pt-32"
-      onSubmit={(e) => {
-        e.preventDefault();
-        commitMutation({
-          variables: {
-            username: creds.username,
-            password: creds.password,
-          },
-          onCompleted: (data: LoginMutation$data) => {
-            setCookie("accessToken", data.login.accessToken);
-          },
-          onError: (e) => {
-            console.log(e);
-            // setErrors("Username or password was invalid")
-          },
-        });
-      }}
+      onSubmit={handleSubmit(onSubmit)}
     >
       <img src={logo} className="h-16 my-2" />
-      <Input
-        styles="my-1 text-sm py-[5px]"
-        title="Username"
-        {...register("username", { required: true })}
-        onChange={(e) =>
-          setCreds({ ...creds, username: e.currentTarget.value })
-        }
+      <Controller
+        control={control}
+        render={({ field }) => (
+          <Input
+            styles="my-1 text-sm"
+            title="Username"
+            {...field}
+          />
+        )}
+        name="username"
+        rules={{ required: true }}
       />
-      {errors.username ? <InputError message={"wonton"} /> : null}
-
-      <Input
-        styles="my-1 text-sm py-[5px]"
-        title="Password"
-        {...register("password", { required: true })}
-        onChange={(e) =>
-          setCreds({ ...creds, password: e.currentTarget.value })
-        }
+      {errors.username?.type === "required" && (
+        <InputError message={"Username is required"} />
+      )}
+      <Controller
+        control={control}
+        render={({ field }) => (
+          <Input
+            styles="my-1 text-sm"
+            title="Password"
+            {...field}
+          />
+        )}
+        name="password"
+        rules={{ required: true }}
       />
-      {errors.password ? <InputError message={"wonton"} /> : null}
-
+      {errors.password?.type === "required" && (
+        <InputError message={"Password is required"} />
+      )}
       <Button
         title="Log in"
         type="submit"
-        styles="text-sm py-[5px] my-2"
+        styles="text-sm my-2"
         loading={isMutationInFlight}
         disabled={isMutationInFlight}
       />

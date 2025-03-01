@@ -9,6 +9,11 @@ body,
 }
 
 @layer base {
+  :root {
+    --error: #ff0000;
+    --success: #00ff00;
+  }
+
   :root[data-theme="light"] {
     --primary-color: #3b82f6;
     --secondary-color: #692bdd;

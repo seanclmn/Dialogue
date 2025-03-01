@@ -5,7 +5,7 @@ interface ChatInputProps
   styles?: string;
 }
 
-export const ChatInput = ({ onChange, value, styles }: ChatInputProps) => {
+export const ChatInput = ({ onChange, value, styles, ...rest }: ChatInputProps) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -37,6 +37,7 @@ export const ChatInput = ({ onChange, value, styles }: ChatInputProps) => {
       ref={textAreaRef}
       onChange={onChange}
       value={value}
+      {...rest}
     />
   );
 };

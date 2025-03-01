@@ -112,7 +112,25 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
             const obj = { ...messageMap };
             obj[chatId] = e.currentTarget.value;
             setMessageMap(obj);
+
           }}
+
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              if (user?.id) {
+                commitMutation({
+                  variables: {
+                    text: messageMap[chatId],
+                    userId: user.id,
+                    chatId: chatId,
+                  },
+                }).dispose();
+                setMessageMap({ ...messageMap, [chatId]: "" })
+              }
+            }
+          }
+          }
         />
         <ChatSendButton disabled={messageMap[chatId]?.length === 0} onClick={() => {
           if (user?.id) {

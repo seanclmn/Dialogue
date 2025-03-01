@@ -13,6 +13,7 @@ export const Input = ({ styles, title, onChange }: InputProps) => {
         onChange={onChange}
         className={`border-[1px] rounded-md px-2
 			py-2 border-black border-solid w-full ${styles}`}
+
       />
     </>
   );
