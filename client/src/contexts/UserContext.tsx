@@ -4,6 +4,7 @@ interface User {
   id: string | null;
   username: string | null;
   chatIds: string[];
+  bio: string | null;
 }
 
 export interface UserContextType {
@@ -15,6 +16,7 @@ const defaultUser = {
   id: null,
   username: null,
   chatIds: [],
+  bio: null,
 };
 
 export const UserContext = createContext<UserContextType>({

@@ -4,16 +4,8 @@ import { CreateChat } from "@components/dialogs/CreateChat";
 import { graphql } from "relay-runtime";
 import { usePaginationFragment } from "react-relay";
 import { Loader } from "@components/shared/loaders/Loader";
-import {
-  ChatGroupsContainer_user$data,
-  ChatGroupsContainer_user$key,
-} from "@generated/ChatGroupsContainer_user.graphql";
+import { ChatGroupsContainer_user$key } from "@generated/ChatGroupsContainer_user.graphql";
 import { UserContext } from "../../contexts/UserContext";
-import {
-  ChatGroupsContainerRefetchQuery,
-  ChatGroupsContainerRefetchQuery$data,
-  ChatGroupsContainerRefetchQuery$variables,
-} from "@generated/ChatGroupsContainerRefetchQuery.graphql";
 
 const fragment = graphql`
   fragment ChatGroupsContainer_user on User
@@ -55,8 +47,6 @@ export const ChatGroupsContainer = ({
   }, [user?.id]);
 
   if (!data.chats) return <Loader />;
-
-  console.log(data.chats);
 
   if (data.chats.edges.length === 0) return null;
 

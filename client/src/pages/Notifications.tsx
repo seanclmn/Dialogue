@@ -34,7 +34,8 @@ const Content = ({ queryReference }: ContentProps) => {
   return (
     <>
       {data.currentUser.friendRequests.length === 0 && (
-        <p className="text-center text-txt-color p-4">No New notifications!</p>)}
+        <p className="text-center text-txt-color p-4">No New notifications!</p>
+      )}
 
       {data.currentUser.friendRequests.map((friendRequest) => (
         <FriendRequest key={friendRequest.id} data={friendRequest} />

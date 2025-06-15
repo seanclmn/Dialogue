@@ -98,15 +98,11 @@ type MessageEdge {
 }
 
 type Mutation {
-  acceptFriendRequest(
-    acceptFriendRequestInput: AcceptFriendRequestInput!
-  ): User!
+  acceptFriendRequest(acceptFriendRequestInput: AcceptFriendRequestInput!): User!
   createChat(createChatInput: CreateChatInput!): Chat!
   createMessage(createMessageInput: CreateMessageInput!): Message!
   createUser(createUserInput: CreateUserInput!): User!
-  declineFriendRequest(
-    declineFriendRequestInput: DeclineFriendRequestInput!
-  ): User!
+  declineFriendRequest(declineFriendRequestInput: DeclineFriendRequestInput!): User!
   login(loginUserInput: LoginUserInput!): LoginResponse!
   removeChat(id: Int!): Chat!
   sendFriendRequest(sendFriendRequestInput: SendFriendRequestInput!): User!
@@ -166,6 +162,7 @@ input UpdateUserInput {
 }
 
 type User implements Node {
+  bio: String!
   chats(after: String, first: Int): ChatConnection!
   friendRequests(receiverId: String): [FriendRequest!]!
   friends(after: String, first: Int): UserConnection!

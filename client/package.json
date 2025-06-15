@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "relay-compiler --validate && tsc -b && vite build",
-    "lint": "eslint . --fix",
+    "lint": "eslint 'src/**/*.ts'",
     "preview": "vite preview",
     "relay": "relay-compiler",
-    "graphql:generate": "./scripts/pull-schema.sh"
+    "graphql:generate": "./scripts/pull-schema.sh",
+    "prettify": "prettier --write ."
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
@@ -17,6 +18,7 @@
     "@types/uuid": "^10.0.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.20.0",
+    "eslint-plugin-typescript": "^0.14.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "graphql-ws": "^5.16.0",
     "path": "^0.12.7",

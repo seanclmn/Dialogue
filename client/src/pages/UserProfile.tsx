@@ -9,9 +9,7 @@ import {
   usePreloadedQuery,
   useQueryLoader,
 } from "react-relay";
-import {
-  UserProfileQuery,
-} from "@generated/UserProfileQuery.graphql";
+import { UserProfileQuery } from "@generated/UserProfileQuery.graphql";
 import { Loader } from "@components/shared/loaders/Loader";
 import { Button } from "@components/shared/Buttons/GenericButton";
 import { UserProfileMutation } from "@generated/UserProfileMutation.graphql";

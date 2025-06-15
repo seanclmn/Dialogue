@@ -59,9 +59,9 @@ export const Login = () => {
         // setErrors("Username or password was invalid")
       },
     });
-  }
+  };
 
-  console.log(errors)
+  console.log(errors);
 
   return (
     <form
@@ -72,11 +72,7 @@ export const Login = () => {
       <Controller
         control={control}
         render={({ field }) => (
-          <Input
-            styles="my-1 text-sm"
-            title="Username"
-            {...field}
-          />
+          <Input styles="my-1 text-sm" title="Username" {...field} />
         )}
         name="username"
         rules={{ required: true }}
@@ -87,11 +83,7 @@ export const Login = () => {
       <Controller
         control={control}
         render={({ field }) => (
-          <Input
-            styles="my-1 text-sm"
-            title="Password"
-            {...field}
-          />
+          <Input styles="my-1 text-sm" title="Password" {...field} />
         )}
         name="password"
         rules={{ required: true }}

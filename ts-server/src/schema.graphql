@@ -162,6 +162,7 @@ input UpdateUserInput {
 }
 
 type User implements Node {
+  bio: String
   chats(after: String, first: Int): ChatConnection!
   friendRequests(receiverId: String): [FriendRequest!]!
   friends(after: String, first: Int): UserConnection!

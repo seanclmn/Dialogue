@@ -19,6 +19,10 @@ export class User implements Node {
   @Field()
   password: string;
 
+  @Column("longtext", { nullable: true })
+  @Field({ nullable: true })
+  bio?: string;
+
   // @Field(() => [Chat], { nullable: true })
   @ManyToMany(() => Chat, (chat) => chat.participants, { eager: true })
   @JoinTable()

@@ -1,5 +1,4 @@
 import { Suspense, useContext, useEffect, useState } from "react";
-import { MessageProps } from "../shared/Messages/Message";
 import { ChatInput } from "../shared/Inputs/ChatInput";
 import { Typing } from "./Typing";
 import { Avatar } from "../shared/users/Avatar";
@@ -58,10 +57,8 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   const [messageMap, setMessageMap] = useState<Record<string, string>>({});
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [conversation, setConversation] = useState<MessageProps[]>([]);
   const { user } = useContext(UserContext);
-  const [commitMutation, isMutationInFlight] =
-    useMutation<ChatContainerMutation>(mutation);
+  const [commitMutation] = useMutation<ChatContainerMutation>(mutation);
   const data = usePreloadedQuery(query, queryReference);
 
   useEffect(() => {
@@ -73,10 +70,10 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   }, [isTyping, chatId]);
 
   return (
-    <div className="h-full flex flex-col justify-between">
+    <div className="h-full w-full flex flex-col justify-between">
       <ChatHeader title={data.node?.name ?? "(unnamed chat)"} />
 
-      <div className="flex flex-col items-start grow px-2 pt-4 h-1 overflow-auto">
+      <div className="flex flex-col items-start grow px-2 py-4 h-1 overflow-auto">
         {data.node ? <Messages fragmentKey={data.node} /> : null}
         {isTyping ? (
           <div className="flex flex-row">
@@ -86,9 +83,9 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
         ) : null}
       </div>
       <form
-        className="border-[1px] rounded-[15px] 
-         m-2 px-[1rem] py-[4px] 
-        border-black flex items-center
+        className="mx-2 mb-2 border-[1px] rounded-[15px] 
+         px-[1rem] py-[4px]
+        border-black flex items-center 
         "
         onSubmit={(e: React.KeyboardEvent<HTMLFormElement>) => {
           e.preventDefault();
@@ -112,9 +109,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
             const obj = { ...messageMap };
             obj[chatId] = e.currentTarget.value;
             setMessageMap(obj);
-
           }}
-
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
@@ -126,24 +121,26 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
                     chatId: chatId,
                   },
                 }).dispose();
-                setMessageMap({ ...messageMap, [chatId]: "" })
+                setMessageMap({ ...messageMap, [chatId]: "" });
               }
             }
-          }
-          }
+          }}
         />
-        <ChatSendButton disabled={messageMap[chatId]?.length === 0} onClick={() => {
-          if (user?.id) {
-            commitMutation({
-              variables: {
-                text: messageMap[chatId],
-                userId: user.id,
-                chatId: chatId
-              }
-            }).dispose()
-            setMessageMap({ ...messageMap, [chatId]: "" })
-          }
-        }} />
+        <ChatSendButton
+          disabled={messageMap[chatId]?.length === 0}
+          onClick={() => {
+            if (user?.id) {
+              commitMutation({
+                variables: {
+                  text: messageMap[chatId],
+                  userId: user.id,
+                  chatId: chatId,
+                },
+              }).dispose();
+              setMessageMap({ ...messageMap, [chatId]: "" });
+            }
+          }}
+        />
       </form>
     </div>
   );

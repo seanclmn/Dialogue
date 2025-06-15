@@ -35,8 +35,8 @@ export default [
       "import/order": [
         "error",
         {
-          "groups": ["builtin", "external", "internal"],
-          "alphabetize": { order: "asc", caseInsensitive: true },
+          groups: ["builtin", "external", "internal"],
+          alphabetize: { order: "asc", caseInsensitive: true },
         },
       ],
     },

@@ -16,13 +16,12 @@ export const RouterParent = () => {
   const [cookies, setCookies] = useCookies(["accessToken", "theme"]);
   useEffect(() => {
     if (!cookies["theme"]) {
-      setCookies("theme", "light")
-      document.documentElement.setAttribute("data-theme", "light")
+      setCookies("theme", "light");
+      document.documentElement.setAttribute("data-theme", "light");
+    } else {
+      document.documentElement.setAttribute("data-theme", cookies["theme"]);
     }
-    else {
-      document.documentElement.setAttribute("data-theme", cookies["theme"])
-    }
-  }, [])
+  }, []);
 
   const router = createBrowserRouter([
     {

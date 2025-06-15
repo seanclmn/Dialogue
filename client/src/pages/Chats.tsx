@@ -30,7 +30,7 @@ const Content = ({ queryReference }: ChatsProps) => {
       <Suspense fallback={<Loader />}>
         <ChatGroupsContainer fragmentKey={data.currentUser} />
       </Suspense>
-      <div className="w-[100%] h-full flex-grow relative">
+      <div className="w-full h-full flex-grow relative">
         {chatId ? <Outlet /> : <EmptyChat />}
       </div>
     </>

@@ -22,13 +22,11 @@ const mutation = graphql`
   }
 `;
 
-
 export const Signup = () => {
   const [creds, setCreds] = useState({ username: "", password: "" });
   const [errors, setErrors] = useState("");
   const [cookies, setCookie] = useCookies(["accessToken"]);
-  const [commitMutation,] =
-    useMutation<SignupMutation>(mutation);
+  const [commitMutation] = useMutation<SignupMutation>(mutation);
 
   if (cookies["accessToken"]) return <Navigate to="/" />;
   return (
