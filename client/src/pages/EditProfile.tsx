@@ -8,7 +8,7 @@ export const EditProfile = () => {
 
   return (
     <div className="w-full flex flex-col items-center py-2">
-      <Avatar src={img} containerStyle="w-28 my-2" />
+      <Avatar src={img} containerStyle="w-28 h-28 my-2" editable />
       <p className="my-2">{data.user.username}</p>
       {data.user.bio ? <p>bio {data.user.bio}</p> : null}
     </div>
