@@ -47,7 +47,9 @@ const Content = ({ queryReference }: ContentProps) => {
 
   return (
     <div className="w-full flex flex-col items-center py-2">
-      <Avatar src={img} containerStyle="w-28 my-2" />
+      {data.user.username === currentUser.user.username ?
+        <Avatar src={img} containerStyle="w-28 h-28 my-2" editable link="/editprofile" /> :
+        <Avatar src={img} containerStyle="w-28 h-28 my-2" />}
       <p className="my-2">{data.user.username}</p>
       {data.user.id !== currentUser.user.id ? (
         <Button

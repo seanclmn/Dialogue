@@ -3,7 +3,6 @@ import {
   BellAlertIcon,
   ChatBubbleOvalLeftEllipsisIcon,
   MagnifyingGlassCircleIcon,
-  MagnifyingGlassIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -14,9 +13,12 @@ import {
 } from "@heroicons/react/24/solid";
 import { Link, useLocation } from "react-router";
 import img from "../../assets/jennie.jpeg";
+import { useContext } from "react";
+import { UserContext } from "@contexts/UserContext";
 
 export const Nav = () => {
   const { pathname } = useLocation();
+  const data = useContext(UserContext);
   return (
     <div className="border-brd-color border-r-[1px] px-4 h-full flex-col items-center">
       <Link to="/friends">
@@ -47,8 +49,8 @@ export const Nav = () => {
           <BellAlertIcon className="my-4 w-7" />
         )}
       </Link>
-      <Link to="/editprofile">
-        {pathname.includes("/editprofile") ? (
+      <Link to={`/u/${data.user.username}`}>
+        {pathname.includes(`/u/${data.user.username}`) ? (
           <Avatar
             src={img}
             containerStyle="m-0 my-4 w-7 border-bgd-highlight border-[1px]"

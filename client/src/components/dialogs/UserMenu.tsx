@@ -1,11 +1,14 @@
+import { UserContext } from "@contexts/UserContext";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { KeyIcon } from "@heroicons/react/16/solid";
 import { PencilIcon } from "@heroicons/react/16/solid";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
+import { useContext } from "react";
 import { useCookies } from "react-cookie";
 import { Link } from "react-router";
 
 export default function UserMenu() {
+  const data = useContext(UserContext);
   const [, removeCookie] = useCookies(["accessToken"]);
 
   return (
@@ -37,7 +40,7 @@ export default function UserMenu() {
           <MenuItem>
             <Link
               className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-bgd-highlight"
-              to="/editprofile"
+              to={`/u/${data.user.username}`}
             >
               <PencilIcon className="size-4" />
               Edit
