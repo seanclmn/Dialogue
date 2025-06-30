@@ -15,9 +15,6 @@ type Inputs = {
 export const EditProfile = () => {
   const data = useContext(UserContext);
   const {
-    register,
-    handleSubmit,
-    watch,
     control,
     formState: { errors },
   } = useForm<Inputs>({ defaultValues: { username: data.user.username ?? "", bio: data.user.bio ?? "" } });
