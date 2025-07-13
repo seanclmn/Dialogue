@@ -29,6 +29,14 @@ type MessageEdge {
   node: Message!
 }
 
+type Message implements Node {
+  chat: Chat!
+  createdAt: DateTime!
+  id: ID!
+  text: String!
+  userId: String!
+}
+
 type PageInfo {
   endCursor: String!
   hasNextPage: Boolean!
