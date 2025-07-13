@@ -1,11 +1,11 @@
-**A full stack web chat application written in Typescript**
+*** A full stack web chat application written in Typescript
 
-**Tools:**
+*** Tools:
 - UI: Typescript, ReactJS, React-Relay, Tailwind
 - API: Typescript, NestJS, GraphQL, TypeORM
 - Database: MySQL
 
-**Relay Style Schema Design**
+*** Relay Style Schema Design
 
 The GraphQL API follows a Relay style GraphQL schema. Every object implements a Node interface, with a unique global ID. Instead of a list of items, we return a connection with edges to item nodes, with cursor style pagination data. Here is a snippet of the schema file:
 
@@ -37,7 +37,7 @@ type PageInfo {
 }
 ```
 
-On the client side we statically compose many data fragments, like the one below, into one big query with the Relay compiler. 
+On the client side we statically compose many data fragments, like the one below, into one big query with the Relay compiler. We write queries and fragments per component with a GraphQL string, and load the data into the React component using a hook. In this case we use a refetchable paginated query:
 
 ```
 const fragment = graphql`
