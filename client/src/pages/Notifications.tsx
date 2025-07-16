@@ -30,7 +30,9 @@ type ContentProps = {
 };
 
 const Content = ({ queryReference }: ContentProps) => {
+
   const data = usePreloadedQuery(query, queryReference);
+
   return (
     <>
       {data.currentUser.friendRequests.length === 0 && (
@@ -47,7 +49,7 @@ const Content = ({ queryReference }: ContentProps) => {
 export const Notifications = () => {
   const data = useContext(UserContext);
   const [queryReference, loadQuery] = useQueryLoader<NotificationsQuery>(query);
-  console.log(data);
+
   useEffect(() => {
     if (data.user.id) {
       loadQuery({ receiverId: data.user.id });
