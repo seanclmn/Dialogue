@@ -63,4 +63,8 @@ export class AuthService {
       user: newUser,
     };
   }
+
+  async createRefreshToken(user: User) {
+    const refreshToken = this.jwtService.sign({}, { expiresIn: "7d" })
+  }
 }
