@@ -18,7 +18,7 @@ import { createClient, ExecutionResult, Sink } from "graphql-ws";
 import { PayloadExtensions } from "relay-runtime/lib/network/RelayNetworkTypes";
 
 export const RelayProvider = ({ children }: PropsWithChildren) => {
-  const [cookies] = useCookies(["accessToken"]);
+  const [cookies, removeCookie] = useCookies(["accessToken"]);
   const HTTP_ENDPOINT = "http://localhost:3000/graphql";
 
   const wsClient = createClient({
@@ -54,8 +54,14 @@ export const RelayProvider = ({ children }: PropsWithChildren) => {
     });
 
     return Observable.from(
-      response.then((data) => {
-        return data.json();
+      response.then(async (data) => {
+        const json = await data.json()
+        console.log(json)
+        if (json?.errors?.some((err) => err.message === "Unauthorized")) {
+          console.log("wonton")
+          removeCookie("accessToken")
+        }
+        return json;
       }),
     );
   };

@@ -66,5 +66,7 @@ export class AuthService {
 
   async createRefreshToken(user: User) {
     const refreshToken = this.jwtService.sign({}, { expiresIn: "7d" })
+    const hashedToken = hash(refreshToken, 10)
+    await this.usersService.updateRefreshToken(user.id, hashedToken)
   }
 }

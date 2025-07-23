@@ -23,6 +23,9 @@ export class User implements Node {
   @Field({ nullable: true })
   bio?: string;
 
+  @Column()
+  hashedRefreshToken?: string;
+
   // @Field(() => [Chat], { nullable: true })
   @ManyToMany(() => Chat, (chat) => chat.participants, { eager: true })
   @JoinTable()
