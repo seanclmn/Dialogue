@@ -9,8 +9,8 @@ export class UpdateUserInput {
   @Field()
   username: string;
 
-  @Field()
-  password: string;
+  @Field({ nullable: true })
+  bio?: string;
 
   @Field(() => [ChatInput], { nullable: true })
   chats: ChatInput[]

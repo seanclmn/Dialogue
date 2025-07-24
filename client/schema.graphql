@@ -109,6 +109,7 @@ type Mutation {
   signup(createUserInput: CreateUserInput!): LoginResponse!
   updateChat(updateChatInput: UpdateChatInput!): Chat!
   updateMessage(updateMessageInput: UpdateMessageInput!): Message!
+  updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 interface Node {
@@ -155,14 +156,14 @@ input UpdateMessageInput {
 }
 
 input UpdateUserInput {
+  bio: String
   chats: [ChatInput!]
   id: ID!
-  password: String!
   username: String!
 }
 
 type User implements Node {
-  bio: String!
+  bio: String
   chats(after: String, first: Int): ChatConnection!
   friendRequests(receiverId: String): [FriendRequest!]!
   friends(after: String, first: Int): UserConnection!

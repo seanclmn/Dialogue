@@ -74,6 +74,20 @@ export class UsersService {
     return { edges, pageInfo };
   }
 
+
+  async updateUser(updateUserInput: UpdateUserInput) {
+    const user = await this.usersRepository.findOne({ where: { id: updateUserInput.id } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    const updatedUser = {
+      ...user,
+      username: updateUserInput.username,
+      bio: updateUserInput.bio,
+    };
+    return await this.usersRepository.save(updatedUser);
+  }
+
   async getFriendRequests(receiverId: string) {
     console.log(receiverId)
     const requests = await this.friendRequestsRepository.find({

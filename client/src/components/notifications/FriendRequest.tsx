@@ -1,6 +1,6 @@
 import { TextButton } from "@components/shared/Buttons/TextButton";
-import { useAcceptFriendRequest } from "@hooks/AcceptFriendRequest";
-import { useDeclineFriendRequest } from "@hooks/DeclineFriendRequest";
+import { useAcceptFriendRequest } from "@mutations/AcceptFriendRequest";
+import { useDeclineFriendRequest } from "@mutations/DeclineFriendRequest";
 
 type FriendRequest = {
   data: {

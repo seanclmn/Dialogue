@@ -8,6 +8,7 @@ import { ChatConnection } from 'src/chats/entities/chat.connection.entity';
 import { UserConnection } from './entities/user.connection.entity';
 import { FriendRequest } from './entities/friendRequests.entity';
 import { AcceptFriendRequestInput, DeclineFriendRequestInput, SendFriendRequestInput } from './dto/friendRequest.input';
+import { UpdateUserInput } from './dto/update-user.input';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -45,6 +46,11 @@ export class UsersResolver {
   @Mutation(() => User)
   async declineFriendRequest(@Args('declineFriendRequestInput') friendRequestInput: DeclineFriendRequestInput) {
     return await this.usersService.declineFriendRequest(friendRequestInput.friendRequestId);
+  }
+
+  @Mutation(() => User)
+  async updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
+    return await this.usersService.updateUser(updateUserInput);
   }
 
   @Query(() => [User], { name: 'users' })
@@ -86,6 +92,8 @@ export class UsersResolver {
   ): Promise<FriendRequest[]> {
     return await this.usersService.getFriendRequests(receiverId);
   }
+
+
 
   // @Mutation(() => User)
   // removeUser(@Args('id', { type: () => Int }) id: number) {

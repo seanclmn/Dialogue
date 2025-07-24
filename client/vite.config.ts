@@ -13,7 +13,7 @@ export default defineConfig({
       //@ts-ignore
       "@components": path.resolve(__dirname, "src/components/"),
       //@ts-ignore
-      "@hooks": path.resolve(__dirname, "src/hooks/"),
+      "@mutations": path.resolve(__dirname, "src/mutations/"),
       //@ts-ignore
       "@pages": path.resolve(__dirname, "src/pages/"),
       //@ts-ignore
