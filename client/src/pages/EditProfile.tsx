@@ -12,18 +12,23 @@ type Inputs = {
   bio: string;
 };
 
-export const EditProfile = () => {
-  const data = useContext(UserContext);
+type EditProfileProps = {
+  username: string;
+  bio?: string;
+};
+
+const EditProfileForm = ({ username, bio }: EditProfileProps) => {
   const {
     control,
     formState: { errors },
-  } = useForm<Inputs>({ defaultValues: { username: data.user.username ?? "", bio: data.user.bio ?? "" } });
+  } = useForm<Inputs>();
 
+  console.log("EditProfileForm username", username);
   return (
     <div className="w-full flex flex-col items-center py-2">
       <Avatar src={img} containerStyle="w-28 h-28 my-2 " editable />
       <form
-        className="flex flex-col items-center mx-auto mt-4"
+      // className="flex flex-col"
       // onSubmit={handleSubmit(onSubmit)}
       >
         <Controller
@@ -33,6 +38,7 @@ export const EditProfile = () => {
           )}
           name="username"
           rules={{ required: true }}
+          defaultValue={username}
         />
         {errors.username?.type === "required" && (
           <InputError message={"Username is required"} />
@@ -57,3 +63,19 @@ export const EditProfile = () => {
     </div>
   );
 };
+
+export const EditProfile = () => {
+  const data = useContext(UserContext);
+  console.log("EditProfile data", data);
+
+  if (!data.user.username) {
+    return <div className="text-center">Loading...</div>;
+  }
+
+  return (
+    <div className="w-full flex flex-col items-center py-2">
+      <h1 className="text-2xl font-bold">Edit Profile</h1>
+      <EditProfileForm username={data.user.username} bio={data.user.bio ?? ""} />
+    </div>
+  );
+}

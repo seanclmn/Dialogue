@@ -1,4 +1,5 @@
 import { InputType, Field, ID } from '@nestjs/graphql';
+import { IsNotEmpty } from 'class-validator';
 import { ChatInput } from 'src/chats/dto/chatInput.input';
 
 @InputType()
@@ -7,6 +8,7 @@ export class UpdateUserInput {
   id: string;
 
   @Field()
+  @IsNotEmpty()
   username: string;
 
   @Field({ nullable: true })
