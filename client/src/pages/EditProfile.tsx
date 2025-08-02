@@ -7,6 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { InputError } from "@components/error/InputError";
 import { Button } from "@components/shared/Buttons/GenericButton";
 import { useUpdateUserMutation } from "@mutations/UpdateUser";
+import { TextAreaInput } from "@components/shared/Inputs/TextAreaInput";
 
 type Inputs = {
   username: string;
@@ -40,7 +41,7 @@ const EditProfileForm = ({ username, bio, id }: EditProfileProps) => {
     <div className="w-full flex flex-col items-center py-2">
       <Avatar src={img} containerStyle="w-28 h-28 my-2 " editable />
       <form
-        // className="flex flex-col"
+        className="my-4"
         onSubmit={handleSubmit(onSubmit)}
       >
         <Controller
@@ -58,7 +59,7 @@ const EditProfileForm = ({ username, bio, id }: EditProfileProps) => {
         <Controller
           control={control}
           render={({ field }) => (
-            <Input styles="my-1 text-sm" title="Bio" {...field} />
+            <TextAreaInput title="Bio" styles="my-1 text-sm h-48" {...field} />
           )}
           name="bio"
           rules={{ required: true }}
@@ -70,7 +71,6 @@ const EditProfileForm = ({ username, bio, id }: EditProfileProps) => {
           loading={isMutationInFlight}
           disabled={isMutationInFlight}
         />
-
       </form>
     </div>
   );
@@ -78,7 +78,6 @@ const EditProfileForm = ({ username, bio, id }: EditProfileProps) => {
 
 export const EditProfile = () => {
   const data = useContext(UserContext);
-  console.log("EditProfile data", data);
 
   if (!data.user.username || !data.user.id) {
     return <div className="text-center">Loading...</div>;

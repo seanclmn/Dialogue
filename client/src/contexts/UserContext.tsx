@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useState } from "react";
 
-interface User {
+export interface User {
   id: string | null;
   username: string | null;
   chatIds: string[];

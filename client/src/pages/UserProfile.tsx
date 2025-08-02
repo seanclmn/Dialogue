@@ -20,6 +20,7 @@ const query = graphql`
     user(username: $username) {
       username
       id
+      bio
     }
   }
 `;
@@ -46,11 +47,12 @@ const Content = ({ queryReference }: ContentProps) => {
     useMutation<UserProfileMutation>(mutation);
 
   return (
-    <div className="w-full flex flex-col items-center py-2">
+    <div className="w-full flex flex-col items-center py-2 max-w-96 mx-auto">
       {data.user.username === currentUser.user.username ?
         <Avatar src={img} containerStyle="w-28 h-28 my-2" editable link="/editprofile" /> :
         <Avatar src={img} containerStyle="w-28 h-28 my-2" />}
       <p className="my-2">{data.user.username}</p>
+      <p className="text-sm text-gray-500">{data.user.bio}</p>
       {data.user.id !== currentUser.user.id ? (
         <Button
           title="Add"

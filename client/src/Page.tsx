@@ -126,7 +126,7 @@ const Content = ({ queryReference }: ContentProps) => {
       ...user,
       id: currentUser.id,
       username: currentUser.username,
-      bio: currentUser.bio
+      bio: currentUser.bio ?? ""
     });
   }, [currentUser.username]);
 
