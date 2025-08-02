@@ -6,6 +6,7 @@ import { Input } from "@components/shared/Inputs/GenericInput";
 import { Controller, useForm } from "react-hook-form";
 import { InputError } from "@components/error/InputError";
 import { Button } from "@components/shared/Buttons/GenericButton";
+import { useUpdateUserMutation } from "@mutations/UpdateUser";
 
 type Inputs = {
   username: string;
@@ -13,23 +14,34 @@ type Inputs = {
 };
 
 type EditProfileProps = {
+  id: string;
   username: string;
   bio?: string;
 };
 
-const EditProfileForm = ({ username, bio }: EditProfileProps) => {
+const EditProfileForm = ({ username, bio, id }: EditProfileProps) => {
   const {
     control,
     formState: { errors },
-  } = useForm<Inputs>();
+    handleSubmit
+  } = useForm<Inputs>({ defaultValues: { username, bio } });
 
-  console.log("EditProfileForm username", username);
+  const { updateUser, isMutationInFlight } = useUpdateUserMutation();
+
+  const onSubmit = (data: Inputs) => {
+    const input = {
+      username: data.username,
+      bio: data.bio,
+    };
+    updateUser({ id, ...input });
+  }
+
   return (
     <div className="w-full flex flex-col items-center py-2">
       <Avatar src={img} containerStyle="w-28 h-28 my-2 " editable />
       <form
-      // className="flex flex-col"
-      // onSubmit={handleSubmit(onSubmit)}
+        // className="flex flex-col"
+        onSubmit={handleSubmit(onSubmit)}
       >
         <Controller
           control={control}
@@ -55,8 +67,8 @@ const EditProfileForm = ({ username, bio }: EditProfileProps) => {
           title="Edit"
           type="submit"
           styles="text-sm my-2"
-        // loading={isMutationInFlight}
-        // disabled={isMutationInFlight}
+          loading={isMutationInFlight}
+          disabled={isMutationInFlight}
         />
 
       </form>
@@ -68,14 +80,14 @@ export const EditProfile = () => {
   const data = useContext(UserContext);
   console.log("EditProfile data", data);
 
-  if (!data.user.username) {
+  if (!data.user.username || !data.user.id) {
     return <div className="text-center">Loading...</div>;
   }
 
   return (
     <div className="w-full flex flex-col items-center py-2">
       <h1 className="text-2xl font-bold">Edit Profile</h1>
-      <EditProfileForm username={data.user.username} bio={data.user.bio ?? ""} />
+      <EditProfileForm username={data.user.username} bio={data.user.bio ?? ""} id={data.user.id} />
     </div>
   );
 }
