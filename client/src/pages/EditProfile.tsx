@@ -8,6 +8,7 @@ import { InputError } from "@components/error/InputError";
 import { Button } from "@components/shared/Buttons/GenericButton";
 import { useUpdateUserMutation } from "@mutations/UpdateUser";
 import { TextAreaInput } from "@components/shared/Inputs/TextAreaInput";
+import { useNavigate } from "react-router";
 
 type Inputs = {
   username: string;
@@ -28,13 +29,14 @@ const EditProfileForm = ({ username, bio, id }: EditProfileProps) => {
   } = useForm<Inputs>({ defaultValues: { username, bio } });
 
   const { updateUser, isMutationInFlight } = useUpdateUserMutation();
-
+  const navigate = useNavigate()
   const onSubmit = (data: Inputs) => {
     const input = {
       username: data.username,
       bio: data.bio,
     };
     updateUser({ id, ...input });
+    navigate(-1)
   }
 
   return (

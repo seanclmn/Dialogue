@@ -21,13 +21,6 @@ export const Nav = () => {
   const data = useContext(UserContext);
   return (
     <div className="border-brd-color border-r-[1px] px-4 h-full flex-col items-center">
-      <Link to="/friends">
-        {pathname.includes("/friends") ? (
-          <UserCircleIconSolid className="my-4 w-7 font-bold" />
-        ) : (
-          <UserCircleIcon className="my-4 w-7" />
-        )}
-      </Link>
       <Link to="/chats">
         {pathname.includes("/chats") || pathname === "/" ? (
           <ChatBubbleOvalLeftEllipsisIconSolid className="my-4 w-7 font-bold" />

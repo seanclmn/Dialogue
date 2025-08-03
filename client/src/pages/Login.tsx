@@ -30,15 +30,12 @@ type Inputs = {
 };
 
 export const Login = () => {
-  const [creds, setCreds] = useState({ username: "", password: "" });
   const [cookies, setCookie] = useCookies(["accessToken"]);
   const [commitMutation, isMutationInFlight] =
     useMutation<LoginMutation>(mutation);
 
   const {
-    register,
     handleSubmit,
-    watch,
     control,
     formState: { errors },
   } = useForm<Inputs>();

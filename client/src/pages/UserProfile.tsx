@@ -80,7 +80,7 @@ export const UserProfile = () => {
     if (username) {
       loadQuery({ username: username });
     }
-  }, []);
+  }, [username]);
 
   if (!queryReference) return <Loader />;
 
