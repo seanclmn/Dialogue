@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "../components/shared/Buttons/GenericButton";
 import { Input } from "../components/shared/Inputs/GenericInput";
 import { graphql } from "relay-runtime";
@@ -57,8 +56,6 @@ export const Login = () => {
       },
     });
   };
-
-  console.log(errors);
 
   return (
     <form

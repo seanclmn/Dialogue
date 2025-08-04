@@ -10,7 +10,7 @@ import { UserContext } from "../../contexts/UserContext";
 const fragment = graphql`
   fragment ChatGroupsContainer_user on User
   @argumentDefinitions(
-    first: { type: "Int", defaultValue: 300 }
+    first: { type: "Int", defaultValue: 10 }
     after: { type: "String" }
   )
   @refetchable(queryName: "ChatGroupsContainerRefetchQuery") {

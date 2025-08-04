@@ -73,7 +73,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     <div className="h-full w-full flex flex-col justify-between">
       <ChatHeader title={data.node?.name ?? "(unnamed chat)"} />
 
-      <div className="flex flex-col items-start grow px-2 py-4 h-1 overflow-auto">
+      <div className="flex flex-col items-start grow px-2 py-4 h-1">
         {data.node ? <Messages fragmentKey={data.node} /> : null}
         {isTyping ? (
           <div className="flex flex-row">

@@ -1,6 +1,6 @@
 import { Message } from "@components/shared/Messages/Message";
 import { Messages_chat$key } from "@generated/Messages_chat.graphql";
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { usePaginationFragment } from "react-relay";
 import { graphql } from "relay-runtime";
 import { UserContext } from "../../contexts/UserContext";
@@ -8,7 +8,7 @@ import { UserContext } from "../../contexts/UserContext";
 const fragment = graphql`
   fragment Messages_chat on Chat
   @argumentDefinitions(
-    first: { type: "Int", defaultValue: 300 }
+    first: { type: "Int", defaultValue: 40 }
     after: { type: "String" }
   )
   @refetchable(queryName: "MessagesRefetchQuery") {
@@ -36,18 +36,38 @@ type MessagesProps = {
 };
 
 export const Messages = ({ fragmentKey }: MessagesProps) => {
-  const { data } = usePaginationFragment(fragment, fragmentKey);
+  const { data, loadNext, hasNext, isLoadingNext } = usePaginationFragment(fragment, fragmentKey);
+  const [isAtTop, setIsAtTop] = useState(false);
   const userContext = useContext(UserContext);
   const endMessagesRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const messages = [...data.messages.edges].reverse()
 
   useEffect(() => {
     if (endMessagesRef.current)
       endMessagesRef.current.scrollIntoView({ behavior: "auto" });
-  }, [data.messages.edges.length]);
+  }, []);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const handleScroll = () => {
+      const isNowAtTop = container.scrollTop < 50;
+      setIsAtTop(isNowAtTop);
+      if (isNowAtTop && hasNext) {
+        console.log("Loading next messages...");
+        loadNext(40); // Load 10 more messages
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [hasNext, isLoadingNext, loadNext]);
 
   return (
-    <>
-      {data.messages.edges.map((edge) => {
+    <div ref={containerRef} className="w-full h-full overflow-auto">
+      {messages.map((edge) => {
         return (
           <Message
             text={edge.node.text}
@@ -57,7 +77,7 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
           />
         );
       })}
-      <div ref={endMessagesRef} />
-    </>
+      <div ref={endMessagesRef} className="h-1" />
+    </div>
   );
 };
