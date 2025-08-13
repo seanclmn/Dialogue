@@ -2,14 +2,16 @@ import { Avatar } from "../users/Avatar";
 import img from "../../../assets/jennie.jpeg";
 
 export interface MessageProps extends React.DOMAttributes<HTMLElement> {
+  date: string;
   text: string;
   id: string;
   senderIsMe?: boolean;
   first?: boolean;
 }
 
-export const Message = ({ text, senderIsMe, first }: MessageProps) => {
+export const Message = ({ date, text, senderIsMe, first }: MessageProps) => {
   // if (!text) return null;
+  const formattedDate = new Date(date).toDateString()
   return (
     <div className={`flex w-full items-start`}>
       {first && !senderIsMe ? <Avatar src={img} /> : null}
@@ -25,6 +27,7 @@ export const Message = ({ text, senderIsMe, first }: MessageProps) => {
           {text ? text : "No text provided"}
         </p>
       </div>
+      {<p>{formattedDate}</p>}
     </div>
   );
 };

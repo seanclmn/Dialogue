@@ -8,7 +8,7 @@ import { UserContext } from "../../contexts/UserContext";
 const fragment = graphql`
   fragment Messages_chat on Chat
   @argumentDefinitions(
-    first: { type: "Int", defaultValue: 40 }
+    first: { type: "Int", defaultValue: 20 }
     after: { type: "String" }
   )
   @refetchable(queryName: "MessagesRefetchQuery") {
@@ -42,8 +42,6 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
   const endMessagesRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const messages = [...data.messages.edges].reverse()
-
   useEffect(() => {
     if (endMessagesRef.current)
       endMessagesRef.current.scrollIntoView({ behavior: "auto" });
@@ -53,11 +51,11 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
     const container = containerRef.current;
     if (!container) return;
     const handleScroll = () => {
-      const isNowAtTop = container.scrollTop < 50;
+      const isNowAtTop = container.scrollTop < 100;
       setIsAtTop(isNowAtTop);
       if (isNowAtTop && hasNext) {
         console.log("Loading next messages...");
-        loadNext(40); // Load 10 more messages
+        loadNext(20); // Load 10 more messages
       }
     };
 
@@ -67,9 +65,10 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
 
   return (
     <div ref={containerRef} className="w-full h-full overflow-auto">
-      {messages.map((edge) => {
+      {data.messages.edges.map((edge) => {
         return (
           <Message
+            date={edge.node.createdAt}
             text={edge.node.text}
             id={edge.node.id}
             key={edge.node.id}
