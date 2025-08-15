@@ -62,6 +62,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   const data = usePreloadedQuery(query, queryReference);
 
   useEffect(() => {
+    console.log("ChatContainer useEffect", data.node?.name);
     const delayDebounceFn = setTimeout(() => {
       setIsTyping(false);
     }, 2000);
@@ -69,8 +70,13 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     return () => clearTimeout(delayDebounceFn);
   }, [isTyping, chatId]);
 
+  if (!queryReference || !data.node) {
+    return <p>wonton</p>
+  }
+
   return (
     <div className="h-full w-full flex flex-col justify-between">
+      {!queryReference ? <Loader /> : null}
       <ChatHeader title={data.node?.name ?? "(unnamed chat)"} />
 
       <div className="flex flex-col items-start grow px-2 py-4 h-1">
@@ -151,11 +157,15 @@ export const ChatContainer = () => {
   const [queryReference, loadQuery] = useQueryLoader<ChatContainerQuery>(query);
 
   useEffect(() => {
+    console.log("ChatContainer useEffect", id);
     if (id) loadQuery({ id: id });
   }, [id]);
 
   if (!id) return null;
-  if (!queryReference) return <Loader />;
+  if (!queryReference) return (
+    <div className="h-full w-full flex flex-col justify-between">
+      <Loader />
+    </div>);
 
   return (
     <Suspense>

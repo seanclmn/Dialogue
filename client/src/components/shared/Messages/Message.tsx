@@ -17,7 +17,7 @@ export const Message = ({ date, text, senderIsMe, first }: MessageProps) => {
       {first && !senderIsMe ? <Avatar src={img} /> : null}
       <div
         className={`${senderIsMe ? "bg-primary ml-auto" : "bg-secondary"
-          } my-[1px] p-1 rounded-[10px] inline-flex`}
+          } my-[1px] p-1 py-2 rounded-[18px] inline-flex`}
       >
         <p
           lang="en"
@@ -27,7 +27,7 @@ export const Message = ({ date, text, senderIsMe, first }: MessageProps) => {
           {text ? text : "No text provided"}
         </p>
       </div>
-      {<p>{formattedDate}</p>}
+      {/* {<p>{formattedDate}</p>} */}
     </div>
   );
 };

@@ -75,7 +75,7 @@ type ContentProps = {
 };
 
 const Content = ({ queryReference }: ContentProps) => {
-  const { currentUser } = usePreloadedQuery(query, queryReference);
+  const { currentUser, } = usePreloadedQuery(query, queryReference);
   const { user, setUser } = useContext(UserContext);
   const config: GraphQLSubscriptionConfig<PageChatsSubscription> = useMemo(
     () => ({
@@ -107,7 +107,7 @@ const Content = ({ queryReference }: ContentProps) => {
           "MessageEdge",
         );
 
-        ConnectionHandler.insertEdgeAfter(messagesConnection, newEdge);
+        ConnectionHandler.insertEdgeBefore(messagesConnection, newEdge);
       },
       onError: (e) => {
         console.log(e);
@@ -129,8 +129,6 @@ const Content = ({ queryReference }: ContentProps) => {
       bio: currentUser.bio ?? ""
     });
   }, [currentUser.username]);
-
-  console.log(currentUser);
 
   if (!currentUser.id) return <Loader />;
 

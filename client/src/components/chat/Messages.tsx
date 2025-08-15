@@ -4,6 +4,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { usePaginationFragment } from "react-relay";
 import { graphql } from "relay-runtime";
 import { UserContext } from "../../contexts/UserContext";
+import { Loader } from "@components/shared/loaders/Loader";
 
 const fragment = graphql`
   fragment Messages_chat on Chat
@@ -55,7 +56,7 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
       setIsAtTop(isNowAtTop);
       if (isNowAtTop && hasNext) {
         console.log("Loading next messages...");
-        loadNext(20); // Load 10 more messages
+        loadNext(20);
       }
     };
 
@@ -63,9 +64,13 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
     return () => container.removeEventListener('scroll', handleScroll);
   }, [hasNext, isLoadingNext, loadNext]);
 
+  const messages = [...data.messages.edges].reverse();
+
   return (
     <div ref={containerRef} className="w-full h-full overflow-auto">
-      {data.messages.edges.map((edge) => {
+      {!hasNext ? <p className="text-center text-gray-500 my-4">Dialogue started!</p> : null}
+      {isLoadingNext ? <div className="w-full flex flex-col items-center my-2"><Loader /></div> : null}
+      {messages.map((edge) => {
         return (
           <Message
             date={edge.node.createdAt}
