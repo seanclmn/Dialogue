@@ -62,7 +62,6 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   const data = usePreloadedQuery(query, queryReference);
 
   useEffect(() => {
-    console.log("ChatContainer useEffect", data.node?.name);
     const delayDebounceFn = setTimeout(() => {
       setIsTyping(false);
     }, 2000);

@@ -89,7 +89,6 @@ export class UsersService {
   }
 
   async getFriendRequests(receiverId: string) {
-    console.log(receiverId)
     const requests = await this.friendRequestsRepository.find({
       where: {
         receiver: {

@@ -56,9 +56,7 @@ export const RelayProvider = ({ children }: PropsWithChildren) => {
     return Observable.from(
       response.then(async (data) => {
         const json = await data.json()
-        console.log(json)
         if (json?.errors?.some((err) => err.message === "Unauthorized")) {
-          console.log("wonton")
           removeCookie("accessToken")
         }
         return json;

@@ -25,7 +25,6 @@ export const UserSearch = () => {
   const fetch = useCallback(
     (username: string) => {
       if (username === "") return null;
-      console.log(username);
       return fetchQuery<UserSearchQuery>(env, query, { username: username })
         .toPromise()
         .then((result) => result);
