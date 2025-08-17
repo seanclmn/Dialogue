@@ -38,7 +38,7 @@ type MessagesProps = {
 
 export const Messages = ({ fragmentKey }: MessagesProps) => {
   const { data, loadNext, hasNext, isLoadingNext } = usePaginationFragment(fragment, fragmentKey);
-  const [isAtTop, setIsAtTop] = useState(false);
+  const [, setIsAtTop] = useState(false);
   const userContext = useContext(UserContext);
   const endMessagesRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -55,11 +55,9 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
       const isNowAtTop = container.scrollTop < 100;
       setIsAtTop(isNowAtTop);
       if (isNowAtTop && hasNext) {
-        console.log("Loading next messages...");
         loadNext(20);
       }
     };
-
     container.addEventListener('scroll', handleScroll);
     return () => container.removeEventListener('scroll', handleScroll);
   }, [hasNext, isLoadingNext, loadNext]);
