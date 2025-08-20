@@ -53,6 +53,8 @@ export class MessagesService {
     first: number,
     after?: Date
   ): Promise<MessageConnection> {
+    // wait 5 seconds before returning messages
+    await new Promise(resolve => setTimeout(resolve, 500));
     const afterDate = after ? new Date(after) : undefined;
     const where = afterDate
       ? { chat: { id }, createdAt: LessThan(afterDate) }

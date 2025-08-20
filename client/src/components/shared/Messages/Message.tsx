@@ -1,6 +1,6 @@
 import { Avatar } from "../users/Avatar";
 import img from "../../../assets/jennie.jpeg";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 export interface MessageProps extends React.DOMAttributes<HTMLElement> {
   date: string;
@@ -10,7 +10,7 @@ export interface MessageProps extends React.DOMAttributes<HTMLElement> {
   first?: boolean;
 }
 
-export const Message = ({ date, text, senderIsMe, first }: MessageProps) => {
+export const Message = memo(({ date, text, senderIsMe, first }: MessageProps) => {
   const [visible, setVisible] = useState(false);
   // if (!text) return null;
   // const formattedDate = new Date(date).toDateString()
@@ -37,4 +37,4 @@ export const Message = ({ date, text, senderIsMe, first }: MessageProps) => {
                      shadow-lg whitespace-nowrap z-50">{formattedDate}</p> : null} */}
     </div>
   );
-};
+});
