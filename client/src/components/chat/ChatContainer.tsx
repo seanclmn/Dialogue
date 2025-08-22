@@ -156,7 +156,6 @@ export const ChatContainer = () => {
   const [queryReference, loadQuery] = useQueryLoader<ChatContainerQuery>(query);
 
   useEffect(() => {
-    console.log("ChatContainer useEffect", id);
     if (id) loadQuery({ id: id });
   }, [id]);
 
