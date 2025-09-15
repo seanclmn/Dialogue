@@ -11,13 +11,27 @@ import { MessagesService } from 'src/messages/messages.service';
 import { MessageConnection } from 'src/messages/entities/Message.Connection.entity';
 import { ChatUpdate } from './dto/chatUpdate';
 import { pubSub } from 'src/messages/messages.resolver';
-
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { TypingEvent } from './events/typing.event';
+import { TypingEventOutput } from './dto/typingEvent';
 @Resolver(() => Chat)
 export class ChatsResolver {
   constructor(private readonly chatsService: ChatsService,
     private usersService: UsersService,
-    private messagesService: MessagesService
-  ) { }
+    private messagesService: MessagesService,
+    private eventEmitter: EventEmitter2,
+    private typingState: TypingEvent
+  ) {
+    this.typingState = {
+      chatId: null,
+      userId: null,
+      isTyping: false
+    }
+    this.eventEmitter.on('chat.typing', (event: TypingEvent) => {
+      pubSub.publish('USER_TYPING', { userTyping: event });
+    });
+  }
+
 
   @Mutation(() => Chat)
   @UseGuards(JwtGuard)
@@ -86,5 +100,31 @@ export class ChatsResolver {
   })
   newMessage(@Args('chatIds', { type: () => [ID!]! }) chatIds: string[]) {
     return pubSub.asyncIterableIterator('newMessage')
+  }
+
+  @Mutation(() => TypingEventOutput)
+  updateTyping(
+    @Args('chatId') chatId: string,
+    @Args('userId') userId: string,
+    @Args('isTyping') isTyping: boolean,
+  ) {
+    // this.typingState[chatId] = this.typingState[chatId] || {};
+    // this.typingState[chatId][userId] = isTyping;
+    const typingStateObj = new TypingEvent(chatId, userId, isTyping)
+    // Emit the event
+    this.eventEmitter.emit(
+      'chat.typing',
+      typingStateObj
+    );
+
+    return typingStateObj;
+  }
+
+  @Subscription(() => TypingEventOutput, {
+    resolve: (payload: { typeEvent: TypingEvent }) => payload.typeEvent,
+    filter: (payload, variables) => payload.userTyping.chatId === variables.chatId,
+  })
+  userTyping(@Args('chatId', { type: () => ID! }) chatId: string) {
+    return pubSub.asyncIterableIterator("userTyping")
   }
 }

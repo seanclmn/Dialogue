@@ -5,7 +5,6 @@ import {
   RecordProxy,
   RecordSourceProxy,
 } from "relay-runtime";
-import "./App.css";
 import { Suspense, useContext, useEffect, useMemo } from "react";
 import {
   PreloadedQuery,

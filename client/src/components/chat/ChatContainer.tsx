@@ -4,7 +4,7 @@ import { Typing } from "./Typing";
 import { Avatar } from "../shared/users/Avatar";
 import img from "../../assets/jennie.jpeg";
 import { Loader } from "../shared/loaders/Loader";
-import { graphql } from "relay-runtime";
+import { graphql, GraphQLSubscriptionConfig } from "relay-runtime";
 import {
   PreloadedQuery,
   useMutation,
@@ -18,6 +18,9 @@ import { Messages } from "./Messages";
 import { useParams } from "react-router";
 import { ChatHeader } from "./ChatHeader";
 import { ChatSendButton } from "@components/shared/Buttons/ChatSendButton";
+import { UpdateTypingMutation } from "@generated/UpdateTypingMutation.graphql";
+import { useUpdateTyping } from "@mutations/UpdateTyping";
+import { ChatContainerSubscription } from "@generated/ChatContainerSubscription.graphql";
 
 const query = graphql`
   query ChatContainerQuery($id: ID!) {
@@ -48,6 +51,16 @@ const mutation = graphql`
   }
 `;
 
+const subscription = graphql`
+  subscription ChatContainerSubscription($chatId: ID!) {
+    userTyping(chatId: $chatId) {
+      chatId
+      isTyping
+      userId
+    } 
+  }
+`
+
 interface ContentProps {
   queryReference: PreloadedQuery<ChatContainerQuery>;
   chatId: string;
@@ -56,21 +69,31 @@ interface ContentProps {
 export const Content = ({ queryReference, chatId }: ContentProps) => {
   const [messageMap, setMessageMap] = useState<Record<string, string>>({});
   const [message, setMessage] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState<boolean | null>(null);
   const { user } = useContext(UserContext);
   const [commitMutation] = useMutation<ChatContainerMutation>(mutation);
+  const { updateTyping } = useUpdateTyping()
   const data = usePreloadedQuery(query, queryReference);
 
   useEffect(() => {
+    const { id: userId } = user
     const delayDebounceFn = setTimeout(() => {
+      if (isTyping === false && userId) {
+        console.log("finish")
+        updateTyping({ chatId, isTyping: false, userId })
+      }
       setIsTyping(false);
     }, 2000);
+
+    if (isTyping && userId) {
+      updateTyping({ chatId, isTyping, userId })
+    }
 
     return () => clearTimeout(delayDebounceFn);
   }, [isTyping, chatId]);
 
   if (!queryReference || !data.node) {
-    return <p>wonton</p>
+    return null
   }
 
   return (

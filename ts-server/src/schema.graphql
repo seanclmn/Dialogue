@@ -109,6 +109,7 @@ type Mutation {
   signup(createUserInput: CreateUserInput!): LoginResponse!
   updateChat(updateChatInput: UpdateChatInput!): Chat!
   updateMessage(updateMessageInput: UpdateMessageInput!): Message!
+  updateTyping(chatId: String!, isTyping: Boolean!, userId: String!): TypingEventOutput!
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
@@ -140,6 +141,13 @@ input SendFriendRequestInput {
 
 type Subscription {
   newMessage(chatIds: [ID!]!): ChatUpdate!
+  userTyping(chatId: ID!): TypingEventOutput!
+}
+
+type TypingEventOutput {
+  chatId: ID!
+  isTyping: Boolean!
+  userId: String!
 }
 
 input UpdateChatInput {

@@ -6,10 +6,11 @@ import { Chat } from './entities/chat.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UsersModule } from 'src/users/users.module';
 import { MessagesModule } from 'src/messages/messages.module';
+import { TypingEvent } from './events/typing.event';
 
 @Module({
   imports: [UsersModule, TypeOrmModule.forFeature([Chat]), MessagesModule],
-  providers: [ChatsResolver, ChatsService],
+  providers: [ChatsResolver, ChatsService, TypingEvent],
   exports: [ChatsService]
 })
 export class ChatsModule { }
