@@ -45,7 +45,6 @@ export class ChatsResolver {
 
     const res = await this.chatsService.create(input);
 
-
     return Promise.all(res.participants.map(async (user) => {
       const userObj: UpdateUserInput = structuredClone(user)
 
@@ -103,7 +102,7 @@ export class ChatsResolver {
     @Args('isTyping') isTyping: boolean,
   ) {
     const typingStateObj = new TypingEvent(chatId, userId, isTyping)
-    // Emit the event
+
     this.eventEmitter.emit(
       'chat.typing',
       typingStateObj
@@ -114,7 +113,6 @@ export class ChatsResolver {
 
   @Subscription(() => TypingEventOutput, {
     filter: (payload, variables) => {
-      console.log("PAYLOAD:", payload);
       return payload.userTyping.chatId === variables.chatId;
     },
     resolve: (payload) => payload.userTyping,
