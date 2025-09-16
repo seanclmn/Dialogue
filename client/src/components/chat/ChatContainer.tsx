@@ -75,6 +75,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   const [commitMutation] = useMutation<ChatContainerMutation>(mutation);
   const { updateTyping } = useUpdateTyping()
   const data = usePreloadedQuery(query, queryReference);
+  const [friendTyping, setFriendTyping] = useState<boolean>(false)
 
   useEffect(() => {
     const { id: userId } = user
@@ -83,7 +84,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
         updateTyping({ chatId, isTyping: false, userId })
       }
       setIsTyping(false);
-    }, 2000);
+    }, 400);
 
     if (isTyping && userId) {
       updateTyping({ chatId, isTyping, userId })
@@ -95,21 +96,30 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   if (!queryReference || !data.node) {
     return null
   }
-
+  console.log(chatId)
   const config: GraphQLSubscriptionConfig<ChatContainerSubscription> = useMemo(
     () => ({
       subscription: subscription,
       variables: { chatId: chatId },
       updater: (store) => {
-        const newEvent = store.getRootField("newTypingEvent")
-        console.log("NEW EVENT NICE", newEvent)
+        const newEventField = store.getRootField("userTyping")
+        const typingUser = newEventField.getValue("userId")
+        const isTyping = newEventField.getValue("isTyping")
+        if (typingUser !== user.id)
+          setFriendTyping(() => isTyping)
+      },
+      onError: (e) => {
+        console.log(e)
+      },
+      onCompleted: () => {
+        console.log("completed")
       }
     }),
     [data.node?.id]
   )
 
   const typingEvent = useSubscription(config)
-
+  console.log(typingEvent)
   return (
     <div className="h-full w-full flex flex-col justify-between">
       {!queryReference ? <Loader /> : null}
@@ -117,7 +127,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
 
       <div className="flex flex-col items-start grow px-2 py-4 h-1">
         {data.node ? <Messages fragmentKey={data.node} /> : null}
-        {isTyping ? (
+        {friendTyping ? (
           <div className="flex flex-row">
             <Avatar src={img} containerStyle="h-8" />
             <Typing />

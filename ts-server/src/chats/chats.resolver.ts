@@ -28,7 +28,7 @@ export class ChatsResolver {
       isTyping: false
     }
     this.eventEmitter.on('chat.typing', (event: TypingEvent) => {
-      pubSub.publish('USER_TYPING', { userTyping: event });
+      pubSub.publish('userTyping', { userTyping: event });
     });
   }
 
@@ -108,8 +108,6 @@ export class ChatsResolver {
     @Args('userId') userId: string,
     @Args('isTyping') isTyping: boolean,
   ) {
-    // this.typingState[chatId] = this.typingState[chatId] || {};
-    // this.typingState[chatId][userId] = isTyping;
     const typingStateObj = new TypingEvent(chatId, userId, isTyping)
     // Emit the event
     this.eventEmitter.emit(
@@ -121,10 +119,13 @@ export class ChatsResolver {
   }
 
   @Subscription(() => TypingEventOutput, {
-    resolve: (payload: { typeEvent: TypingEvent }) => payload.typeEvent,
-    filter: (payload, variables) => payload.userTyping.chatId === variables.chatId,
+    filter: (payload, variables) => {
+      console.log("PAYLOAD:", payload);
+      return payload.userTyping.chatId === variables.chatId;
+    },
+    resolve: (payload) => payload.userTyping,
   })
-  userTyping(@Args('chatId', { type: () => ID! }) chatId: string) {
-    return pubSub.asyncIterableIterator("userTyping")
+  userTyping(@Args('chatId', { type: () => ID }) chatId: string) {
+    return pubSub.asyncIterableIterator('userTyping');
   }
 }
