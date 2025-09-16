@@ -20,13 +20,7 @@ export class ChatsResolver {
     private usersService: UsersService,
     private messagesService: MessagesService,
     private eventEmitter: EventEmitter2,
-    private typingState: TypingEvent
   ) {
-    this.typingState = {
-      chatId: null,
-      userId: null,
-      isTyping: false
-    }
     this.eventEmitter.on('chat.typing', (event: TypingEvent) => {
       pubSub.publish('userTyping', { userTyping: event });
     });
