@@ -1,4 +1,4 @@
-import { Suspense, useContext, useEffect, useState } from "react";
+import { Suspense, useContext, useEffect, useMemo, useState } from "react";
 import { ChatInput } from "../shared/Inputs/ChatInput";
 import { Typing } from "./Typing";
 import { Avatar } from "../shared/users/Avatar";
@@ -10,6 +10,7 @@ import {
   useMutation,
   usePreloadedQuery,
   useQueryLoader,
+  useSubscription,
 } from "react-relay";
 import { ChatContainerQuery } from "@generated/ChatContainerQuery.graphql";
 import { ChatContainerMutation } from "@generated/ChatContainerMutation.graphql";
@@ -79,7 +80,6 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     const { id: userId } = user
     const delayDebounceFn = setTimeout(() => {
       if (isTyping === false && userId) {
-        console.log("finish")
         updateTyping({ chatId, isTyping: false, userId })
       }
       setIsTyping(false);
@@ -95,6 +95,20 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   if (!queryReference || !data.node) {
     return null
   }
+
+  const config: GraphQLSubscriptionConfig<ChatContainerSubscription> = useMemo(
+    () => ({
+      subscription: subscription,
+      variables: { chatId: chatId },
+      updater: (store) => {
+        const newEvent = store.getRootField("newTypingEvent")
+        console.log("NEW EVENT NICE", newEvent)
+      }
+    }),
+    [data.node?.id]
+  )
+
+  const typingEvent = useSubscription(config)
 
   return (
     <div className="h-full w-full flex flex-col justify-between">
