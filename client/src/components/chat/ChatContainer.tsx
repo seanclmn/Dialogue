@@ -96,7 +96,6 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   if (!queryReference || !data.node) {
     return null
   }
-  console.log(chatId)
   const config: GraphQLSubscriptionConfig<ChatContainerSubscription> = useMemo(
     () => ({
       subscription: subscription,
@@ -119,7 +118,6 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   )
 
   const typingEvent = useSubscription(config)
-  console.log(typingEvent)
   return (
     <div className="h-full w-full flex flex-col justify-between">
       {!queryReference ? <Loader /> : null}
