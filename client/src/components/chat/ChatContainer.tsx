@@ -19,7 +19,6 @@ import { Messages } from "./Messages";
 import { useParams } from "react-router";
 import { ChatHeader } from "./ChatHeader";
 import { ChatSendButton } from "@components/shared/Buttons/ChatSendButton";
-import { UpdateTypingMutation } from "@generated/UpdateTypingMutation.graphql";
 import { useUpdateTyping } from "@mutations/UpdateTyping";
 import { ChatContainerSubscription } from "@generated/ChatContainerSubscription.graphql";
 
@@ -117,7 +116,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     [data.node?.id]
   )
 
-  const typingEvent = useSubscription(config)
+  const _ = useSubscription(config)
   return (
     <div className="h-full w-full flex flex-col justify-between">
       {!queryReference ? <Loader /> : null}

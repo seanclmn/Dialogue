@@ -11,9 +11,7 @@ export interface MessageProps extends React.DOMAttributes<HTMLElement> {
 }
 
 export const Message = memo(({ date, text, senderIsMe, first }: MessageProps) => {
-  const [visible, setVisible] = useState(false);
-  // if (!text) return null;
-  // const formattedDate = new Date(date).toDateString()
+  const [, setVisible] = useState(false);
   return (
     <div className={`flex w-full items-start`}
     >
@@ -32,9 +30,6 @@ export const Message = memo(({ date, text, senderIsMe, first }: MessageProps) =>
           {text ? text : "No text provided"}
         </p>
       </div>
-      {/* {visible ? <p className=" mb-2
-                     rounded-lg bg-gray-800 text-white text-sm px-2 py-1 
-                     shadow-lg whitespace-nowrap z-50">{formattedDate}</p> : null} */}
     </div>
   );
 });

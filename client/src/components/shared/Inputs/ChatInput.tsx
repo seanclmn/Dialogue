@@ -9,7 +9,6 @@ export const ChatInput = ({
   onChange,
   value,
   styles,
-  ...rest
 }: ChatInputProps) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
