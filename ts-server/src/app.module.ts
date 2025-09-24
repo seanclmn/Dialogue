@@ -13,6 +13,7 @@ import { Message } from './messages/entities/message.entity';
 import { NodeResolver } from './node/node.resolver';
 import { FriendRequest } from './users/entities/friendRequests.entity';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { NotificationsModule } from './notifications/notifications.module';
 @Module({
   imports: [
     GraphQLModule.forRoot({
@@ -53,7 +54,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       verboseMemoryLeak: false,
       // disable throwing uncaughtException if an error event is emitted and it has no listeners
       ignoreErrors: false,
-    })
+    }),
+    NotificationsModule
   ],
   providers: [NodeResolver],
 })
