@@ -117,6 +117,13 @@ interface Node {
   id: ID!
 }
 
+type Notification {
+  id: String!
+  receiver: User!
+  receiverId: ID!
+  sender: User!
+}
+
 type PageInfo {
   endCursor: String!
   hasNextPage: Boolean!
@@ -130,6 +137,7 @@ type Query {
   currentUser: User!
   message(id: Int!): Message!
   node(id: ID!): Node
+  notifications(id: ID!): [Notification!]!
   user(username: String!): User!
   users(username: String!): [User!]!
 }
