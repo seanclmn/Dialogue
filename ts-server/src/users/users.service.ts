@@ -16,6 +16,7 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(Chat) private chatsRepository: Repository<Chat>,
     @InjectRepository(FriendRequest) private friendRequestsRepository: Repository<FriendRequest>,
+    @InjectRepository(Notification) private notificationsRepository: Repository<Notification>
   ) { }
 
   async create(createUserInput: CreateUserInput) {
@@ -74,6 +75,18 @@ export class UsersService {
     return { edges, pageInfo };
   }
 
+  async getNotificationsForUser(id: string, first?: number, after?: Date) {
+    const where = after
+      ? { receiver: { id: id }, createdAt: MoreThan(after) }
+      : { receiver: { id: id } }
+
+    const notifications = await this.notificationsRepository.find({
+      where,
+      order: { updatedAt: 'ASC' },
+      relations: ['receiver'],
+      take: first + 1
+    })
+  }
 
   async updateUser(updateUserInput: UpdateUserInput) {
     const user = await this.usersRepository.findOne({ where: { id: updateUserInput.id } });
