@@ -77,12 +77,13 @@ export class UsersService {
 
   async getNotificationsForUser(id: string, first?: number, after?: Date) {
     const where = after
-      ? { receiver: { id: id }, createdAt: MoreThan(after) }
-      : { receiver: { id: id } }
+      ? { receiverId: id, createdAt: MoreThan(after) }
+      : { receiverId: id }
 
     const notifications = await this.notificationsRepository.find({
-      where,
-      order: { updatedAt: 'ASC' },
+      where: {
+        receiverId: id
+      },
       relations: ['receiver'],
       take: first + 1
     })

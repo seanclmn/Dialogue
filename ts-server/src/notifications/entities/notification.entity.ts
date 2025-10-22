@@ -1,10 +1,11 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { Node } from "src/relay";
 import { User } from "src/users/entities/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-@ObjectType()
-export class Notification {
+@ObjectType({ implements: Node })
+export class Notification implements Node {
   @PrimaryGeneratedColumn("uuid")
   @Field()
   id: string
@@ -20,6 +21,11 @@ export class Notification {
   @Column()
   @Field(() => ID)
   receiverId: string;
+
+  @Field()
+  @Column()
+  @CreateDateColumn()
+  createdAt: Date;
 
   @Column({
     type: 'enum',
