@@ -7,7 +7,7 @@ import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } f
 @ObjectType({ implements: Node })
 export class Notification implements Node {
   @PrimaryGeneratedColumn("uuid")
-  @Field()
+  @Field(() => ID)
   id: string
 
   @Field(() => User)

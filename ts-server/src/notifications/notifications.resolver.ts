@@ -10,8 +10,8 @@ export class NotificationsResolver {
   ) { }
 
   @Query(() => [Notification], { name: 'notifications' })
-  findAll(@Args('id', { type: () => ID }) id: string) {
-    return this.notificationsService.findAll(id)
+  findAll(@Args('userId', { type: () => ID }) userId: string) {
+    return this.notificationsService.findAll(userId)
   }
 
 }

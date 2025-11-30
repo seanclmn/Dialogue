@@ -1,15 +1,15 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersResolver } from './users.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Chat } from 'src/chats/entities/chat.entity';
 import { ChatsModule } from 'src/chats/chats.module';
-import { ChatsService } from 'src/chats/chats.service';
 import { FriendRequest } from './entities/friendRequests.entity';
+import { NotificationsModule } from 'src/notifications/notifications.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Chat, FriendRequest])],
+  imports: [TypeOrmModule.forFeature([User, FriendRequest, Chat]), ChatsModule, NotificationsModule],
   providers: [UsersResolver, UsersService],
   exports: [UsersService],
 })

@@ -20,21 +20,3 @@ export class PageInfo {
   @Field()
   endCursor: string;
 }
-
-// @InterfaceType()
-// export class Edge<Type> {
-//   @Field(() => String)
-//   cursor: string;
-
-//   @Field(() => Type)
-//   node: Type;
-// }
-
-// @InterfaceType()
-// export class Connection<T> {
-//   @Field(() => [Edge], { nullable: 'itemsAndList' })
-//   edges: Edge<T>[];
-
-//   @Field(() => PageInfo)
-//   pageInfo: PageInfo;
-// }

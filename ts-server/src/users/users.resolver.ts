@@ -9,11 +9,18 @@ import { UserConnection } from './entities/user.connection.entity';
 import { FriendRequest } from './entities/friendRequests.entity';
 import { AcceptFriendRequestInput, DeclineFriendRequestInput, SendFriendRequestInput } from './dto/friendRequest.input';
 import { UpdateUserInput } from './dto/update-user.input';
+import { NotificationsService } from 'src/notifications/notifications.service';
+
+import { Notification } from 'src/notifications/entities/notification.entity';
+import { buildRelayConnection, decodeDateCursor, encodeDateCursor, relayToOffset } from 'src/relay-helpers';
+import { NotificationConnection } from 'src/notifications/entities/notification.connection.entity';
+
 
 @Resolver(() => User)
 export class UsersResolver {
   constructor(
     private readonly usersService: UsersService,
+    private readonly notificationsService: NotificationsService,
   ) { }
 
   @Query(() => User)
@@ -88,15 +95,36 @@ export class UsersResolver {
   @ResolveField('friendRequests', () => [FriendRequest])
   async friendRequests(
     @Parent() user: User,
-    @Args('receiverId', { type: () => String, nullable: true }) receiverId?: string,
   ): Promise<FriendRequest[]> {
-    return await this.usersService.getFriendRequests(receiverId);
+    return await this.usersService.getFriendRequests(user.id);
   }
 
+  @ResolveField("notifications", () => NotificationConnection)
+  async notifications(
+    @Parent() user: User,
+    @Args('first', { type: () => Int, nullable: true }) first?: number,
+    @Args('after', { type: () => String, nullable: true }) after?: Date
+  ): Promise<NotificationConnection> {
+
+    const { take, skip } = relayToOffset(first, encodeDateCursor(after));
+
+    const { items, totalCount } =
+      await this.notificationsService.getNotificationsForUser(
+        user.id,
+        take,
+        skip,
+      );
 
 
-  // @Mutation(() => User)
-  // removeUser(@Args('id', { type: () => Int }) id: number) {
-  //   return this.usersService.remove(id);
-  // }
+    const args = {
+      first: take,
+      after: encodeDateCursor(after),
+    };
+
+    return buildRelayConnection(
+      items,
+      totalCount,
+      args,
+    );
+  }
 }
