@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int, Context, Subscription, Parent, ResolveField } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, Context, Parent, ResolveField } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { CreateUserInput } from './dto/create-user.input';
@@ -10,9 +10,7 @@ import { FriendRequest } from './entities/friendRequests.entity';
 import { AcceptFriendRequestInput, DeclineFriendRequestInput, SendFriendRequestInput } from './dto/friendRequest.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { NotificationsService } from 'src/notifications/notifications.service';
-
-import { Notification } from 'src/notifications/entities/notification.entity';
-import { buildRelayConnection, decodeDateCursor, encodeDateCursor, relayToOffset } from 'src/relay-helpers';
+import { buildRelayConnection, decodeCursor, relayToOffset } from 'src/relay-helpers';
 import { NotificationConnection } from 'src/notifications/entities/notification.connection.entity';
 
 
@@ -102,23 +100,23 @@ export class UsersResolver {
   @ResolveField("notifications", () => NotificationConnection)
   async notifications(
     @Parent() user: User,
-    @Args('first', { type: () => Int, nullable: true }) first?: number,
-    @Args('after', { type: () => String, nullable: true }) after?: Date
+    @Args('first', { type: () => Int, nullable: true }) first: number,
+    @Args('after', { type: () => String, nullable: true }) after?: string
   ): Promise<NotificationConnection> {
 
-    const { take, skip } = relayToOffset(first, encodeDateCursor(after));
+    const { take, skip } = relayToOffset(first, after);
 
     const { items, totalCount } =
       await this.notificationsService.getNotificationsForUser(
         user.id,
-        take,
-        skip,
+        first,
+        decodeCursor(after)
       );
 
 
     const args = {
       first: take,
-      after: encodeDateCursor(after),
+      after: skip,
     };
 
     return buildRelayConnection(

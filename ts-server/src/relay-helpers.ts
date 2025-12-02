@@ -25,11 +25,6 @@ export function encodeDateCursor(date: Date) {
   return Buffer.from(date.toISOString()).toString("base64");
 }
 
-export function decodeDateCursor(cursor?: string): Date | null {
-  if (!cursor) return null;
-  return new Date(Buffer.from(cursor, "base64").toString("ascii"));
-}
-
 export function encodeCursor(offset: number) {
   return Buffer.from(offset.toString()).toString("base64");
 }
@@ -39,6 +34,11 @@ export function decodeCursor(cursor?: string) {
   return parseInt(Buffer.from(cursor, "base64").toString("ascii"), 10);
 }
 
+// what this take and skip do?
+// take: number of items to fetch
+// skip: number of items to skip 
+// used for pagination
+// 
 export function relayToOffset(first: number, after: string) {
   const take = first ?? 20;
   const skip = after
@@ -49,7 +49,9 @@ export function relayToOffset(first: number, after: string) {
 }
 
 
+
 export function buildRelayConnection<ItemType>(items: ItemType[], totalCount: number, { first, after }: ConnectionArgs): ConnectionType<ItemType> {
+
   const take = first ?? items.length;
   const skip = after ? decodeCursor(after) : 0;
 
