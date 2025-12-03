@@ -16,7 +16,7 @@ type ConnectionType<T> = {
 
 export type ConnectionArgs = {
   first?: number;
-  after?: string;
+  after?: number;
   last?: number;
   before?: string;
 };
@@ -53,7 +53,7 @@ export function relayToOffset(first: number, after: string) {
 export function buildRelayConnection<ItemType>(items: ItemType[], totalCount: number, { first, after }: ConnectionArgs): ConnectionType<ItemType> {
 
   const take = first ?? items.length;
-  const skip = after ? decodeCursor(after) : 0;
+  const skip = after ? after : 0;
 
   const edges = items.map((item, index) => ({
     node: item,
