@@ -1,4 +1,3 @@
-import { NotificationsQuery } from "@generated/NotificationsQuery.graphql";
 import { useContext, useEffect } from "react";
 import {
   graphql,
@@ -8,20 +7,38 @@ import {
 } from "react-relay";
 import { UserContext } from "@contexts/UserContext";
 import { FriendRequest } from "@components/notifications/FriendRequest";
+import { NotificationsPaginationRefetchQuery } from "@generated/NotificationsPaginationRefetchQuery.graphql";
+import { NotificationsQuery } from "@generated/NotificationsQuery.graphql";
 
 const query = graphql`
-  query NotificationsQuery($receiverId: String!) {
-    currentUser {
-      friendRequests(receiverId: $receiverId) {
-        accepted
-        declined
-        id
-        sender {
-          id
-          username
-        }
+  query NotificationsQuery {
+      currentUser {
+        ...Notifications_user
       }
     }
+`
+
+const fragment = graphql`
+  fragment Notifications_user on User
+  @argumentDefinitions(
+    first: {type: "Int", defaultValue: 20}
+    after: { type: "String"}
+  )
+  @refetchable(queryName: "NotificationsPaginationRefetchQuery"){
+    notifications(first: $first, after: $after) 
+      @connection(key: "Notifications_notifications") {
+        edges {
+          cursor
+          node {
+            id
+          }
+        }
+        
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+      }
   }
 `;
 
@@ -48,11 +65,11 @@ const Content = ({ queryReference }: ContentProps) => {
 
 export const Notifications = () => {
   const data = useContext(UserContext);
-  const [queryReference, loadQuery] = useQueryLoader<NotificationsQuery>(query);
+  const [queryReference, loadQuery] = useQueryLoader<NotificationsQuery>(fragment);
 
   useEffect(() => {
     if (data.user.id) {
-      loadQuery({ receiverId: data.user.id });
+      loadQuery({});
     }
   }, [data.user.id]);
 

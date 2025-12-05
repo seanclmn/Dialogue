@@ -117,6 +117,24 @@ interface Node {
   id: ID!
 }
 
+type Notification implements Node {
+  createdAt: DateTime!
+  id: ID!
+  receiver: User!
+  receiverId: ID!
+  sender: User!
+}
+
+type NotificationConnection {
+  edges: [NotificationEdge!]!
+  pageInfo: PageInfo!
+}
+
+type NotificationEdge {
+  cursor: String!
+  node: Notification!
+}
+
 type PageInfo {
   endCursor: String!
   hasNextPage: Boolean!
@@ -130,6 +148,7 @@ type Query {
   currentUser: User!
   message(id: Int!): Message!
   node(id: ID!): Node
+  notifications(userId: ID!): [Notification!]!
   user(username: String!): User!
   users(username: String!): [User!]!
 }
@@ -173,9 +192,10 @@ input UpdateUserInput {
 type User implements Node {
   bio: String
   chats(after: String, first: Int): ChatConnection!
-  friendRequests(receiverId: String): [FriendRequest!]!
+  friendRequests: [FriendRequest!]!
   friends(after: String, first: Int): UserConnection!
   id: ID!
+  notifications(after: String, first: Int): NotificationConnection!
   password: String!
   username: String!
 }
