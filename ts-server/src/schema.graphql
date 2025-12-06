@@ -195,7 +195,7 @@ type User implements Node {
   friendRequests: [FriendRequest!]!
   friends(after: String, first: Int): UserConnection!
   id: ID!
-  notifications(after: String, first: Int): NotificationConnection!
+  notifications(after: String, first: Int): NotificationConnection
   password: String!
   username: String!
 }

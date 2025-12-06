@@ -2,28 +2,36 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import { MoreThan, Repository } from 'typeorm';
-
+type GetNotificationsForUser = {
+  items: Notification[];
+  totalCount: number;
+}
 @Injectable()
 export class NotificationsService {
 
   constructor(
     @InjectRepository(Notification) private notificationsRepository: Repository<Notification>,
-
   ) { }
 
   async findAll(id: string) {
-    return await this.notificationsRepository.find({
+    console.log(id)
+    const res = await this.notificationsRepository.find({
       where: {
         receiverId: id
       }
     })
+    console.log(res)
+    return res
   }
 
   async create(notification: Notification): Promise<Notification> {
     return await this.notificationsRepository.save(notification)
   }
 
-  async getNotificationsForUser(userId: string, take: number, skip: number) {
+  async getNotificationsForUser(userId: string, take: number, skip: number): Promise<GetNotificationsForUser> {
+
+    const res = await this.findAll(userId)
+    console.log(skip)
     const [items, totalCount] = await this.notificationsRepository.findAndCount({
       where: { receiverId: userId },
       order: { createdAt: "DESC" },
@@ -31,6 +39,7 @@ export class NotificationsService {
       skip: skip,
     });
 
+    console.log(totalCount)
     return { items, totalCount };
   }
 }

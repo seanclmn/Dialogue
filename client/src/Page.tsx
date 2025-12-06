@@ -34,8 +34,6 @@ const query = graphql`
           }
         }
       }
-      ...ChatGroupsContainer_user
-      ...Notifications_user
     }
   }
 `;

@@ -6,41 +6,16 @@ import {
   useQueryLoader,
 } from "react-relay";
 import { UserContext } from "@contexts/UserContext";
-import { FriendRequest } from "@components/notifications/FriendRequest";
-import { NotificationsPaginationRefetchQuery } from "@generated/NotificationsPaginationRefetchQuery.graphql";
 import { NotificationsQuery } from "@generated/NotificationsQuery.graphql";
+import { NotificationsList } from "@components/notifications/NotificationsList";
 
 const query = graphql`
   query NotificationsQuery {
       currentUser {
-        ...Notifications_user
+        ...NotificationsList_user
       }
     }
 `
-
-const fragment = graphql`
-  fragment Notifications_user on User
-  @argumentDefinitions(
-    first: {type: "Int", defaultValue: 20}
-    after: { type: "String"}
-  )
-  @refetchable(queryName: "NotificationsPaginationRefetchQuery"){
-    notifications(first: $first, after: $after) 
-      @connection(key: "Notifications_notifications") {
-        edges {
-          cursor
-          node {
-            id
-          }
-        }
-        
-        pageInfo {
-          endCursor
-          hasNextPage
-        }
-      }
-  }
-`;
 
 type ContentProps = {
   queryReference: PreloadedQuery<NotificationsQuery>;
@@ -48,24 +23,17 @@ type ContentProps = {
 
 const Content = ({ queryReference }: ContentProps) => {
 
-  const data = usePreloadedQuery(query, queryReference);
+  const data = usePreloadedQuery<NotificationsQuery>(query, queryReference);
 
+  if (!data.currentUser) return null
   return (
-    <>
-      {data.currentUser.friendRequests.length === 0 && (
-        <p className="text-center text-txt-color p-4">No New notifications!</p>
-      )}
-
-      {data.currentUser.friendRequests.map((friendRequest) => (
-        <FriendRequest key={friendRequest.id} data={friendRequest} />
-      ))}
-    </>
+    <NotificationsList fragmentKey={data.currentUser} />
   );
 };
 
 export const Notifications = () => {
   const data = useContext(UserContext);
-  const [queryReference, loadQuery] = useQueryLoader<NotificationsQuery>(fragment);
+  const [queryReference, loadQuery] = useQueryLoader<NotificationsQuery>(query);
 
   useEffect(() => {
     if (data.user.id) {
@@ -75,5 +43,7 @@ export const Notifications = () => {
 
   if (!queryReference) return null;
 
-  return <Content queryReference={queryReference} />;
+  return <Content
+    queryReference={queryReference}
+  />;
 };

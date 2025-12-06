@@ -3,6 +3,8 @@ import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, PrimaryGe
 import { Node } from 'src/relay';
 import { Chat } from 'src/chats/entities/chat.entity';
 import { FriendRequest } from './friendRequests.entity';
+import { Notification } from 'src/notifications/entities/notification.entity'
+import { NotificationConnection } from 'src/notifications/entities/notification.connection';
 
 @Entity()
 @ObjectType({ implements: Node })
@@ -44,5 +46,8 @@ export class User implements Node {
 
   @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.receiver, { nullable: true })
   incomingRequests: FriendRequest[]
+
+  @Field(() => NotificationConnection, { nullable: true })
+  notifications: NotificationConnection
 
 }

@@ -1,7 +1,5 @@
 import { PageInfo } from "./relay";
 
-
-
 type EdgeType<Type = any> = {
   cursor: string;
 
@@ -34,11 +32,6 @@ export function decodeCursor(cursor?: string) {
   return parseInt(Buffer.from(cursor, "base64").toString("ascii"), 10);
 }
 
-// what this take and skip do?
-// take: number of items to fetch
-// skip: number of items to skip 
-// used for pagination
-// 
 export function relayToOffset(first: number, after: string) {
   const take = first ?? 20;
   const skip = after
@@ -47,8 +40,6 @@ export function relayToOffset(first: number, after: string) {
 
   return { take, skip };
 }
-
-
 
 export function buildRelayConnection<ItemType>(items: ItemType[], totalCount: number, { first, after }: ConnectionArgs): ConnectionType<ItemType> {
 

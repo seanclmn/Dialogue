@@ -11,7 +11,7 @@ import { AcceptFriendRequestInput, DeclineFriendRequestInput, SendFriendRequestI
 import { UpdateUserInput } from './dto/update-user.input';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { buildRelayConnection, decodeCursor, relayToOffset } from 'src/relay-helpers';
-import { NotificationConnection } from 'src/notifications/entities/notification.connection.entity';
+import { NotificationConnection } from 'src/notifications/entities/notification.connection';
 
 
 @Resolver(() => User)
@@ -103,9 +103,8 @@ export class UsersResolver {
     @Args('first', { type: () => Int, nullable: true }) first: number,
     @Args('after', { type: () => String, nullable: true }) after?: string
   ): Promise<NotificationConnection> {
-
-    const { take, skip } = relayToOffset(first, after);
-
+    console.log("wonton merp")
+    console.log(first, after)
     const { items, totalCount } =
       await this.notificationsService.getNotificationsForUser(
         user.id,
@@ -113,16 +112,15 @@ export class UsersResolver {
         decodeCursor(after)
       );
 
-
-    const args = {
-      first: take,
-      after: skip,
-    };
+    console.log("wonton items: ", items)
 
     return buildRelayConnection(
       items,
       totalCount,
-      args,
+      {
+        first,
+        after: decodeCursor(after),
+      }
     );
   }
 }
