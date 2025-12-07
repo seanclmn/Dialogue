@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
-import { MoreThan, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 type GetNotificationsForUser = {
   items: Notification[];
   totalCount: number;
@@ -14,13 +14,11 @@ export class NotificationsService {
   ) { }
 
   async findAll(id: string) {
-    console.log(id)
     const res = await this.notificationsRepository.find({
       where: {
         receiverId: id
       }
     })
-    console.log(res)
     return res
   }
 
@@ -30,8 +28,6 @@ export class NotificationsService {
 
   async getNotificationsForUser(userId: string, take: number, skip: number): Promise<GetNotificationsForUser> {
 
-    const res = await this.findAll(userId)
-    console.log(skip)
     const [items, totalCount] = await this.notificationsRepository.findAndCount({
       where: { receiverId: userId },
       order: { createdAt: "DESC" },

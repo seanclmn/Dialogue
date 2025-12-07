@@ -1,6 +1,7 @@
-import { Args, ID, Query, Resolver } from '@nestjs/graphql';
+import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { NotificationsService } from './notifications.service';
 import { Notification } from './entities/notification.entity';
+import { CreateNotificationPayload } from './dto/payloads/create-notification.payload';
 
 @Resolver()
 export class NotificationsResolver {
@@ -13,5 +14,4 @@ export class NotificationsResolver {
   findAll(@Args('userId', { type: () => ID }) userId: string) {
     return this.notificationsService.findAll(userId)
   }
-
 }

@@ -2,13 +2,11 @@ import { PageInfo } from "./relay";
 
 type EdgeType<Type = any> = {
   cursor: string;
-
   node: Type;
 }
 
 type ConnectionType<T> = {
   edges: EdgeType<T>[];
-
   pageInfo: PageInfo;
 }
 
@@ -29,7 +27,8 @@ export function encodeCursor(offset: number) {
 
 export function decodeCursor(cursor?: string) {
   if (!cursor) return 0;
-  return parseInt(Buffer.from(cursor, "base64").toString("ascii"), 10);
+  const res = parseInt(Buffer.from(cursor, "base64").toString("ascii"), 10);
+  return res
 }
 
 export function relayToOffset(first: number, after: string) {
@@ -60,4 +59,4 @@ export function buildRelayConnection<ItemType>(items: ItemType[], totalCount: nu
       endCursor: edges[edges.length - 1]?.cursor,
     },
   };
-} 
+}

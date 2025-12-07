@@ -6,10 +6,10 @@ const fragment = graphql`
   fragment NotificationsList_user on User
   @argumentDefinitions(
     first: {type: "Int", defaultValue: 20}
-    after: { type: "String"}
+    cursor: { type: "String"}
   )
   @refetchable(queryName: "NotificationsListPaginationRefetchQuery"){
-    notifications(first: $first, after: $after) 
+    notifications(first: $first, after: $cursor) 
       @connection(key: "NotificationsList_notifications") {
         edges {
           cursor
