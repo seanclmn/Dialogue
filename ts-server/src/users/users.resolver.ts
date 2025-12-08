@@ -103,16 +103,12 @@ export class UsersResolver {
     @Args('first', { type: () => Int, nullable: true }) first: number,
     @Args('after', { type: () => String, nullable: true }) after?: string
   ): Promise<NotificationConnection> {
-    console.log("wonton merp")
-    console.log(first, after)
     const { items, totalCount } =
       await this.notificationsService.getNotificationsForUser(
         user.id,
         first,
         decodeCursor(after)
       );
-
-    console.log("wonton items: ", items)
 
     return buildRelayConnection(
       items,

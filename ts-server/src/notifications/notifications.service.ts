@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import { Repository } from 'typeorm';
+import { CreateNotificationInput } from './dto/inputs/create-notification.input';
 type GetNotificationsForUser = {
   items: Notification[];
   totalCount: number;
@@ -22,7 +23,7 @@ export class NotificationsService {
     return res
   }
 
-  async create(notification: Notification): Promise<Notification> {
+  async create(notification: CreateNotificationInput): Promise<Notification> {
     return await this.notificationsRepository.save(notification)
   }
 
