@@ -1,9 +1,9 @@
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { NotificationsService } from './notifications.service';
-import { Notification } from './entities/notification.entity';
-import { CreateNotificationPayload } from './dto/payloads/create-notification.payload';
-import { CreateFriendRequestInput } from './dto/inputs/create-friendrequest.input';
+import { NotificationsType, Notification } from './entities/notification.entity';
 import { UsersService } from 'src/users/users.service';
+import { CreateNotificationInput } from './dto/create-notification.input';
+import { CreateNotificationParams } from './inputs/create-notification.input';
 
 @Resolver()
 export class NotificationsResolver {
@@ -18,20 +18,19 @@ export class NotificationsResolver {
     return this.notificationsService.findAll(userId)
   }
 
-  // @Mutation(() => Notification)
-  // createFriendRequest(@Args('createFriendRequestInput') createFriendRequestInput: CreateFriendRequestInput) {
-  //   const { senderId, type, receiverId, content } = createFriendRequestInput
+  @Mutation(() => Notification)
+  async createFriendRequest(@Args('createFriendRequestInput') createFriendRequestInput: CreateNotificationInput) {
+    const { senderId, type, receiverId } = createFriendRequestInput
 
-  //   const sender = this.usersService.findOne(senderId)
-  //   const receiver = this.usersService.findOne(receiverId)
+    const sender = await this.usersService.findOne(senderId)
+    const receiver = await this.usersService.findOne(receiverId)
 
+    const newNotification: CreateNotificationParams = {
+      sender: sender,
+      receiver: receiver,
+      type: NotificationsType.FRIENDREQUEST,
+    }
 
-  //   const newNotification: CreateFriendRequestInput = {
-  //     senderId: senderId,
-  //     receiverId: receiverId,
-
-  //   }
-
-  //   return this.notificationsService.create(newNotification)
-  // }
+    return this.notificationsService.create(newNotification)
+  }
 }

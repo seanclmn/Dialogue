@@ -3,6 +3,11 @@ import { Node } from "src/relay";
 import { User } from "src/users/entities/user.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
+export enum NotificationsType {
+  FRIENDREQUEST = 'FriendRequest'
+}
+
+
 @Entity()
 @ObjectType({ implements: Node })
 export class Notification implements Node {
@@ -29,8 +34,7 @@ export class Notification implements Node {
 
   @Column({
     type: 'enum',
-    enum: ["FriendRequest"],
-    enumName: 'notification_type_enum', // Optional: specify a custom name for the database enum type
+    enum: NotificationsType,
   })
-  type: ["FriendRequest"];
+  type: NotificationsType;
 }
