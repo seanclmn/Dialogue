@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { Field, ID, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { Node } from "src/relay";
 import { User } from "src/users/entities/user.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
@@ -6,6 +6,10 @@ import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } f
 export enum NotificationsType {
   FRIENDREQUEST = 'FriendRequest'
 }
+
+registerEnumType(NotificationsType, {
+  name: 'NotificationsType',
+});
 
 
 @Entity()
@@ -32,6 +36,7 @@ export class Notification implements Node {
   @CreateDateColumn()
   createdAt: Date;
 
+  @Field(() => NotificationsType)
   @Column({
     type: 'enum',
     enum: NotificationsType,

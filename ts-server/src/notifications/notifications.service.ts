@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Notification } from './entities/notification.entity';
-import { Repository } from 'typeorm';
+import { NotificationConnection } from './entities/notification.connection';
+import { LessThan, Repository } from 'typeorm';
 import { CreateNotificationParams } from './inputs/create-notification.input';
+import { NotificationEdge } from './entities/notification.edge';
+import { PageInfo } from 'src/relay';
+import { Notification } from './entities/notification.entity';
 
-type GetNotificationsForUser = {
-  items: Notification[];
-  totalCount: number;
-}
 @Injectable()
 export class NotificationsService {
 
@@ -28,16 +27,37 @@ export class NotificationsService {
     return await this.notificationsRepository.save(createNotificationInput)
   }
 
-  async getNotificationsForUser(userId: string, take: number, skip: number): Promise<GetNotificationsForUser> {
+  async getNotificationsForUser(
+    userId: string,
+    first: number,
+    after?: string
+  ): Promise<NotificationConnection> {
+    const afterDate = after ? new Date(Buffer.from(after, 'base64').toString('ascii')) : undefined;
+    const where = afterDate
+      ? { receiverId: userId, createdAt: LessThan(afterDate) }
+      : { receiverId: userId };
 
-    const [items, totalCount] = await this.notificationsRepository.findAndCount({
-      where: { receiverId: userId },
+    const notifications = await this.notificationsRepository.find({
+      where,
       order: { createdAt: "DESC" },
-      take: take,
-      skip: skip,
+      take: first + 1,
     });
 
-    console.log(totalCount)
-    return { items, totalCount };
+    const requestedNotifications = notifications.slice(0, first);
+    const hasNextPage = notifications.length > first;
+
+    const edges: NotificationEdge[] = requestedNotifications.map((notification) => ({
+      cursor: Buffer.from(notification.createdAt.toISOString()).toString('base64'),
+      node: notification,
+    }));
+
+    const pageInfo: PageInfo = {
+      startCursor: edges[0]?.cursor || null,
+      endCursor: edges[edges.length - 1]?.cursor || null,
+      hasPreviousPage: !!after,
+      hasNextPage,
+    };
+
+    return { edges, pageInfo };
   }
 }

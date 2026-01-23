@@ -47,6 +47,12 @@ input CreateMessageInput {
   userId: String!
 }
 
+input CreateNotificationInput {
+  receiverId: String!
+  senderId: String!
+  type: NotificationsType!
+}
+
 input CreateUserInput {
   password: String!
   username: String!
@@ -100,6 +106,7 @@ type MessageEdge {
 type Mutation {
   acceptFriendRequest(acceptFriendRequestInput: AcceptFriendRequestInput!): User!
   createChat(createChatInput: CreateChatInput!): Chat!
+  createFriendRequest(createFriendRequestInput: CreateNotificationInput!): Notification!
   createMessage(createMessageInput: CreateMessageInput!): Message!
   createUser(createUserInput: CreateUserInput!): User!
   declineFriendRequest(declineFriendRequestInput: DeclineFriendRequestInput!): User!
@@ -123,6 +130,7 @@ type Notification implements Node {
   receiver: User!
   receiverId: ID!
   sender: User!
+  type: NotificationsType!
 }
 
 type NotificationConnection {
@@ -133,6 +141,10 @@ type NotificationConnection {
 type NotificationEdge {
   cursor: String!
   node: Notification!
+}
+
+enum NotificationsType {
+  FRIENDREQUEST
 }
 
 type PageInfo {
@@ -148,7 +160,7 @@ type Query {
   currentUser: User!
   message(id: Int!): Message!
   node(id: ID!): Node
-  notifications(userId: ID!): [Notification!]!
+  notifications(after: String, first: Int! = 10, userId: ID!): NotificationConnection!
   user(username: String!): User!
   users(username: String!): [User!]!
 }
@@ -195,7 +207,7 @@ type User implements Node {
   friendRequests: [FriendRequest!]!
   friends(after: String, first: Int): UserConnection!
   id: ID!
-  notifications(after: String, first: Int): NotificationConnection!
+  notifications(after: String, first: Int): NotificationConnection
   password: String!
   username: String!
 }

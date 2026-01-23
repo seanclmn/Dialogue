@@ -1,9 +1,10 @@
-import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, ID, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { NotificationsService } from './notifications.service';
 import { NotificationsType, Notification } from './entities/notification.entity';
 import { UsersService } from 'src/users/users.service';
 import { CreateNotificationInput } from './dto/create-notification.input';
 import { CreateNotificationParams } from './inputs/create-notification.input';
+import { NotificationConnection } from './entities/notification.connection';
 
 @Resolver()
 export class NotificationsResolver {
@@ -13,9 +14,13 @@ export class NotificationsResolver {
     private usersService: UsersService
   ) { }
 
-  @Query(() => [Notification], { name: 'notifications' })
-  findAll(@Args('userId', { type: () => ID }) userId: string) {
-    return this.notificationsService.findAll(userId)
+  @Query(() => NotificationConnection, { name: 'notifications' })
+  findAll(
+    @Args('userId', { type: () => ID }) userId: string,
+    @Args('first', { type: () => Int, defaultValue: 10 }) first: number,
+    @Args('after', { type: () => String, nullable: true }) after?: string
+  ) {
+    return this.notificationsService.getNotificationsForUser(userId, first, after)
   }
 
   @Mutation(() => Notification)

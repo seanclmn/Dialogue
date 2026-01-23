@@ -103,20 +103,10 @@ export class UsersResolver {
     @Args('first', { type: () => Int, nullable: true }) first: number,
     @Args('after', { type: () => String, nullable: true }) after?: string
   ): Promise<NotificationConnection> {
-    const { items, totalCount } =
-      await this.notificationsService.getNotificationsForUser(
-        user.id,
-        first,
-        decodeCursor(after)
-      );
-
-    return buildRelayConnection(
-      items,
-      totalCount,
-      {
-        first,
-        after: decodeCursor(after),
-      }
+    return await this.notificationsService.getNotificationsForUser(
+      user.id,
+      first || 10,
+      after
     );
   }
 }
