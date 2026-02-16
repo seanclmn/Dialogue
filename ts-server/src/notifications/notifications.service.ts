@@ -58,6 +58,7 @@ export class NotificationsService {
       hasNextPage,
     };
 
+    console.log(edges, pageInfo)
     return { edges, pageInfo };
   }
 }

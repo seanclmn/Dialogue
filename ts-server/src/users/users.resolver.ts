@@ -10,9 +10,7 @@ import { FriendRequest } from './entities/friendRequests.entity';
 import { AcceptFriendRequestInput, DeclineFriendRequestInput, SendFriendRequestInput } from './dto/friendRequest.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { NotificationsService } from 'src/notifications/notifications.service';
-import { buildRelayConnection, decodeCursor, relayToOffset } from 'src/relay-helpers';
 import { NotificationConnection } from 'src/notifications/entities/notification.connection';
-
 
 @Resolver(() => User)
 export class UsersResolver {

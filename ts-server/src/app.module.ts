@@ -11,9 +11,11 @@ import { Chat } from './chats/entities/chat.entity';
 import { MessagesModule } from './messages/messages.module';
 import { Message } from './messages/entities/message.entity';
 import { NodeResolver } from './node/node.resolver';
+import { Notification } from './notifications/entities/notification.entity';
 import { FriendRequest } from './users/entities/friendRequests.entity';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { NotificationsModule } from './notifications/notifications.module';
+
 @Module({
   imports: [
     GraphQLModule.forRoot({
@@ -32,7 +34,7 @@ import { NotificationsModule } from './notifications/notifications.module';
       username: 'root',
       password: 'root',
       database: 'chat',
-      entities: [User, Chat, Message, FriendRequest],
+      entities: [User, Chat, Message, FriendRequest, Notification],
       synchronize: true,
     }),
     UsersModule,

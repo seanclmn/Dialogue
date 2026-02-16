@@ -30,11 +30,23 @@ interface NotificationsList {
 }
 
 export const NotificationsList = ({ fragmentKey }: NotificationsList) => {
-  const data = usePaginationFragment(fragment, fragmentKey)
-  console.log(data)
+  const { hasNext, loadNext, data } = usePaginationFragment(fragment, fragmentKey)
+
+  if (!data.notifications) return <NoNotifications />
+
   return (
     <div>
+      {data.notifications?.edges.map((notification) => <p>{notification.node.id}</p>)}
 
+      {hasNext && <button onClick={() => loadNext(20)}>Load More</button>}
+    </div>
+  )
+}
+
+const NoNotifications = () => {
+  return (
+    <div className="p-4">
+      <h1>No new Notifications!</h1>
     </div>
   )
 }

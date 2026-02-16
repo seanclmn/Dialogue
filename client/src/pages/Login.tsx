@@ -57,45 +57,72 @@ export const Login = () => {
     });
   };
 
+  const loginAs = (username: string) => {
+    commitMutation({
+      variables: {
+        username,
+        password: "password123",
+      },
+      onCompleted: (data: LoginMutation$data) => {
+        setCookie("accessToken", data.login.accessToken);
+      },
+    });
+  };
+
   return (
-    <form
-      className="flex flex-col items-center max-w-60 mx-auto pt-32"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <img src={logo} className="h-16 my-2" />
-      <Controller
-        control={control}
-        render={({ field }) => (
-          <Input styles="my-1 text-sm" title="Username" {...field} />
+    <div className="flex flex-col items-center max-w-60 mx-auto pt-32">
+      <form className="flex flex-col items-center w-full" onSubmit={handleSubmit(onSubmit)}>
+        <img src={logo} className="h-16 my-2" />
+        <Controller
+          control={control}
+          render={({ field }) => (
+            <Input styles="my-1 text-sm" title="Username" {...field} />
+          )}
+          name="username"
+          rules={{ required: true }}
+        />
+        {errors.username?.type === "required" && (
+          <InputError message={"Username is required"} />
         )}
-        name="username"
-        rules={{ required: true }}
-      />
-      {errors.username?.type === "required" && (
-        <InputError message={"Username is required"} />
-      )}
-      <Controller
-        control={control}
-        render={({ field }) => (
-          <Input styles="my-1 text-sm" title="Password" {...field} />
+        <Controller
+          control={control}
+          render={({ field }) => (
+            <Input styles="my-1 text-sm" title="Password" {...field} />
+          )}
+          name="password"
+          rules={{ required: true }}
+        />
+        {errors.password?.type === "required" && (
+          <InputError message={"Password is required"} />
         )}
-        name="password"
-        rules={{ required: true }}
-      />
-      {errors.password?.type === "required" && (
-        <InputError message={"Password is required"} />
-      )}
-      <Button
-        title="Log in"
-        type="submit"
-        styles="text-sm my-2"
-        loading={isMutationInFlight}
-        disabled={isMutationInFlight}
-      />
+        <Button
+          title="Log in"
+          type="submit"
+          styles="text-sm my-2"
+          loading={isMutationInFlight}
+          disabled={isMutationInFlight}
+        />
+      </form>
+
+      <div className="flex flex-col w-full gap-2 mt-4">
+        <p className="text-xs text-gray-500 text-center">Quick Login (Dev)</p>
+        <div className="flex gap-2">
+          {["alice", "bob", "charlie"].map((user) => (
+            <Button
+              key={user}
+              title={user}
+              type="button"
+              styles="text-[10px] py-1 bg-gray-100 !text-gray-600 border-gray-200"
+              onClick={() => loginAs(user)}
+              disabled={isMutationInFlight}
+            />
+          ))}
+        </div>
+      </div>
 
       <Link to="/signup">
-        <p className="my-2">Sign up here</p>
+        <p className="my-2 text-sm">Sign up here</p>
       </Link>
-    </form>
+    </div>
   );
 };
