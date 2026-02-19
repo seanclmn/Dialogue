@@ -3,11 +3,10 @@ import { CreateMessageInput } from './dto/create-message.input';
 import { UpdateMessageInput } from './dto/update-message.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Message } from './entities/message.entity';
-import { LessThan, MoreThan, Repository } from 'typeorm';
-import { MessageEdge } from './entities/message.edge.entity';
+import { Repository } from 'typeorm';
 import { MessageConnection } from './entities/Message.Connection.entity';
 import { Chat } from 'src/chats/entities/chat.entity';
-import { PageInfo } from 'src/relay';
+import { buildRelayConnection, decodeCursor } from 'src/relay-helpers';
 
 @Injectable()
 export class MessagesService {
@@ -51,36 +50,18 @@ export class MessagesService {
   async getMessagesForChat(
     id: string,
     first: number,
-    after?: Date
+    after?: string
   ): Promise<MessageConnection> {
-    // wait 5 seconds before returning messages
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const afterDate = after ? new Date(after) : undefined;
-    const where = afterDate
-      ? { chat: { id }, createdAt: LessThan(afterDate) }
-      : { chat: { id } };
+    const skip = decodeCursor(after);
+    const take = first || 20;
 
-    const messages = await this.messagesRepository.find({
-      where,
+    const [messages, totalCount] = await this.messagesRepository.findAndCount({
+      where: { chat: { id } },
       order: { createdAt: 'DESC' },
-      take: first + 1,
+      skip,
+      take,
     });
 
-    const requestedMessages = messages.slice(0, first);
-    const hasNextPage = messages.length > first;
-
-    const edges: MessageEdge[] = requestedMessages.map((message) => ({
-      cursor: message.createdAt.toISOString(),
-      node: message,
-    }));
-
-    const pageInfo: PageInfo = {
-      startCursor: edges[0]?.cursor || null,
-      endCursor: edges[edges.length - 1]?.cursor || null,
-      hasPreviousPage: !!after,
-      hasNextPage,
-    };
-
-    return { edges, pageInfo };
+    return buildRelayConnection(messages, totalCount, { first, after: skip });
   }
 }

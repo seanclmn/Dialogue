@@ -87,7 +87,7 @@ export class ChatsResolver {
   async messages(
     @Parent() chat: Chat,
     @Args('first', { type: () => Int, nullable: true }) first?: number,
-    @Args('after', { type: () => String, nullable: true }) after?: Date
+    @Args('after', { type: () => String, nullable: true }) after?: string
   ): Promise<MessageConnection> {
     return await this.messagesService.getMessagesForChat(chat.id, first, after);
   }
