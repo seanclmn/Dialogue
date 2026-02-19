@@ -18,7 +18,7 @@ export const Message = memo(({ date, text, senderIsMe, first }: MessageProps) =>
       {first && !senderIsMe ? <Avatar src={img} /> : null}
       <div
         className={`${senderIsMe ? "bg-primary ml-auto" : "bg-secondary"
-          } my-[1px] p-1 py-2 rounded-[18px] inline-flex`}
+          } my-[1px] p-1 py-2 rounded-[18px] inline-flex max-w-4xl`}
       >
         <p
           onMouseEnter={() => setVisible(true)}
@@ -27,7 +27,7 @@ export const Message = memo(({ date, text, senderIsMe, first }: MessageProps) =>
           className={`px-2 whitespace-break-spaces break-keep	
           text-[15px] ${senderIsMe ? "text-my-txt-color" : "text-txt-color"}`}
         >
-          {text ? text : "No text provided"}
+          {text ? text : "[Message not supported]"}
         </p>
       </div>
     </div>
