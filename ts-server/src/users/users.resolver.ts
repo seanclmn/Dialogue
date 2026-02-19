@@ -32,31 +32,26 @@ export class UsersResolver {
   }
 
   @Mutation(() => User)
-  @UseGuards(JwtGuard)
   createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.usersService.create(createUserInput);
   }
 
   @Mutation(() => User)
-  @UseGuards(JwtGuard)
   async sendFriendRequest(@Args('sendFriendRequestInput') friendRequestInput: SendFriendRequestInput) {
     return await this.usersService.sendFriendRequest(friendRequestInput.senderId, friendRequestInput.receiverId);
   }
 
   @Mutation(() => User)
-  @UseGuards(JwtGuard)
   async acceptFriendRequest(@Args('acceptFriendRequestInput') friendRequestInput: AcceptFriendRequestInput) {
     return await this.usersService.acceptFriendRequest(friendRequestInput.friendRequestId);
   }
 
   @Mutation(() => User)
-  @UseGuards(JwtGuard)
   async declineFriendRequest(@Args('declineFriendRequestInput') friendRequestInput: DeclineFriendRequestInput) {
     return await this.usersService.declineFriendRequest(friendRequestInput.friendRequestId);
   }
 
   @Mutation(() => User)
-  @UseGuards(JwtGuard)
   async updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
     return await this.usersService.updateUser(updateUserInput);
   }
@@ -76,7 +71,6 @@ export class UsersResolver {
   }
 
   @ResolveField('chats', () => ChatConnection)
-  @UseGuards(JwtGuard)
   async chats(
     @Parent() user: User,
     @Args('first', { type: () => Int, nullable: true }) first?: number,
@@ -86,7 +80,6 @@ export class UsersResolver {
   }
 
   @ResolveField('friends', () => UserConnection)
-  @UseGuards(JwtGuard)
   async friends(
     @Parent() user: User,
     @Args('first', { type: () => Int, nullable: true }) first?: number,
@@ -96,7 +89,6 @@ export class UsersResolver {
   }
 
   @ResolveField('friendRequests', () => [FriendRequest])
-  @UseGuards(JwtGuard)
   async friendRequests(
     @Parent() user: User,
   ): Promise<FriendRequest[]> {
@@ -104,7 +96,6 @@ export class UsersResolver {
   }
 
   @ResolveField("notifications", () => NotificationConnection)
-  @UseGuards(JwtGuard)
   async notifications(
     @Parent() user: User,
     @Args('first', { type: () => Int, nullable: true }) first: number,
