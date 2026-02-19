@@ -6,5 +6,5 @@ services:
       - MYSQL_DATABASE=chat
     ports:
       - 3306:3306
-    # volumes: 
-    #   - /Users/seanclmn/Projects/chat/db:/var/lib/mysql
+    volumes: 
+      - /Users/seanclmn/Projects/chat/db:/var/lib/mysql

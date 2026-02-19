@@ -207,13 +207,13 @@ export class UsersService {
     return await this.friendRequestsRepository.save({ ...friendRequest, declined: true })
   }
 
-  async invalidateRefreshToken(userId: string) {
-    return await this.usersRepository.update({ id: userId }, { hashedRefreshToken: null })
-  }
+  // async invalidateRefreshToken(userId: string) {
+  //   return await this.usersRepository.update({ id: userId }, { hashedRefreshToken: null })
+  // }
 
-  async updateRefreshToken(userId: string, refreshToken: string) {
-    return await this.usersRepository.update({ id: userId }, { hashedRefreshToken: refreshToken })
-  }
+  // async updateRefreshToken(userId: string, refreshToken: string) {
+  //   return await this.usersRepository.update({ id: userId }, { hashedRefreshToken: refreshToken })
+  // }
 
   // async inviteUsers(userNames: string[],) {
   //   const users = userNames.map(async (username) => {

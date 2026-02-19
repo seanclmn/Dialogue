@@ -23,6 +23,8 @@ export class AuthService {
   ): Promise<ValidateUser | null> {
     const user = await this.usersService.findOne(username);
 
+    console.log((await this.usersService.searchUsers('sean')).length);
+
     if (!user) throw new Error('User does not exist');
 
     const valid = await compare(password, user.password);
@@ -59,14 +61,15 @@ export class AuthService {
       accessToken: this.jwtService.sign({
         username: newUser.username,
         sub: newUser.id,
+
       }),
       user: newUser,
     };
   }
 
-  async createRefreshToken(user: User) {
-    const refreshToken = this.jwtService.sign({}, { expiresIn: "7d" })
-    const hashedToken = hash(refreshToken, 10)
-    await this.usersService.updateRefreshToken(user.id, hashedToken)
-  }
+  // async createRefreshToken(user: User) {
+  //   const refreshToken = this.jwtService.sign({}, { expiresIn: "7d" })
+  //   const hashedToken = hash(refreshToken, 10)
+  //   await this.usersService.updateRefreshToken(user.id, hashedToken)
+  // }
 }
