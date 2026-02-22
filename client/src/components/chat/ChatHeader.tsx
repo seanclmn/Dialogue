@@ -1,7 +1,6 @@
 import { ReactElement } from "react";
 import { Avatar } from "../shared/users/Avatar";
 import img from "../../assets/jennie.jpeg";
-import UserMenu from "@components/dialogs/UserMenu";
 
 interface ChatHeaderProps {
   title: string;
@@ -18,7 +17,6 @@ export const ChatHeader = ({ title, style }: ChatHeaderProps): ReactElement => {
         <p>{title}</p>
       </div>
 
-      <UserMenu />
     </div>
   );
 };
