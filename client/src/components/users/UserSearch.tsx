@@ -43,7 +43,7 @@ export const UserSearch = () => {
   return (
     <>
       <Input
-        title={"search users"}
+        title={"Search users..."}
         onChange={async (e) => {
           setInput(e.currentTarget.value);
           const result = await fetch(e.currentTarget.value);

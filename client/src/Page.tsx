@@ -137,7 +137,7 @@ const Content = ({ queryReference }: ContentProps) => {
           to={"/"}
           className="cursor-pointer px-4 border-b-[1px] border-brd-color bg-bgd-color"
         >
-          <img src={img} className="h-12 my-2 mr-auto" />
+          <p className="text-3xl py-4 cedarville-cursive-regular">Dialogue</p>
         </Link>
         <div className="flex flex-row items-start flex-grow flex-1 h-1">
           <Nav />

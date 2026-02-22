@@ -72,7 +72,7 @@ export const Login = () => {
   return (
     <div className="flex flex-col items-center max-w-60 mx-auto pt-32 min-h-screen bg-bgd-color text-txt-color transition-colors duration-200">
       <form className="flex flex-col items-center w-full" onSubmit={handleSubmit(onSubmit)}>
-        <img src={logo} className="h-16 my-2" />
+        <p className="text-5xl my-4 cedarville-cursive-regular">Dialogue</p>
         <Controller
           control={control}
           render={({ field }) => (

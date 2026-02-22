@@ -34,42 +34,43 @@ export const Signup = () => {
       <form
         className="flex flex-col items-center max-w-60 mx-auto pt-32"
         onSubmit={(e) => {
-        e.preventDefault();
-        commitMutation({
-          variables: {
-            username: creds.username,
-            password: creds.password,
-          },
-          onCompleted: (data: SignupMutation$data) => {
-            setCookie("accessToken", data.signup.accessToken);
-          },
-          onError: (e) => {
-            console.log(e);
-            setErrors("This user already exists");
-          },
-        });
-      }}
-    >
-      <img src={logo} className="h-16 my-2" />
-      <Input
-        styles="mb-2 text-sm py-[5px]"
-        title="Username"
-        onChange={(e) =>
-          setCreds({ ...creds, username: e.currentTarget.value })
-        }
-      />
-      <Input
-        styles="mb-2 text-sm py-[5px]"
-        title="Password"
-        onChange={(e) =>
-          setCreds({ ...creds, password: e.currentTarget.value })
-        }
-      />
-      <p>{errors}</p>
-      <Button title="Sign up" type="submit" styles="text-sm py-[5px]" />
-      <Link to="/login">
-        <p className="my-2">Log in here</p>
-      </Link>
+          e.preventDefault();
+          commitMutation({
+            variables: {
+              username: creds.username,
+              password: creds.password,
+            },
+            onCompleted: (data: SignupMutation$data) => {
+              setCookie("accessToken", data.signup.accessToken);
+            },
+            onError: (e) => {
+              console.log(e);
+              setErrors("This user already exists");
+            },
+          });
+        }}
+      >
+        <p className="text-5xl my-4 cedarville-cursive-regular">Dialogue</p>
+        <Input
+          styles="mb-2 text-sm py-[5px]"
+          title="Username"
+          onChange={(e) =>
+            setCreds({ ...creds, username: e.currentTarget.value })
+          }
+        />
+        <Input
+          styles="mb-2 text-sm py-[5px]"
+          title="Password"
+          onChange={(e) =>
+            setCreds({ ...creds, password: e.currentTarget.value })
+          }
+        />
+        <p>{errors}</p>
+        <Button title="Sign up" type="submit" styles="text-sm py-[5px]" />
+        <Link to="/login">
+          <p className="my-2">Log in here</p>
+        </Link>
+      </form>
     </div>
   );
 };

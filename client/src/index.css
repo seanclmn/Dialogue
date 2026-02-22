@@ -34,3 +34,9 @@ body,
     --my-text-color: #000000;
   }
 }
+
+.cedarville-cursive-regular {
+  font-family: "Cedarville Cursive", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
