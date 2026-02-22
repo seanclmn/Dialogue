@@ -70,8 +70,8 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex flex-col items-center max-w-60 mx-auto pt-32 min-h-screen bg-bgd-color text-txt-color">
-      <form className="flex flex-col items-center w-full" onSubmit={handleSubmit(onSubmit)}>
+    <div className="w-full flex flex-col items-center pt-32 min-h-screen bg-bgd-color text-txt-color">
+      <form className="flex flex-col items-center " onSubmit={handleSubmit(onSubmit)}>
         <p className="text-5xl my-4 cedarville-cursive-regular">Dialogue</p>
         <Controller
           control={control}
@@ -104,7 +104,7 @@ export const Login = () => {
         />
       </form>
 
-      <div className="flex flex-col w-full gap-2 mt-4">
+      <div className="flex flex-col gap-2 mt-4">
         <p className="text-xs text-gray-500 text-center">Quick Login (Dev)</p>
         <div className="flex gap-2">
           {["alice", "bob", "charlie"].map((user) => (
@@ -112,7 +112,7 @@ export const Login = () => {
               key={user}
               title={user}
               type="button"
-              styles="text-[10px] py-1 bg-gray-100 !text-gray-600 border-gray-200"
+              styles="text-[10px] py-1 bg-gray-100 !text-gray-600 border-gray-200 w-20"
               onClick={() => loginAs(user)}
               disabled={isMutationInFlight}
             />
