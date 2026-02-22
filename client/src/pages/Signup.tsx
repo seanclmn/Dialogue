@@ -30,7 +30,7 @@ export const Signup = () => {
 
   if (cookies["accessToken"]) return <Navigate to="/" />;
   return (
-    <div className="min-h-screen bg-bgd-color text-txt-color transition-colors duration-200">
+    <div className="min-h-screen bg-bgd-color text-txt-color">
       <form
         className="flex flex-col items-center max-w-60 mx-auto pt-32"
         onSubmit={(e) => {

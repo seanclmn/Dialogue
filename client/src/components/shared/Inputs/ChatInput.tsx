@@ -36,7 +36,7 @@ export const ChatInput = ({
   return (
     <textarea
       className={` w-[100%] mx-0 resize-none leading-none bg-bgd-color text-txt-color
-        transition-all duration-1000 ease-in-out outline-none ${styles}`}
+        outline-none ${styles}`}
       rows={1}
       ref={textAreaRef}
       onChange={onChange}
