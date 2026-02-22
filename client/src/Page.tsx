@@ -132,10 +132,10 @@ const Content = ({ queryReference }: ContentProps) => {
 
   return (
     <>
-      <div className="flex flex-col h-[100vh] items-left">
+      <div className="flex flex-col h-[100vh] items-left bg-bgd-color text-txt-color transition-colors duration-200">
         <Link
           to={"/"}
-          className="cursor-pointer px-4 border-b-[1px] border-brd-color"
+          className="cursor-pointer px-4 border-b-[1px] border-brd-color bg-bgd-color"
         >
           <img src={img} className="h-12 my-2 mr-auto" />
         </Link>

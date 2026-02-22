@@ -30,9 +30,10 @@ export const Signup = () => {
 
   if (cookies["accessToken"]) return <Navigate to="/" />;
   return (
-    <form
-      className="flex flex-col items-center max-w-60 mx-auto pt-32"
-      onSubmit={(e) => {
+    <div className="min-h-screen bg-bgd-color text-txt-color transition-colors duration-200">
+      <form
+        className="flex flex-col items-center max-w-60 mx-auto pt-32"
+        onSubmit={(e) => {
         e.preventDefault();
         commitMutation({
           variables: {
@@ -69,6 +70,6 @@ export const Signup = () => {
       <Link to="/login">
         <p className="my-2">Log in here</p>
       </Link>
-    </form>
+    </div>
   );
 };

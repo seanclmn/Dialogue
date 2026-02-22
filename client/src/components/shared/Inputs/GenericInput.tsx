@@ -12,7 +12,7 @@ export const Input = ({ styles, title, onChange, ...props }: InputProps) => {
         id={title}
         onChange={onChange}
         className={`border-[1px] rounded-md px-2
-			py-2 border-black border-solid w-full ${styles}`}
+			py-2 border-brd-color border-solid w-full bg-bgd-color text-txt-color ${styles}`}
         {...props}
       />
     </>

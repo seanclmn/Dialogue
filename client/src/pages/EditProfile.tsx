@@ -82,11 +82,11 @@ export const EditProfile = () => {
   const data = useContext(UserContext);
 
   if (!data.user.username || !data.user.id) {
-    return <div className="text-center">Loading...</div>;
+    return <div className="text-center bg-bgd-color text-txt-color min-h-full w-full">Loading...</div>;
   }
 
   return (
-    <div className="w-full flex flex-col items-center py-2">
+    <div className="w-full flex flex-col items-center py-2 bg-bgd-color text-txt-color min-h-full">
       <h1 className="text-2xl font-bold">Edit Profile</h1>
       <EditProfileForm username={data.user.username} bio={data.user.bio ?? ""} id={data.user.id} />
     </div>

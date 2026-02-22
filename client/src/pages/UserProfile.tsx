@@ -47,7 +47,7 @@ const Content = ({ queryReference }: ContentProps) => {
     useMutation<UserProfileMutation>(mutation);
 
   return (
-    <div className="w-full flex flex-col items-center py-2 max-w-96 mx-auto">
+    <div className="w-full flex flex-col items-center py-2 max-w-96 mx-auto bg-bgd-color text-txt-color min-h-full">
       {data.user.username === currentUser.user.username ?
         <Avatar src={img} containerStyle="w-28 h-28 my-2" editable link="/editprofile" /> :
         <Avatar src={img} containerStyle="w-28 h-28 my-2" />}

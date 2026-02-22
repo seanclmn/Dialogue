@@ -10,7 +10,7 @@ export const TextAreaInput = ({ styles, title, onChange, ...props }: TextAreaInp
         placeholder={title}
         id={title}
         onChange={onChange}
-        className={`border-[1px] rounded-md px-2 py-2 border-black border-solid w-full ${styles}`}
+        className={`border-[1px] rounded-md px-2 py-2 border-brd-color border-solid w-full bg-bgd-color text-txt-color ${styles}`}
         {...props}
       />
     </>

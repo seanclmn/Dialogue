@@ -35,17 +35,17 @@ export const NotificationsList = ({ fragmentKey }: NotificationsList) => {
   if (!data.notifications) return <NoNotifications />
 
   return (
-    <div>
-      {data.notifications?.edges.map((notification) => <p>{notification.node.id}</p>)}
+    <div className="bg-bgd-color text-txt-color min-h-full w-full">
+      {data.notifications?.edges.map((notification) => <p key={notification.node.id}>{notification.node.id}</p>)}
 
-      {hasNext && <button onClick={() => loadNext(20)}>Load More</button>}
+      {hasNext && <button onClick={() => loadNext(20)} className="bg-primary text-my-txt-color px-4 py-2 rounded-md m-4">Load More</button>}
     </div>
   )
 }
 
 const NoNotifications = () => {
   return (
-    <div className="p-4">
+    <div className="p-4 bg-bgd-color text-txt-color min-h-full w-full">
       <h1>No new Notifications!</h1>
     </div>
   )

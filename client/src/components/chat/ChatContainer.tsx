@@ -134,7 +134,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
       <form
         className="mx-2 mb-2 border-[1px] rounded-[15px] 
          px-[1rem] py-[4px]
-        border-black flex items-center 
+        border-brd-color flex items-center bg-bgd-color
         "
         onSubmit={(e: React.KeyboardEvent<HTMLFormElement>) => {
           e.preventDefault();
