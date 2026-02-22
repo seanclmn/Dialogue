@@ -1,13 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './users/entities/user.entity';
 import { Chat } from './chats/entities/chat.entity';
 import { Message } from './messages/entities/message.entity';
 import { Notification, NotificationsType } from './notifications/entities/notification.entity';
 import { hash } from 'bcrypt';
-import { INestApplicationContext } from '@nestjs/common';
 
 async function seed() {
   const app = await NestFactory.createApplicationContext(AppModule);

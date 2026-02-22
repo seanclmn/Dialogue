@@ -16,7 +16,7 @@ body,
 
   :root[data-theme="light"] {
     --primary-color: #3b82f6;
-    --secondary-color: #692bdd;
+    --secondary-color: #dcdcdc;
     --bg-color: #ffffff;
     --bg-highlight-color: #e1e1e1d0;
     --border-color: #e8e8e8d0;

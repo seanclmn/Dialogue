@@ -7,5 +7,5 @@ export class CreateChatInput {
   participants: string[];
 
   @Field()
-  name: String;
+  name: string;
 }

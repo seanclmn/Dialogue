@@ -17,7 +17,7 @@ export class Chat implements Node {
 
   @Column()
   @Field()
-  name: String;
+  name: string;
 
   @OneToMany(() => Message, (message) => message.chat, { cascade: true })
   messages: Message[];

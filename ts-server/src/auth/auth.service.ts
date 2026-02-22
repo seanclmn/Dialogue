@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
@@ -23,14 +23,12 @@ export class AuthService {
   ): Promise<ValidateUser | null> {
     const user = await this.usersService.findOne(username);
 
-    console.log((await this.usersService.searchUsers('sean')).length);
-
     if (!user) throw new Error('User does not exist');
 
     const valid = await compare(password, user.password);
 
     if (user && valid) {
-      const { password, ...result } = user;
+      const { password: _password, ...result } = user;
       return result;
     } else return null;
   }
@@ -50,11 +48,11 @@ export class AuthService {
 
     if (user) throw new Error('User already Exists');
 
-    const password = await hash(createUserInput.password, 10);
+    const hashedPassword = await hash(createUserInput.password, 10);
 
     const newUser = await this.usersService.create({
       ...createUserInput,
-      password,
+      password: hashedPassword,
     });
 
     return {

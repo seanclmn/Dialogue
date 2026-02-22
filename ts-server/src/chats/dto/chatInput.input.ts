@@ -10,5 +10,5 @@ export class ChatInput {
   participants: UpdateUserInput[];
 
   @Field()
-  name: String;
+  name: string;
 }

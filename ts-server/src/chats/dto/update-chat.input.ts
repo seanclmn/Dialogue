@@ -15,5 +15,5 @@ export class UpdateChatInput {
 
   @Column()
   @Field()
-  name: String;
+  name: string;
 }

@@ -25,7 +25,7 @@ export class NotificationsResolver {
 
   @Mutation(() => Notification)
   async createFriendRequest(@Args('createFriendRequestInput') createFriendRequestInput: CreateNotificationInput) {
-    const { senderId, type, receiverId } = createFriendRequestInput
+    const { senderId, receiverId } = createFriendRequestInput
 
     const sender = await this.usersService.findOne(senderId)
     const receiver = await this.usersService.findOne(receiverId)

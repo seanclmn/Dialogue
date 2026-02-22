@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { UpdateChatInput } from './dto/update-chat.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
-import { MoreThan, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
 import { UpdateUserInput } from 'src/users/dto/update-user.input';
 
 export interface CreateChatFuncInput {
-  name: String;
+  name: string;
   participants: UpdateUserInput[]
 }
 

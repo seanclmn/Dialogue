@@ -1,9 +1,8 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql';
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Node } from 'src/relay';
 import { Chat } from 'src/chats/entities/chat.entity';
 import { FriendRequest } from './friendRequests.entity';
-import { Notification } from 'src/notifications/entities/notification.entity'
 import { NotificationConnection } from 'src/notifications/entities/notification.connection';
 
 @Entity()

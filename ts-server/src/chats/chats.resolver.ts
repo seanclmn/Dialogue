@@ -31,7 +31,7 @@ export class ChatsResolver {
   @UseGuards(JwtGuard)
   async createChat(
     @Args('createChatInput') createChatInput: CreateChatInput,
-    @Context() context: any
+    @Context() _context: any
   ) {
 
     const participantObjects: UpdateUserInput[] = await Promise.all(createChatInput.participants.map(async (username) => {
@@ -59,26 +59,31 @@ export class ChatsResolver {
   }
 
   @Query(() => [Chat], { name: 'chats' })
+  @UseGuards(JwtGuard)
   findAll() {
     return this.chatsService.findAll();
   }
 
   @Query(() => Chat, { name: 'chat' })
+  @UseGuards(JwtGuard)
   findOne(@Args('id', { type: () => ID }) id: string) {
     return this.chatsService.findOne(id);
   }
 
   @Mutation(() => Chat)
+  @UseGuards(JwtGuard)
   updateChat(@Args('updateChatInput') updateChatInput: UpdateChatInput) {
     return this.chatsService.update(updateChatInput);
   }
 
   @Mutation(() => Chat)
+  @UseGuards(JwtGuard)
   removeChat(@Args('id', { type: () => Int }) id: string) {
     return this.chatsService.remove(id);
   }
 
   @ResolveField('messages', () => MessageConnection)
+  @UseGuards(JwtGuard)
   async messages(
     @Parent() chat: Chat,
     @Args('first', { type: () => Int, nullable: true }) first?: number,
@@ -91,11 +96,12 @@ export class ChatsResolver {
     resolve: (payload: { messageAdded: ChatUpdate }) => payload.messageAdded,
     filter: (payload: { messageAdded: ChatUpdate }, variables) => variables.chatIds.includes(payload.messageAdded.chatId),
   })
-  newMessage(@Args('chatIds', { type: () => [ID!]! }) chatIds: string[]) {
+  newMessage(@Args('chatIds', { type: () => [ID!]! }) _chatIds: string[]) {
     return pubSub.asyncIterableIterator('newMessage')
   }
 
   @Mutation(() => TypingEventOutput)
+  @UseGuards(JwtGuard)
   updateTyping(
     @Args('chatId') chatId: string,
     @Args('userId') userId: string,
@@ -117,7 +123,7 @@ export class ChatsResolver {
     },
     resolve: (payload) => payload.userTyping,
   })
-  userTyping(@Args('chatId', { type: () => ID }) chatId: string) {
+  userTyping(@Args('chatId', { type: () => ID }) _chatId: string) {
     return pubSub.asyncIterableIterator('userTyping');
   }
 }
