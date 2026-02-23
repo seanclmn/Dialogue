@@ -18,11 +18,14 @@ import { createClient, ExecutionResult, Sink } from "graphql-ws";
 import { PayloadExtensions } from "relay-runtime/lib/network/RelayNetworkTypes";
 
 export const RelayProvider = ({ children }: PropsWithChildren) => {
-  const [cookies, removeCookie] = useCookies(["accessToken"]);
+  const [cookies, , removeCookie] = useCookies(["accessToken"]);
   const HTTP_ENDPOINT = "http://localhost:3000/graphql";
 
   const wsClient = createClient({
     url: "ws://localhost:3000/graphql",
+    connectionParams: () => ({
+      Authorization: cookies["accessToken"] ? `Bearer ${cookies["accessToken"]}` : undefined,
+    }),
   });
 
   const subscribe: SubscribeFunction = (operation, variables) => {
@@ -57,7 +60,7 @@ export const RelayProvider = ({ children }: PropsWithChildren) => {
       response.then(async (data) => {
         const json = await data.json()
         if (json?.errors?.some((err) => err.message === "Unauthorized")) {
-          removeCookie("accessToken")
+          removeCookie("accessToken", { path: "/" })
         }
         return json;
       }),

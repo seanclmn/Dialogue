@@ -16,15 +16,29 @@ import { FriendRequest } from './users/entities/friendRequests.entity';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { NotificationsModule } from './notifications/notifications.module';
 
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+
 @Module({
   imports: [
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
       sortSchema: true,
       driver: ApolloDriver,
-      playground: true,
+      playground: false,
+      plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
       subscriptions: {
-        'graphql-ws': true
+        'graphql-ws': {
+          onConnect: (context: any) => {
+            const { connectionParams } = context;
+            return { req: { headers: connectionParams } };
+          },
+        },
+      },
+      context: ({ req, extra }) => {
+        if (extra) {
+          return { req: extra.req };
+        }
+        return { req };
       },
     }),
     TypeOrmModule.forRoot({

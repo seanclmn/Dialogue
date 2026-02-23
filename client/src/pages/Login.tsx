@@ -48,7 +48,7 @@ export const Login = () => {
         password: creds.password,
       },
       onCompleted: (data: LoginMutation$data) => {
-        setCookie("accessToken", data.login.accessToken);
+        setCookie("accessToken", data.login.accessToken, { path: "/" });
       },
       onError: (e) => {
         console.log(e);
@@ -64,7 +64,7 @@ export const Login = () => {
         password: "password123",
       },
       onCompleted: (data: LoginMutation$data) => {
-        setCookie("accessToken", data.login.accessToken);
+        setCookie("accessToken", data.login.accessToken, { path: "/" });
       },
     });
   };

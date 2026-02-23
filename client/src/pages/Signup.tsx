@@ -41,7 +41,7 @@ export const Signup = () => {
               password: creds.password,
             },
             onCompleted: (data: SignupMutation$data) => {
-              setCookie("accessToken", data.signup.accessToken);
+              setCookie("accessToken", data.signup.accessToken, { path: "/" });
             },
             onError: (e) => {
               console.log(e);
