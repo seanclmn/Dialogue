@@ -5,6 +5,7 @@ import { graphql } from "relay-runtime";
 import { useMutation } from "react-relay";
 import { useCookies } from "react-cookie";
 import { Link, Navigate } from "react-router";
+import toast from "react-hot-toast";
 import {
   SignupMutation,
   SignupMutation$data,
@@ -24,7 +25,6 @@ const mutation = graphql`
 
 export const Signup = () => {
   const [creds, setCreds] = useState({ username: "", password: "" });
-  const [errors, setErrors] = useState("");
   const [cookies, setCookie] = useCookies(["accessToken"]);
   const [commitMutation] = useMutation<SignupMutation>(mutation);
 
@@ -42,10 +42,11 @@ export const Signup = () => {
             },
             onCompleted: (data: SignupMutation$data) => {
               setCookie("accessToken", data.signup.accessToken, { path: "/" });
+              toast.success("Account created successfully!");
             },
-            onError: (e) => {
-              console.log(e);
-              setErrors("This user already exists");
+            onError: (e: any) => {
+              const message = e.source?.errors?.[0]?.message || e.message || "User already exists";
+              toast.error(message);
             },
           });
         }}
@@ -65,7 +66,6 @@ export const Signup = () => {
             setCreds({ ...creds, password: e.currentTarget.value })
           }
         />
-        <p>{errors}</p>
         <Button title="Sign up" type="submit" styles="text-sm py-[5px]" />
         <Link to="/login">
           <p className="my-2">Log in here</p>

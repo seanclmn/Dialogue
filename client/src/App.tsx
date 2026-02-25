@@ -11,6 +11,7 @@ import { Chats } from "./pages/Chats";
 import { SearchUsers } from "./pages/SearchUsers";
 import { UserProfile } from "./pages/UserProfile";
 import { Notifications } from "./pages/Notifications";
+import { ToastProvider } from "./components/common/ToastProvider";
 
 export const RouterParent = () => {
   const [cookies, setCookies] = useCookies(["accessToken", "theme"]);
@@ -83,5 +84,10 @@ export const RouterParent = () => {
 };
 
 export const App = () => {
-  return <RouterParent />;
+  return (
+    <>
+      <ToastProvider />
+      <RouterParent />
+    </>
+  );
 };

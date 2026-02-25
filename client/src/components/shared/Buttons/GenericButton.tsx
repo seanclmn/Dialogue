@@ -19,7 +19,7 @@ export const Button = ({
   return (
     <button
       type={type}
-      className={`bg-blue-400 text-white w-full px-2
+      className={`bg-blue-400 text-white w-auto px-2
 			py-2 rounded-md border-blue-400 border-[1px] border-solid ${styles}`}
       onClick={onClick}
       disabled={disabled}

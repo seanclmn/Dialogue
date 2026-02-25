@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMessageInput } from './dto/create-message.input';
 import { UpdateMessageInput } from './dto/update-message.input';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,6 +19,7 @@ export class MessagesService {
     const chat = await this.chatsRepository.findOne({
       where: { id: createMessageInput.chatId }
     })
+    if (!chat) throw new NotFoundException(`Chat with ID ${createMessageInput.chatId} not found`);
     const newMessage = await this.messagesRepository.save({
       text: createMessageInput.text,
       chat: chat,
@@ -36,11 +37,13 @@ export class MessagesService {
   }
 
   async findOne(id: string) {
-    return await this.messagesRepository.findOne({
+    const message = await this.messagesRepository.findOne({
       where: {
         id: id,
       }
     });
+    if (!message) throw new NotFoundException(`Message with ID ${id} not found`);
+    return message;
   }
 
   async update(updateMessageInput: UpdateMessageInput) {

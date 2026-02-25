@@ -2,8 +2,6 @@ import {
   ConnectionHandler,
   graphql,
   GraphQLSubscriptionConfig,
-  RecordProxy,
-  RecordSourceProxy,
 } from "relay-runtime";
 import { Suspense, useContext, useEffect, useMemo } from "react";
 import {
@@ -19,7 +17,6 @@ import { Outlet, useParams } from "react-router";
 import { PageChatsSubscription } from "@generated/PageChatsSubscription.graphql";
 import { Nav } from "@components/nav/Nav";
 import { Link } from "react-router";
-import img from "../src/assets/logo.png";
 
 const query = graphql`
   query PageQuery {
@@ -75,6 +72,7 @@ type ContentProps = {
 const Content = ({ queryReference }: ContentProps) => {
   const { currentUser, } = usePreloadedQuery(query, queryReference);
   const { user, setUser } = useContext(UserContext);
+  const { id: currentOpenChatId } = useParams();
   const config: GraphQLSubscriptionConfig<PageChatsSubscription> = useMemo(
     () => ({
       subscription: subscription,
@@ -114,7 +112,7 @@ const Content = ({ queryReference }: ContentProps) => {
         console.log("completed");
       },
     }),
-    [user?.chatIds],
+    [user?.id],
   );
 
   useSubscription(config);

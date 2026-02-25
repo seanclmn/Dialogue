@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { graphql, useMutation } from "react-relay";
+import toast from "react-hot-toast";
 import { UserContext } from "../contexts/UserContext";
 import { AcceptFriendRequestMutation } from "@generated/AcceptFriendRequestMutation.graphql";
 
@@ -25,6 +26,13 @@ export const useAcceptFriendRequest = (friendRequestId: string) => {
           acceptFriendRequestInput: {
             friendRequestId: friendRequestId,
           },
+        },
+        onCompleted: () => {
+          toast.success("Friend request accepted!");
+        },
+        onError: (e: any) => {
+          const message = e.source?.errors?.[0]?.message || e.message || "Failed to accept friend request";
+          toast.error(message);
         },
       }).dispose();
   };

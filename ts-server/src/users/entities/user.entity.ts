@@ -41,9 +41,11 @@ export class User implements Node {
   friends: User[]
 
   @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.sender, { nullable: true })
+  @Field(() => [FriendRequest], { nullable: true })
   sentRequests: FriendRequest[]
 
   @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.receiver, { nullable: true })
+  @Field(() => [FriendRequest], { nullable: true })
   incomingRequests: FriendRequest[]
 
   @Field(() => NotificationConnection, { nullable: true })

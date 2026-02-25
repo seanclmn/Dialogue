@@ -21,6 +21,16 @@ const query = graphql`
       username
       id
       bio
+      friendRequests {
+        sender {
+          id
+        }
+        receiver {
+          id
+        }
+        accepted
+        declined
+      }
     }
   }
 `;
@@ -46,18 +56,51 @@ const Content = ({ queryReference }: ContentProps) => {
   const [commitMutation, isMutationInFlight] =
     useMutation<UserProfileMutation>(mutation);
 
+  const hasSentRequest = data.user.friendRequests?.some(
+    (req) => req.sender.id === currentUser.user.id && !req.accepted && !req.declined
+  );
+
+  const hasReceivedRequest = data.user.friendRequests?.some(
+    (req) => req.receiver.id === currentUser.user.id && !req.accepted && !req.declined
+  );
+
+  const isFriend = data.user.friendRequests?.some(
+    (req) => (req.sender.id === currentUser.user.id || req.receiver.id === currentUser.user.id) && req.accepted
+  );
+
   return (
     <div className="w-full flex flex-col items-center py-2 max-w-96 mx-auto bg-bgd-color text-txt-color min-h-full">
-      {data.user.username === currentUser.user.username ?
-        <Avatar src={img} containerStyle="w-28 h-28 my-2" editable link="/editprofile" /> :
-        <Avatar src={img} containerStyle="w-28 h-28 my-2" />}
+      {data.user.username === currentUser.user.username ? (
+        <Avatar
+          src={img}
+          containerStyle="w-28 h-28 my-2"
+          editable
+          link="/editprofile"
+        />
+      ) : (
+        <Avatar src={img} containerStyle="w-28 h-28 my-2" />
+      )}
       <p className="my-2">{data.user.username}</p>
       <p className="text-sm text-gray-500">{data.user.bio}</p>
       {data.user.id !== currentUser.user.id ? (
         <Button
-          title="Add"
+          title={
+            isFriend
+              ? "Friends"
+              : hasSentRequest
+                ? "Requested"
+                : hasReceivedRequest
+                  ? "Accept Request"
+                  : "Add"
+          }
+          styles={
+            `my-2 ${hasSentRequest || isFriend
+              ? "bg-gray-400 border-gray-400 cursor-not-allowed"
+              : ""}`
+          }
+          disabled={isMutationInFlight || hasSentRequest || isFriend}
           onClick={() => {
-            if (currentUser.user.id) {
+            if (currentUser.user.id && !hasSentRequest && !isFriend) {
               commitMutation({
                 variables: {
                   receiverId: data.user.id,

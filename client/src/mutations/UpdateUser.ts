@@ -1,5 +1,6 @@
 import { graphql } from "relay-runtime";
 import { useMutation } from "react-relay";
+import toast from "react-hot-toast";
 import { UpdateUserMutation, UpdateUserMutation$data } from "@generated/UpdateUserMutation.graphql";
 import { useContext } from "react";
 import { User, UserContext } from "@contexts/UserContext";
@@ -33,6 +34,11 @@ export const useUpdateUserMutation = () => {
           bio: data.updateUser.bio ?? user.bio,
         };
         setUser(updatedUser);
+        toast.success("Profile updated!");
+      },
+      onError: (e: any) => {
+        const message = e.source?.errors?.[0]?.message || e.message || "Failed to update profile";
+        toast.error(message);
       }
     });
 

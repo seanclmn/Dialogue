@@ -2,7 +2,7 @@ import { Resolver, Query, Mutation, Args, Int, Context, Parent, ResolveField } f
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { CreateUserInput } from './dto/create-user.input';
-import { UnauthorizedException, UseGuards } from '@nestjs/common';
+import { UnauthorizedException, UseGuards, NotFoundException } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/jwt-auth.guard';
 import { ChatConnection } from 'src/chats/entities/chat.connection.entity';
 import { UserConnection } from './entities/user.connection.entity';
@@ -28,7 +28,9 @@ export class UsersResolver {
       throw new UnauthorizedException('You are not authorized to view this profile');
     }
     const username = context.req.user.username;
-    return await this.usersService.findOne(username)
+    const foundUser = await this.usersService.findOne(username);
+    if (!foundUser) throw new NotFoundException(`User with username ${username} not found`);
+    return foundUser;
   }
 
   @Mutation(() => User)
@@ -66,8 +68,10 @@ export class UsersResolver {
 
   @Query(() => User, { name: 'user' })
   @UseGuards(JwtGuard)
-  findOne(@Args('username', { type: () => String }) username: string) {
-    return this.usersService.findOne(username);
+  async findOne(@Args('username', { type: () => String }) username: string) {
+    const user = await this.usersService.findOne(username);
+    if (!user) throw new NotFoundException(`User with username ${username} not found`);
+    return user;
   }
 
   @ResolveField('chats', () => ChatConnection)

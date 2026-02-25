@@ -3,7 +3,7 @@ export interface InputProps extends React.HTMLAttributes<HTMLInputElement> {
   styles?: string;
 }
 
-export const Input = ({ styles, title, onChange, ...props }: InputProps) => {
+export const Input = ({ styles, title, onChange, ...rest }: InputProps) => {
   return (
     <>
       <input
@@ -13,7 +13,7 @@ export const Input = ({ styles, title, onChange, ...props }: InputProps) => {
         onChange={onChange}
         className={`border-[1px] rounded-md px-2
 			py-2 border-brd-color border-solid w-full bg-bgd-color text-txt-color ${styles}`}
-        {...props}
+        {...rest}
       />
     </>
   );

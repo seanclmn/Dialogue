@@ -12,6 +12,7 @@ import { Link } from "react-router";
 import logo from "../assets/logo.png";
 import { InputError } from "@components/error/InputError";
 import { Controller, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 const mutation = graphql`
   mutation LoginMutation($username: String!, $password: String!) {
     login(loginUserInput: { username: $username, password: $password }) {
@@ -49,10 +50,11 @@ export const Login = () => {
       },
       onCompleted: (data: LoginMutation$data) => {
         setCookie("accessToken", data.login.accessToken, { path: "/" });
+        toast.success("Logged in successfully!");
       },
-      onError: (e) => {
-        console.log(e);
-        // setErrors("Username or password was invalid")
+      onError: (e: any) => {
+        const message = e.source?.errors?.[0]?.message || e.message || "Invalid username or password";
+        toast.error(message);
       },
     });
   };
@@ -65,6 +67,11 @@ export const Login = () => {
       },
       onCompleted: (data: LoginMutation$data) => {
         setCookie("accessToken", data.login.accessToken, { path: "/" });
+        toast.success(`Logged in as ${username}`);
+      },
+      onError: (e: any) => {
+        const message = e.source?.errors?.[0]?.message || e.message || "Quick login failed";
+        toast.error(message);
       },
     });
   };

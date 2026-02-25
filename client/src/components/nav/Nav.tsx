@@ -6,13 +6,14 @@ import {
   Bars3Icon,
   SunIcon,
   MoonIcon,
+  ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import {
   ChatBubbleOvalLeftEllipsisIcon as ChatBubbleOvalLeftEllipsisIconSolid,
   BellAlertIcon as BellAlertIconSolid,
   MagnifyingGlassCircleIcon as MagnifyingGlassCircleIconSolid,
 } from "@heroicons/react/24/solid";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import img from "../../assets/jennie.jpeg";
 import { useContext } from "react";
 import { UserContext } from "@contexts/UserContext";
@@ -22,6 +23,7 @@ import { useCookies } from "react-cookie";
 export const Nav = () => {
   const { pathname } = useLocation();
   const data = useContext(UserContext);
+  const navigate = useNavigate();
   const [cookies, setCookies, removeCookie] = useCookies([
     "accessToken",
     "theme",
@@ -29,6 +31,7 @@ export const Nav = () => {
 
   const handleLogout = () => {
     removeCookie("accessToken", { path: "/" });
+    navigate("/")
   };
 
   const toggleTheme = () => {
@@ -104,8 +107,9 @@ export const Nav = () => {
             <MenuItem>
               <button
                 onClick={handleLogout}
-                className="block w-full px-4 py-2 text-left text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+                className="flex w-full items-center px-4 py-2 text-left text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
               >
+                <ArrowRightOnRectangleIcon className="mr-2 h-5 w-5" />
                 Logout
               </button>
             </MenuItem>

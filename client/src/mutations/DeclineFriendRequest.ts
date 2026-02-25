@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { graphql, useMutation } from "react-relay";
+import toast from "react-hot-toast";
 import { UserContext } from "../contexts/UserContext";
 import { DeclineFriendRequestMutation } from "@generated/DeclineFriendRequestMutation.graphql";
 
@@ -27,6 +28,13 @@ export const useDeclineFriendRequest = (friendRequestId: string) => {
           declineFriendRequestInput: {
             friendRequestId: friendRequestId,
           },
+        },
+        onCompleted: () => {
+          toast.success("Friend request declined");
+        },
+        onError: (e: any) => {
+          const message = e.source?.errors?.[0]?.message || e.message || "Failed to decline friend request";
+          toast.error(message);
         },
       });
   };

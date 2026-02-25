@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateUserInput } from './dto/create-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
@@ -77,7 +77,7 @@ export class UsersService {
   async updateUser(updateUserInput: UpdateUserInput) {
     const user = await this.usersRepository.findOne({ where: { id: updateUserInput.id } });
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException(`User with ID ${updateUserInput.id} not found`);
     }
     const updatedUser = {
       ...user,
@@ -172,14 +172,14 @@ export class UsersService {
     const friendRequest = await this.friendRequestsRepository.findOne({ where: { id: friendRequestId } })
 
     if (!friendRequest) {
-      throw new Error("Error processing friend request")
+      throw new NotFoundException(`Friend request with ID ${friendRequestId} not found`);
     }
 
     const sender = await this.usersRepository.findOne({ where: { id: friendRequest.sender.id } })
     const receiver = await this.usersRepository.findOne({ where: { id: friendRequest.receiver.id } })
 
     if (!receiver || !sender) {
-      throw new Error("There was an error sending your friend request")
+      throw new BadRequestException("There was an error processing your friend request");
     }
 
     if (sender.friends) {
@@ -201,7 +201,7 @@ export class UsersService {
     const friendRequest = await this.friendRequestsRepository.findOne({ where: { id: friendRequestId } })
 
     if (!friendRequest) {
-      throw new Error("Server Error")
+      throw new NotFoundException(`Friend request with ID ${friendRequestId} not found`);
     }
 
     return await this.friendRequestsRepository.save({ ...friendRequest, declined: true })

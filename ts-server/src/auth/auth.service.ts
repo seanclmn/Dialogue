@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
@@ -23,14 +23,14 @@ export class AuthService {
   ): Promise<ValidateUser | null> {
     const user = await this.usersService.findOne(username);
 
-    if (!user) throw new Error('User does not exist');
+    if (!user) throw new UnauthorizedException('User does not exist');
 
     const valid = await compare(password, user.password);
 
     if (user && valid) {
       const { password: _password, ...result } = user;
       return result;
-    } else return null;
+    } else throw new UnauthorizedException('Invalid password');
   }
 
   async login(user: User) {
@@ -46,7 +46,7 @@ export class AuthService {
   async signup(createUserInput: CreateUserInput) {
     const user = await this.usersService.findOne(createUserInput.username);
 
-    if (user) throw new Error('User already Exists');
+    if (user) throw new ConflictException('User already exists');
 
     const hashedPassword = await hash(createUserInput.password, 10);
 

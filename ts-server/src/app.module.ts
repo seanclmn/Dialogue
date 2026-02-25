@@ -15,6 +15,8 @@ import { Notification } from './notifications/entities/notification.entity';
 import { FriendRequest } from './users/entities/friendRequests.entity';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { NotificationsModule } from './notifications/notifications.module';
+import { APP_FILTER } from '@nestjs/core';
+import { GraphQLErrorFilter } from './common/filters/graphql-error.filter';
 
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
@@ -73,6 +75,12 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
     }),
     NotificationsModule
   ],
-  providers: [NodeResolver],
+  providers: [
+    NodeResolver,
+    {
+      provide: APP_FILTER,
+      useClass: GraphQLErrorFilter,
+    },
+  ],
 })
 export class AppModule { }

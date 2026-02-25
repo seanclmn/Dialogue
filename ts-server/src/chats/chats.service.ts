@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateChatInput } from './dto/update-chat.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
@@ -38,12 +38,14 @@ export class ChatsService {
   }
 
   async findOne(id: string) {
-    return await this.chatsRepository.findOne({
+    const chat = await this.chatsRepository.findOne({
       where: {
         id: id
       },
       relations: ["participants"]
     })
+    if (!chat) throw new NotFoundException(`Chat with ID ${id} not found`);
+    return chat;
   }
 
   async update(updateChatInput: UpdateChatInput) {
@@ -57,7 +59,7 @@ export class ChatsService {
   async addParticipant(chat: Chat, user: User) {
 
     if (!chat) {
-      throw new Error(`Chat with ID ${chat.id} not found`);
+      throw new NotFoundException(`Chat not found`);
     }
 
     if (chat.participants) {
