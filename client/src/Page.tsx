@@ -72,7 +72,6 @@ type ContentProps = {
 const Content = ({ queryReference }: ContentProps) => {
   const { currentUser, } = usePreloadedQuery(query, queryReference);
   const { user, setUser } = useContext(UserContext);
-  const { id: currentOpenChatId } = useParams();
   const config: GraphQLSubscriptionConfig<PageChatsSubscription> = useMemo(
     () => ({
       subscription: subscription,

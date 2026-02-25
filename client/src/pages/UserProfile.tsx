@@ -2,13 +2,13 @@ import { Avatar } from "@components/shared/users/Avatar";
 import img from "../assets/jennie.jpeg";
 import { useParams } from "react-router";
 import { useContext, useEffect } from "react";
-import { graphql } from "relay-runtime";
 import {
   PreloadedQuery,
   useMutation,
   usePreloadedQuery,
   useQueryLoader,
 } from "react-relay";
+import { graphql } from "relay-runtime";
 import { UserProfileQuery } from "@generated/UserProfileQuery.graphql";
 import { Loader } from "@components/shared/loaders/Loader";
 import { Button } from "@components/shared/Buttons/GenericButton";
