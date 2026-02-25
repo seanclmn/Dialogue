@@ -105,7 +105,7 @@ export const Login = () => {
         <Button
           title="Log in"
           type="submit"
-          styles="text-sm my-2"
+          styles="w-full text-sm my-2"
           loading={isMutationInFlight}
           disabled={isMutationInFlight}
         />
