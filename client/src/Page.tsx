@@ -111,7 +111,7 @@ const Content = ({ queryReference }: ContentProps) => {
         console.log("completed");
       },
     }),
-    [user?.id],
+    [user?.id, user?.chatIds],
   );
 
   useSubscription(config);

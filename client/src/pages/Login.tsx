@@ -9,7 +9,6 @@ import {
   LoginMutation$data,
 } from "@generated/LoginMutation.graphql";
 import { Link } from "react-router";
-import logo from "../assets/logo.png";
 import { InputError } from "@components/error/InputError";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";

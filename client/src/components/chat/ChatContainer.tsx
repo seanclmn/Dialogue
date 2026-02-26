@@ -68,55 +68,68 @@ interface ContentProps {
 
 export const Content = ({ queryReference, chatId }: ContentProps) => {
   const [messageMap, setMessageMap] = useState<Record<string, string>>({});
-  const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState<boolean | null>(null);
   const { user } = useContext(UserContext);
   const [commitMutation] = useMutation<ChatContainerMutation>(mutation);
-  const { updateTyping } = useUpdateTyping()
+  const { updateTyping } = useUpdateTyping();
   const data = usePreloadedQuery(query, queryReference);
-  const [friendTyping, setFriendTyping] = useState<boolean>(false)
+  const [friendTyping, setFriendTyping] = useState<boolean>(false);
 
   useEffect(() => {
-    const { id: userId } = user
+    const { id: userId } = user;
     const delayDebounceFn = setTimeout(() => {
       if (isTyping === false && userId) {
-        updateTyping({ chatId, isTyping: false, userId })
+        updateTyping({ chatId, isTyping: false, userId });
       }
       setIsTyping(false);
     }, 400);
 
     if (isTyping && userId) {
-      updateTyping({ chatId, isTyping, userId })
+      updateTyping({ chatId, isTyping, userId });
     }
 
     return () => clearTimeout(delayDebounceFn);
   }, [isTyping, chatId]);
 
   if (!queryReference || !data.node) {
-    return null
+    return null;
   }
   const config: GraphQLSubscriptionConfig<ChatContainerSubscription> = useMemo(
     () => ({
       subscription: subscription,
       variables: { chatId: chatId },
       updater: (store) => {
-        const newEventField = store.getRootField("userTyping")
-        const typingUser = newEventField.getValue("userId")
-        const isTyping = newEventField.getValue("isTyping")
-        if (typingUser !== user.id)
-          setFriendTyping(() => isTyping)
+        const newEventField = store.getRootField("userTyping");
+        const typingUser = newEventField.getValue("userId");
+        const isTyping = newEventField.getValue("isTyping");
+        if (typingUser !== user.id) setFriendTyping(() => isTyping);
       },
       onError: (e) => {
-        console.log(e)
+        console.log(e);
       },
       onCompleted: () => {
-        console.log("completed")
-      }
+        console.log("completed");
+      },
     }),
-    [data.node?.id]
-  )
+    [data.node?.id],
+  );
 
-  const _ = useSubscription(config)
+  const _ = useSubscription(config);
+
+  const handleSendMessage = () => {
+    const text = messageMap[chatId];
+    if (user?.id && text && text.trim().length > 0) {
+      commitMutation({
+        variables: {
+          text: text,
+          userId: user.id,
+          chatId: chatId,
+        },
+      }).dispose();
+      setMessageMap({ ...messageMap, [chatId]: "" });
+    }
+  };
+
   return (
     <div className="h-full w-full flex flex-col justify-between">
       {!queryReference ? <Loader /> : null}
@@ -136,18 +149,9 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
          px-[1rem] py-[4px]
         border-brd-color flex items-center bg-bgd-color
         "
-        onSubmit={(e: React.KeyboardEvent<HTMLFormElement>) => {
+        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
-          if (user?.id) {
-            commitMutation({
-              variables: {
-                text: message,
-                userId: user.id,
-                chatId: chatId,
-              },
-            }).dispose();
-            setMessage("");
-          }
+          handleSendMessage();
         }}
       >
         <ChatInput
@@ -162,33 +166,13 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
-              if (user?.id) {
-                commitMutation({
-                  variables: {
-                    text: messageMap[chatId],
-                    userId: user.id,
-                    chatId: chatId,
-                  },
-                }).dispose();
-                setMessageMap({ ...messageMap, [chatId]: "" });
-              }
+              handleSendMessage();
             }
           }}
         />
         <ChatSendButton
-          disabled={messageMap[chatId]?.length === 0}
-          onClick={() => {
-            if (user?.id) {
-              commitMutation({
-                variables: {
-                  text: messageMap[chatId],
-                  userId: user.id,
-                  chatId: chatId,
-                },
-              }).dispose();
-              setMessageMap({ ...messageMap, [chatId]: "" });
-            }
-          }}
+          disabled={!messageMap[chatId] || messageMap[chatId].trim().length === 0}
+          onClick={handleSendMessage}
         />
       </form>
     </div>
