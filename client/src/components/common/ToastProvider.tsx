@@ -15,7 +15,7 @@ export const ToastProvider = () => {
         },
         success: {
           duration: 3000,
-          theme: {
+          iconTheme: {
             primary: 'green',
             secondary: 'black',
           },

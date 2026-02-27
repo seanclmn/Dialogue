@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType, registerEnumType } from "@nestjs/graphql";
+import { Field, ID, InterfaceType, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { Node } from "src/relay";
 import { User } from "src/users/entities/user.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
@@ -11,10 +11,14 @@ registerEnumType(NotificationsType, {
   name: 'NotificationsType',
 });
 
-
 @Entity()
-@ObjectType({ implements: Node })
-export class Notification implements Node {
+@InterfaceType({ implements: () => [Node], resolveType: (value) => {
+  if (value.type === NotificationsType.FRIENDREQUEST) {
+    return FriendRequestNotification;
+  }
+  return null;
+}})
+export abstract class Notification implements Node {
   @PrimaryGeneratedColumn("uuid")
   @Field(() => ID)
   id: string
@@ -36,10 +40,20 @@ export class Notification implements Node {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Field(() => NotificationsType)
   @Column({
     type: 'enum',
     enum: NotificationsType,
   })
   type: NotificationsType;
+}
+
+@ObjectType({ implements: () => [Notification, Node] })
+export class FriendRequestNotification extends Notification {
+  @Column({ default: false })
+  @Field(() => Boolean)
+  accepted: boolean;
+
+  @Column({ default: false })
+  @Field(() => Boolean)
+  declined: boolean;
 }

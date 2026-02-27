@@ -11,7 +11,7 @@ import { Chat } from './chats/entities/chat.entity';
 import { MessagesModule } from './messages/messages.module';
 import { Message } from './messages/entities/message.entity';
 import { NodeResolver } from './node/node.resolver';
-import { Notification } from './notifications/entities/notification.entity';
+import { Notification, FriendRequestNotification } from './notifications/entities/notification.entity';
 import { FriendRequest } from './users/entities/friendRequests.entity';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { NotificationsModule } from './notifications/notifications.module';
@@ -28,6 +28,9 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
       driver: ApolloDriver,
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
+      buildSchemaOptions: {
+        orphanedTypes: [FriendRequestNotification],
+      },
       subscriptions: {
         'graphql-ws': {
           onConnect: (context: any) => {

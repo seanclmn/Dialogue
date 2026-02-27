@@ -114,7 +114,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     [data.node?.id],
   );
 
-  const _ = useSubscription(config);
+  useSubscription(config);
 
   const handleSendMessage = () => {
     const text = messageMap[chatId];

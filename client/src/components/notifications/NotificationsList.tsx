@@ -1,8 +1,7 @@
 import { NotificationsList_user$key } from "@generated/NotificationsList_user.graphql";
 import { usePaginationFragment } from "react-relay";
 import { graphql } from "relay-runtime";
-import { Avatar } from "@components/shared/users/Avatar";
-import img from "../../assets/jennie.jpeg";
+import { FriendRequest } from "./FriendRequest";
 
 const fragment = graphql`
   fragment NotificationsList_user on User
@@ -16,12 +15,20 @@ const fragment = graphql`
         edges {
           cursor
           node {
+            __typename
             id
-            type
             createdAt
             sender {
               username
               id
+            }
+            receiver {
+              username
+              id
+            }
+            ... on FriendRequestNotification {
+              accepted
+              declined
             }
           }
         }
@@ -42,38 +49,26 @@ export const NotificationsList = ({ fragmentKey }: NotificationsList) => {
     fragment,
     fragmentKey
   );
+  console.log(data.notifications);
 
   if (!data.notifications || data.notifications.edges.length === 0)
     return <NoNotifications />;
-
   return (
     <div className="bg-bgd-color text-txt-color min-h-full w-full flex flex-col">
       <div className="divide-y divide-brd-color">
         {data.notifications?.edges.map(({ node }) => {
-          const date = new Date(node.createdAt).toLocaleDateString();
-
           const renderNotificationContent = () => {
-            switch (node.type) {
-              case "FRIENDREQUEST":
+            switch (node.__typename) {
+              case "FriendRequestNotification":
                 return (
-                  <div className="flex items-center gap-3 p-4 hover:bg-bgd-highlight transition-colors">
-                    <Avatar src={img} containerStyle="w-10 h-10" />
-                    <div className="flex flex-col flex-1">
-                      <p className="text-sm">
-                        <span className="font-bold">{node.sender.username}</span>{" "}
-                        sent you a friend request.
-                      </p>
-                      <p className="text-xs text-gray-500">{date}</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button className="text-xs bg-primary text-white px-3 py-1 rounded-md font-medium">
-                        Accept
-                      </button>
-                      <button className="text-xs bg-gray-200 text-gray-700 px-3 py-1 rounded-md font-medium">
-                        Decline
-                      </button>
-                    </div>
-                  </div>
+                  <FriendRequest
+                    data={{
+                      accepted: node.accepted ?? false,
+                      declined: node.declined ?? false,
+                      id: node.id,
+                      sender: node.sender,
+                    }}
+                  />
                 );
               default:
                 return (

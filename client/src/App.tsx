@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import ErrorPage from "./pages/404";
 import { Login } from "./pages/Login";

@@ -75,6 +75,16 @@ type FriendRequest {
   sender: User!
 }
 
+type FriendRequestNotification implements Node & Notification {
+  accepted: Boolean!
+  createdAt: DateTime!
+  declined: Boolean!
+  id: ID!
+  receiver: User!
+  receiverId: ID!
+  sender: User!
+}
+
 type LoginResponse {
   accessToken: String!
   user: User!
@@ -124,13 +134,12 @@ interface Node {
   id: ID!
 }
 
-type Notification implements Node {
+interface Notification implements Node {
   createdAt: DateTime!
   id: ID!
   receiver: User!
   receiverId: ID!
   sender: User!
-  type: NotificationsType!
 }
 
 type NotificationConnection {
@@ -207,8 +216,10 @@ type User implements Node {
   friendRequests: [FriendRequest!]!
   friends(after: String, first: Int): UserConnection!
   id: ID!
+  incomingRequests: [FriendRequest!]
   notifications(after: String, first: Int): NotificationConnection
   password: String!
+  sentRequests: [FriendRequest!]
   username: String!
 }
 

@@ -19,11 +19,13 @@ async function seed() {
 
   const password = await hash('password123', 10);
 
-  // Clear existing data (optional, but often useful for seeds)
-  // await notificationRepository.delete({});
-  // await messageRepository.delete({});
-  // await chatRepository.delete({});
-  // await userRepository.delete({});
+  // Clear existing data
+  await chatRepository.query('SET FOREIGN_KEY_CHECKS = 0');
+  await notificationRepository.createQueryBuilder().delete().execute();
+  await messageRepository.createQueryBuilder().delete().execute();
+  await chatRepository.createQueryBuilder().delete().execute();
+  await userRepository.createQueryBuilder().delete().execute();
+  await chatRepository.query('SET FOREIGN_KEY_CHECKS = 1');
 
   const alice = await userRepository.save({
     username: 'alice',
