@@ -12,6 +12,8 @@ const declineRequestMutation = graphql`
       declineFriendRequestInput: $declineFriendRequestInput
     ) {
       id
+      accepted
+      declined
     }
   }
 `;

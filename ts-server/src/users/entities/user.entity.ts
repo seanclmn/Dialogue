@@ -2,7 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Node } from 'src/relay';
 import { Chat } from 'src/chats/entities/chat.entity';
-import { FriendRequest } from './friendRequests.entity';
+import { FriendRequest as FriendRequestEntity } from "src/friends/entities/friend-request.entity";
 import { NotificationConnection } from 'src/notifications/entities/notification.connection';
 
 @Entity()
@@ -40,13 +40,13 @@ export class User implements Node {
   })
   friends: User[]
 
-  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.sender, { nullable: true })
-  @Field(() => [FriendRequest], { nullable: true })
-  sentRequests: FriendRequest[]
+  @OneToMany(() => FriendRequestEntity, (friendRequest) => friendRequest.sender, { nullable: true })
+  @Field(() => [FriendRequestEntity], { nullable: true })
+  sentRequests: FriendRequestEntity[]
 
-  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.receiver, { nullable: true })
-  @Field(() => [FriendRequest], { nullable: true })
-  incomingRequests: FriendRequest[]
+  @OneToMany(() => FriendRequestEntity, (friendRequest) => friendRequest.receiver, { nullable: true })
+  @Field(() => [FriendRequestEntity], { nullable: true })
+  incomingRequests: FriendRequestEntity[]
 
   @Field(() => NotificationConnection, { nullable: true })
   notifications: NotificationConnection

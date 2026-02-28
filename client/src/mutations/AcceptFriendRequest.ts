@@ -10,6 +10,8 @@ const acceptRequestMutation = graphql`
   ) {
     acceptFriendRequest(acceptFriendRequestInput: $acceptFriendRequestInput) {
       id
+      accepted
+      declined
     }
   }
 `;

@@ -12,6 +12,7 @@ import { NotificationsList } from "@components/notifications/NotificationsList";
 const query = graphql`
   query NotificationsQuery {
       currentUser {
+        id
         ...NotificationsList_user
       }
     }
@@ -24,7 +25,6 @@ type ContentProps = {
 const Content = ({ queryReference }: ContentProps) => {
 
   const data = usePreloadedQuery<NotificationsQuery>(query, queryReference);
-
   if (!data.currentUser) return null
   return (
     <NotificationsList fragmentKey={data.currentUser} />

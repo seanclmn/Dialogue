@@ -5,8 +5,11 @@ import { UsersService } from 'src/users/users.service';
 import { CreateNotificationInput } from './dto/create-notification.input';
 import { CreateNotificationParams } from './inputs/create-notification.input';
 import { NotificationConnection } from './entities/notification.connection';
+import { UseGuards } from '@nestjs/common';
+import { JwtGuard } from 'src/auth/jwt-auth.guard';
 
 @Resolver()
+@UseGuards(JwtGuard)
 export class NotificationsResolver {
 
   constructor(
@@ -15,7 +18,7 @@ export class NotificationsResolver {
   ) { }
 
   @Query(() => NotificationConnection, { name: 'notifications' })
-  findAll(
+  async findAll(
     @Args('userId', { type: () => ID }) userId: string,
     @Args('first', { type: () => Int, defaultValue: 10 }) first: number,
     @Args('after', { type: () => String, nullable: true }) after?: string

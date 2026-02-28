@@ -40,8 +40,9 @@ const mutation = graphql`
     sendFriendRequest(
       sendFriendRequestInput: { receiverId: $receiverId, senderId: $senderId }
     ) {
-      username
       id
+      accepted
+      declined
     }
   }
 `;

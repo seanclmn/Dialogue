@@ -15,7 +15,6 @@ export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(Chat) private chatsRepository: Repository<Chat>,
-    @InjectRepository(FriendRequest) private friendRequestsRepository: Repository<FriendRequest>,
   ) { }
 
   async create(createUserInput: CreateUserInput) {
@@ -47,7 +46,6 @@ export class UsersService {
   }
 
   async getChatsForUser(id: string, first?: number, after?: Date) {
-
     const where = after
       ? { participants: { id: id }, createdAt: MoreThan(after) }
       : { participants: { id: id } };
@@ -87,32 +85,11 @@ export class UsersService {
     return await this.usersRepository.save(updatedUser);
   }
 
-  async getFriendRequests(receiverId: string) {
-    const requests = await this.friendRequestsRepository.find({
-      where: {
-        receiver: {
-          id: receiverId
-        }
-      }
-    })
-
-    if (!requests) return []
-
-    return requests
-  }
-
   async getFriendsForUser(id: string, first?: number, after?: number) {
-
-    const where = after
-      ? { friends: { id: id }, skip: after }
-      : { friends: { id: id } };
-
-    const take = first ? first + 1 : null
-
     const friends = await this.usersRepository.find({
-      where,
+      where: { friends: { id: id } },
       relations: ['friends'],
-      take: take, // Fetch one extra to determine if there's a next page
+      take: first ? first + 1 : undefined,
     });
 
     const edges: UserEdge[] = friends ? friends.slice(0, first).map((user) => ({
@@ -128,83 +105,6 @@ export class UsersService {
     };
 
     return { edges, pageInfo };
-  }
-
-  async sendFriendRequest(senderId: string, receiverId: string) {
-    const sender = await this.usersRepository.findOne({ where: { id: senderId } })
-    const receiver = await this.usersRepository.findOne({ where: { id: receiverId } })
-
-    const friendRequestInput = {
-      sender: sender,
-      receiver: receiver,
-      accepted: false,
-      declined: false
-    }
-
-    const newFriendRequest = await this.friendRequestsRepository.save(friendRequestInput)
-    await this.usersRepository.save(
-      {
-        ...receiver,
-        incomingRequests: receiver.incomingRequests ?
-          [
-            ...receiver.incomingRequests,
-            newFriendRequest
-          ] :
-          [newFriendRequest]
-
-      })
-
-    return await this.usersRepository.save(
-      {
-        ...sender,
-        sentRequests: sender.sentRequests ?
-          [
-            ...sender.sentRequests,
-            newFriendRequest
-          ] :
-          [newFriendRequest]
-
-      })
-  }
-
-  async acceptFriendRequest(friendRequestId: string) {
-
-    const friendRequest = await this.friendRequestsRepository.findOne({ where: { id: friendRequestId } })
-
-    if (!friendRequest) {
-      throw new NotFoundException(`Friend request with ID ${friendRequestId} not found`);
-    }
-
-    const sender = await this.usersRepository.findOne({ where: { id: friendRequest.sender.id } })
-    const receiver = await this.usersRepository.findOne({ where: { id: friendRequest.receiver.id } })
-
-    if (!receiver || !sender) {
-      throw new BadRequestException("There was an error processing your friend request");
-    }
-
-    if (sender.friends) {
-      await this.usersRepository.save({ ...sender, friends: [...sender.friends, receiver] })
-    } else {
-      await this.usersRepository.save({ ...sender, friends: [receiver] })
-    }
-
-    if (receiver.friends) {
-      await this.usersRepository.save({ ...receiver, friends: [...receiver.friends, sender] })
-    } else {
-      await this.usersRepository.save({ ...receiver, friends: [sender] })
-    }
-
-    return await this.friendRequestsRepository.save({ ...friendRequest, accepted: true })
-  }
-
-  async declineFriendRequest(friendRequestId: string) {
-    const friendRequest = await this.friendRequestsRepository.findOne({ where: { id: friendRequestId } })
-
-    if (!friendRequest) {
-      throw new NotFoundException(`Friend request with ID ${friendRequestId} not found`);
-    }
-
-    return await this.friendRequestsRepository.save({ ...friendRequest, declined: true })
   }
 
   // async invalidateRefreshToken(userId: string) {

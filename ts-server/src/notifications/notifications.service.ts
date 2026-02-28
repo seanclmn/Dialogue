@@ -5,7 +5,7 @@ import { LessThan, Repository } from 'typeorm';
 import { CreateNotificationParams } from './inputs/create-notification.input';
 import { NotificationEdge } from './entities/notification.edge';
 import { PageInfo } from 'src/relay';
-import { Notification } from './entities/notification.entity';
+import { Notification, NotificationsType } from './entities/notification.entity';
 
 @Injectable()
 export class NotificationsService {
@@ -41,6 +41,7 @@ export class NotificationsService {
       where,
       order: { createdAt: "DESC" },
       take: first + 1,
+      relations: ['sender', 'receiver'],
     });
 
     const requestedNotifications = notifications.slice(0, first);
@@ -58,7 +59,14 @@ export class NotificationsService {
       hasNextPage,
     };
 
-    console.log(edges, pageInfo)
     return { edges, pageInfo };
+  }
+
+  async deleteFriendRequestNotification(senderId: string, receiverId: string) {
+    await this.notificationsRepository.delete({
+      sender: { id: senderId },
+      receiverId: receiverId,
+      type: NotificationsType.FRIENDREQUEST,
+    });
   }
 }

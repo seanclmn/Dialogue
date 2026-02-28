@@ -10,6 +10,7 @@ const fragment = graphql`
     cursor: { type: "String"}
   )
   @refetchable(queryName: "NotificationsListPaginationRefetchQuery"){
+    id
     notifications(first: $first, after: $cursor) 
       @connection(key: "NotificationsList_notifications") {
         edges {
@@ -49,7 +50,6 @@ export const NotificationsList = ({ fragmentKey }: NotificationsList) => {
     fragment,
     fragmentKey
   );
-  console.log(data.notifications);
 
   if (!data.notifications || data.notifications.edges.length === 0)
     return <NoNotifications />;

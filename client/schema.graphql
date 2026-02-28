@@ -114,15 +114,15 @@ type MessageEdge {
 }
 
 type Mutation {
-  acceptFriendRequest(acceptFriendRequestInput: AcceptFriendRequestInput!): User!
+  acceptFriendRequest(acceptFriendRequestInput: AcceptFriendRequestInput!): FriendRequest!
   createChat(createChatInput: CreateChatInput!): Chat!
   createFriendRequest(createFriendRequestInput: CreateNotificationInput!): Notification!
   createMessage(createMessageInput: CreateMessageInput!): Message!
   createUser(createUserInput: CreateUserInput!): User!
-  declineFriendRequest(declineFriendRequestInput: DeclineFriendRequestInput!): User!
+  declineFriendRequest(declineFriendRequestInput: DeclineFriendRequestInput!): FriendRequest!
   login(loginUserInput: LoginUserInput!): LoginResponse!
   removeChat(id: Int!): Chat!
-  sendFriendRequest(sendFriendRequestInput: SendFriendRequestInput!): User!
+  sendFriendRequest(sendFriendRequestInput: SendFriendRequestInput!): FriendRequest!
   signup(createUserInput: CreateUserInput!): LoginResponse!
   updateChat(updateChatInput: UpdateChatInput!): Chat!
   updateMessage(updateMessageInput: UpdateMessageInput!): Message!

@@ -3,7 +3,7 @@
 # ------------------------------------------------------
 
 input AcceptFriendRequestInput {
-  friendRequestId: String!
+  friendRequestId: ID!
 }
 
 type Chat implements Node {
@@ -64,13 +64,14 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 input DeclineFriendRequestInput {
-  friendRequestId: String!
+  friendRequestId: ID!
 }
 
-type FriendRequest {
+type FriendRequest implements Node {
   accepted: Boolean!
+  createdAt: DateTime!
   declined: Boolean!
-  id: String!
+  id: ID!
   receiver: User!
   sender: User!
 }
@@ -114,15 +115,15 @@ type MessageEdge {
 }
 
 type Mutation {
-  acceptFriendRequest(acceptFriendRequestInput: AcceptFriendRequestInput!): User!
+  acceptFriendRequest(acceptFriendRequestInput: AcceptFriendRequestInput!): FriendRequest!
   createChat(createChatInput: CreateChatInput!): Chat!
   createFriendRequest(createFriendRequestInput: CreateNotificationInput!): Notification!
   createMessage(createMessageInput: CreateMessageInput!): Message!
   createUser(createUserInput: CreateUserInput!): User!
-  declineFriendRequest(declineFriendRequestInput: DeclineFriendRequestInput!): User!
+  declineFriendRequest(declineFriendRequestInput: DeclineFriendRequestInput!): FriendRequest!
   login(loginUserInput: LoginUserInput!): LoginResponse!
   removeChat(id: Int!): Chat!
-  sendFriendRequest(sendFriendRequestInput: SendFriendRequestInput!): User!
+  sendFriendRequest(sendFriendRequestInput: SendFriendRequestInput!): FriendRequest!
   signup(createUserInput: CreateUserInput!): LoginResponse!
   updateChat(updateChatInput: UpdateChatInput!): Chat!
   updateMessage(updateMessageInput: UpdateMessageInput!): Message!

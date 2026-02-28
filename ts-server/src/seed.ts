@@ -4,7 +4,8 @@ import { Repository } from 'typeorm';
 import { User } from './users/entities/user.entity';
 import { Chat } from './chats/entities/chat.entity';
 import { Message } from './messages/entities/message.entity';
-import { Notification, NotificationsType } from './notifications/entities/notification.entity';
+import { Notification, NotificationsType, FriendRequestNotification } from './notifications/entities/notification.entity';
+import { FriendRequest } from './friends/entities/friend-request.entity';
 import { hash } from 'bcrypt';
 
 async function seed() {
@@ -14,6 +15,8 @@ async function seed() {
   const chatRepository = app.get<Repository<Chat>>('ChatRepository');
   const messageRepository = app.get<Repository<Message>>('MessageRepository');
   const notificationRepository = app.get<Repository<Notification>>('NotificationRepository');
+  const friendRequestNotificationRepository = app.get<Repository<FriendRequestNotification>>('FriendRequestNotificationRepository');
+  const friendRequestRepository = app.get<Repository<FriendRequest>>('FriendRequestRepository');
 
   console.log('Seeding database via CLI...');
 
@@ -22,6 +25,7 @@ async function seed() {
   // Clear existing data
   await chatRepository.query('SET FOREIGN_KEY_CHECKS = 0');
   await notificationRepository.createQueryBuilder().delete().execute();
+  await friendRequestRepository.createQueryBuilder().delete().execute();
   await messageRepository.createQueryBuilder().delete().execute();
   await chatRepository.createQueryBuilder().delete().execute();
   await userRepository.createQueryBuilder().delete().execute();
@@ -87,14 +91,41 @@ async function seed() {
 
   await messageRepository.save(allMessages);
 
-  await notificationRepository.save([
-    {
-      type: NotificationsType.FRIENDREQUEST,
-      sender: charlie,
-      receiver: alice,
-      receiverId: alice.id,
-    },
-  ]);
+  // Create a friend request from Charlie to Alice
+  await friendRequestRepository.save({
+    sender: charlie,
+    receiver: alice,
+    accepted: false,
+    declined: false,
+  });
+
+  // Create a corresponding notification for Alice
+  await friendRequestNotificationRepository.save({
+    type: NotificationsType.FRIENDREQUEST,
+    sender: charlie,
+    receiver: alice,
+    receiverId: alice.id,
+    accepted: false,
+    declined: false,
+  });
+
+  // Create another friend request from Bob to Charlie
+  await friendRequestRepository.save({
+    sender: bob,
+    receiver: charlie,
+    accepted: false,
+    declined: false,
+  });
+
+  // Create a corresponding notification for Charlie
+  await friendRequestNotificationRepository.save({
+    type: NotificationsType.FRIENDREQUEST,
+    sender: bob,
+    receiver: charlie,
+    receiverId: charlie.id,
+    accepted: false,
+    declined: false,
+  });
 
   console.log('Seeding completed successfully!');
   await app.close();

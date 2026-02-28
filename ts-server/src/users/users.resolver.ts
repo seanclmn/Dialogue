@@ -6,17 +6,19 @@ import { UnauthorizedException, UseGuards, NotFoundException } from '@nestjs/com
 import { JwtGuard } from 'src/auth/jwt-auth.guard';
 import { ChatConnection } from 'src/chats/entities/chat.connection.entity';
 import { UserConnection } from './entities/user.connection.entity';
-import { FriendRequest } from './entities/friendRequests.entity';
-import { AcceptFriendRequestInput, DeclineFriendRequestInput, SendFriendRequestInput } from './dto/friendRequest.input';
+import { AcceptFriendRequestInput, DeclineFriendRequestInput, SendFriendRequestInput } from '../friends/dto/friend-request.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { NotificationConnection } from 'src/notifications/entities/notification.connection';
+import { FriendsService } from '../friends/friends.service';
+import { FriendRequest as FriendRequestEntity } from '../friends/entities/friend-request.entity';
 
 @Resolver(() => User)
 export class UsersResolver {
   constructor(
     private readonly usersService: UsersService,
     private readonly notificationsService: NotificationsService,
+    private readonly friendsService: FriendsService,
   ) { }
 
   @Query(() => User)
@@ -36,21 +38,6 @@ export class UsersResolver {
   @Mutation(() => User)
   createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.usersService.create(createUserInput);
-  }
-
-  @Mutation(() => User)
-  async sendFriendRequest(@Args('sendFriendRequestInput') friendRequestInput: SendFriendRequestInput) {
-    return await this.usersService.sendFriendRequest(friendRequestInput.senderId, friendRequestInput.receiverId);
-  }
-
-  @Mutation(() => User)
-  async acceptFriendRequest(@Args('acceptFriendRequestInput') friendRequestInput: AcceptFriendRequestInput) {
-    return await this.usersService.acceptFriendRequest(friendRequestInput.friendRequestId);
-  }
-
-  @Mutation(() => User)
-  async declineFriendRequest(@Args('declineFriendRequestInput') friendRequestInput: DeclineFriendRequestInput) {
-    return await this.usersService.declineFriendRequest(friendRequestInput.friendRequestId);
   }
 
   @Mutation(() => User)
@@ -87,16 +74,16 @@ export class UsersResolver {
   async friends(
     @Parent() user: User,
     @Args('first', { type: () => Int, nullable: true }) first?: number,
-    @Args('after', { type: () => String, nullable: true }) after?: number
+    @Args('after', { type: () => String, nullable: true }) after?: string
   ): Promise<UserConnection> {
-    return await this.usersService.getFriendsForUser(user.id, first, after);
+    return await this.usersService.getFriendsForUser(user.id, first, parseInt(after || '0'));
   }
 
-  @ResolveField('friendRequests', () => [FriendRequest])
+  @ResolveField('friendRequests', () => [FriendRequestEntity])
   async friendRequests(
     @Parent() user: User,
-  ): Promise<FriendRequest[]> {
-    return await this.usersService.getFriendRequests(user.id);
+  ): Promise<FriendRequestEntity[]> {
+    return await this.friendsService.getFriendRequests(user.id);
   }
 
   @ResolveField("notifications", () => NotificationConnection)
