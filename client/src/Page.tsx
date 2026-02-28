@@ -31,6 +31,7 @@ const query = graphql`
           }
         }
       }
+      ...Chats_user
     }
   }
 `;
@@ -138,7 +139,7 @@ const Content = ({ queryReference }: ContentProps) => {
         </Link>
         <div className="flex flex-row items-start flex-grow flex-1 h-1">
           <Nav />
-          <Outlet />
+          <Outlet context={{ currentUser }} />
         </div>
       </div>
     </>
