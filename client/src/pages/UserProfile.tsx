@@ -14,6 +14,11 @@ import { Loader } from "@components/shared/loaders/Loader";
 import { Button } from "@components/shared/Buttons/GenericButton";
 import { UserProfileMutation } from "@generated/UserProfileMutation.graphql";
 import { UserContext } from "../contexts/UserContext";
+import { useAcceptFriendRequest } from "@mutations/AcceptFriendRequest";
+import { useDeclineFriendRequest } from "@mutations/DeclineFriendRequest";
+import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { Fragment } from "react";
 
 const query = graphql`
   query UserProfileQuery($username: String!) {
@@ -21,7 +26,9 @@ const query = graphql`
       username
       id
       bio
+      isFriend
       friendRequests {
+        id
         sender {
           id
         }
@@ -61,13 +68,15 @@ const Content = ({ queryReference }: ContentProps) => {
     (req) => req.sender.id === currentUser.user.id && !req.accepted && !req.declined
   );
 
-  const hasReceivedRequest = data.user.friendRequests?.some(
+  const hasReceivedRequest = data.user.friendRequests?.find(
     (req) => req.receiver.id === currentUser.user.id && !req.accepted && !req.declined
   );
 
-  const isFriend = data.user.friendRequests?.some(
-    (req) => (req.sender.id === currentUser.user.id || req.receiver.id === currentUser.user.id) && req.accepted
-  );
+  const { acceptFriendRequest, isMutationInFlight: isAccepting } = useAcceptFriendRequest(hasReceivedRequest?.id || "");
+  const { declineFriendRequest, isMutationInFlight: isDeclining } = useDeclineFriendRequest(hasReceivedRequest?.id || "");
+
+  const isFriend = data.user.isFriend;
+  console.log(isFriend)
 
   return (
     <div className="w-full flex flex-col items-center py-2 max-w-96 mx-auto bg-bgd-color text-txt-color min-h-full">
@@ -84,33 +93,86 @@ const Content = ({ queryReference }: ContentProps) => {
       <p className="my-2">{data.user.username}</p>
       <p className="text-sm text-gray-500">{data.user.bio}</p>
       {data.user.id !== currentUser.user.id ? (
-        <Button
-          title={
-            isFriend
-              ? "Friends"
-              : hasSentRequest
-                ? "Requested"
-                : hasReceivedRequest
-                  ? "Accept Request"
+        hasReceivedRequest ? (
+          <Menu as="div" className="relative inline-block text-left my-2">
+            <div>
+              <MenuButton 
+                disabled={isAccepting || isDeclining}
+                className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-dark transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                {isAccepting ? "Accepting..." : isDeclining ? "Declining..." : "Accept Request"}
+                <ChevronDownIcon className="-mr-1 h-5 w-5 text-white" aria-hidden="true" />
+              </MenuButton>
+            </div>
+
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+            >
+              <MenuItems className="absolute left-0 z-10 mt-2 w-40 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div className="py-1">
+                  <MenuItem>
+                    {({ focus }) => (
+                      <button
+                        onClick={() => acceptFriendRequest()}
+                        disabled={isAccepting || isDeclining}
+                        className={`${
+                          focus ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                        } block w-full px-4 py-2 text-left text-sm disabled:opacity-50`}
+                      >
+                        Accept
+                      </button>
+                    )}
+                  </MenuItem>
+                  <MenuItem>
+                    {({ focus }) => (
+                      <button
+                        onClick={() => declineFriendRequest()}
+                        disabled={isAccepting || isDeclining}
+                        className={`${
+                          focus ? 'bg-gray-100 text-red-600' : 'text-red-500'
+                        } block w-full px-4 py-2 text-left text-sm disabled:opacity-50`}
+                      >
+                        Decline
+                      </button>
+                    )}
+                  </MenuItem>
+                </div>
+              </MenuItems>
+            </Transition>
+          </Menu>
+        ) : (
+          <Button
+            title={
+              isFriend
+                ? "Friends"
+                : hasSentRequest
+                  ? "Requested"
                   : "Add Friend"
-          }
-          styles={
-            `my-2 ${hasSentRequest || isFriend
-              ? "bg-gray-400 border-gray-400 cursor-not-allowed"
-              : ""}`
-          }
-          disabled={isMutationInFlight || hasSentRequest || isFriend}
-          onClick={() => {
-            if (currentUser.user.id && !hasSentRequest && !isFriend) {
-              commitMutation({
-                variables: {
-                  receiverId: data.user.id,
-                  senderId: currentUser.user.id,
-                },
-              }).dispose();
             }
-          }}
-        />
+            styles={
+              `my-2 ${hasSentRequest || isFriend
+                ? "bg-gray-400 border-gray-400 cursor-not-allowed"
+                : ""}`
+            }
+            disabled={isMutationInFlight || hasSentRequest || isFriend}
+            onClick={() => {
+              if (currentUser.user.id && !hasSentRequest && !isFriend) {
+                commitMutation({
+                  variables: {
+                    receiverId: data.user.id,
+                    senderId: currentUser.user.id,
+                  },
+                }).dispose();
+              }
+            }}
+          />
+        )
       ) : null}
     </div>
   );

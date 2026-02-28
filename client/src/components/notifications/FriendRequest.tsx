@@ -2,11 +2,12 @@ import { TextButton } from "@components/shared/Buttons/TextButton";
 import { useAcceptFriendRequest } from "@mutations/AcceptFriendRequest";
 import { useDeclineFriendRequest } from "@mutations/DeclineFriendRequest";
 
-type FriendRequest = {
+type FriendRequestProps = {
   data: {
     accepted: boolean;
     declined: boolean;
-    id: string;
+    friendRequestId: string;
+    notificationId: string;
     sender: {
       id: string;
       username: string;
@@ -14,9 +15,10 @@ type FriendRequest = {
   };
 };
 
-export const FriendRequest = ({ data }: FriendRequest) => {
-  const { acceptFriendRequest } = useAcceptFriendRequest(data.id);
-  const { declineFriendRequest } = useDeclineFriendRequest(data.id);
+export const FriendRequest = ({ data }: FriendRequestProps) => {
+  console.log("FriendRequest.tsx", data.notificationId, data.friendRequestId);
+  const { acceptFriendRequest } = useAcceptFriendRequest(data.friendRequestId, data.notificationId);
+  const { declineFriendRequest } = useDeclineFriendRequest(data.friendRequestId, data.notificationId);
 
   return (
     <div>

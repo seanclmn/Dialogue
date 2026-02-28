@@ -19,17 +19,18 @@ const fragment = graphql`
             __typename
             id
             createdAt
-            sender {
-              username
-              id
-            }
-            receiver {
-              username
-              id
-            }
             ... on FriendRequestNotification {
+              sender {
+                username
+                id
+              }
+              receiver {
+                username
+                id
+              }
               accepted
               declined
+              friendRequestId
             }
           }
         }
@@ -65,8 +66,9 @@ export const NotificationsList = ({ fragmentKey }: NotificationsList) => {
                     data={{
                       accepted: node.accepted ?? false,
                       declined: node.declined ?? false,
-                      id: node.id,
-                      sender: node.sender,
+                      friendRequestId: node.friendRequestId ?? "",
+                      notificationId: node.id,
+                      sender: node.sender!,
                     }}
                   />
                 );

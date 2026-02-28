@@ -3,7 +3,7 @@
 # ------------------------------------------------------
 
 input AcceptFriendRequestInput {
-  friendRequestId: String!
+  friendRequestId: ID!
 }
 
 type Chat implements Node {
@@ -64,13 +64,14 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 input DeclineFriendRequestInput {
-  friendRequestId: String!
+  friendRequestId: ID!
 }
 
-type FriendRequest {
+type FriendRequest implements Node {
   accepted: Boolean!
+  createdAt: DateTime!
   declined: Boolean!
-  id: String!
+  id: ID!
   receiver: User!
   sender: User!
 }
@@ -79,10 +80,18 @@ type FriendRequestNotification implements Node & Notification {
   accepted: Boolean!
   createdAt: DateTime!
   declined: Boolean!
+  friendRequestId: ID
   id: ID!
   receiver: User!
   receiverId: ID!
   sender: User!
+}
+
+type Friendship implements Node {
+  createdAt: DateTime!
+  friend: User!
+  id: ID!
+  user: User!
 }
 
 type LoginResponse {
@@ -137,9 +146,7 @@ interface Node {
 interface Notification implements Node {
   createdAt: DateTime!
   id: ID!
-  receiver: User!
   receiverId: ID!
-  sender: User!
 }
 
 type NotificationConnection {
@@ -217,6 +224,7 @@ type User implements Node {
   friends(after: String, first: Int): UserConnection!
   id: ID!
   incomingRequests: [FriendRequest!]
+  isFriend: Boolean!
   notifications(after: String, first: Int): NotificationConnection
   password: String!
   sentRequests: [FriendRequest!]

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { graphql, useMutation } from "react-relay";
+import { ConnectionHandler, graphql, useMutation } from "react-relay";
 import toast from "react-hot-toast";
 import { UserContext } from "../contexts/UserContext";
 import { AcceptFriendRequestMutation } from "@generated/AcceptFriendRequestMutation.graphql";
@@ -16,7 +16,7 @@ const acceptRequestMutation = graphql`
   }
 `;
 
-export const useAcceptFriendRequest = (friendRequestId: string) => {
+export const useAcceptFriendRequest = (friendRequestId: string, notificationId?: string) => {
   const userContext = useContext(UserContext);
   const [commitMutation, isMutationInFlight] =
     useMutation<AcceptFriendRequestMutation>(acceptRequestMutation);
@@ -29,6 +29,20 @@ export const useAcceptFriendRequest = (friendRequestId: string) => {
             friendRequestId: friendRequestId,
           },
         },
+        updater: (store) => {
+          if (notificationId && userContext.user.id) {
+            const userRecord = store.get(userContext.user.id);
+            if (userRecord) {
+              const connection = ConnectionHandler.getConnection(
+                userRecord,
+                "NotificationsList_notifications"
+              );
+              if (connection) {
+                ConnectionHandler.deleteNode(connection, notificationId);
+              }
+            }
+          }
+        },
         onCompleted: () => {
           toast.success("Friend request accepted!");
         },
@@ -36,7 +50,7 @@ export const useAcceptFriendRequest = (friendRequestId: string) => {
           const message = e.source?.errors?.[0]?.message || e.message || "Failed to accept friend request";
           toast.error(message);
         },
-      }).dispose();
+      });
   };
 
   return { acceptFriendRequest, isMutationInFlight };

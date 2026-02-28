@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { graphql, useMutation } from "react-relay";
+import { ConnectionHandler, graphql, useMutation } from "react-relay";
 import toast from "react-hot-toast";
 import { UserContext } from "../contexts/UserContext";
 import { DeclineFriendRequestMutation } from "@generated/DeclineFriendRequestMutation.graphql";
@@ -18,7 +18,7 @@ const declineRequestMutation = graphql`
   }
 `;
 
-export const useDeclineFriendRequest = (friendRequestId: string) => {
+export const useDeclineFriendRequest = (friendRequestId: string, notificationId?: string) => {
   const userContext = useContext(UserContext);
   const [commitMutation, isMutationInFlight] =
     useMutation<DeclineFriendRequestMutation>(declineRequestMutation);
@@ -30,6 +30,20 @@ export const useDeclineFriendRequest = (friendRequestId: string) => {
           declineFriendRequestInput: {
             friendRequestId: friendRequestId,
           },
+        },
+        updater: (store) => {
+          if (notificationId && userContext.user.id) {
+            const userRecord = store.get(userContext.user.id);
+            if (userRecord) {
+              const connection = ConnectionHandler.getConnection(
+                userRecord,
+                "NotificationsList_notifications"
+              );
+              if (connection) {
+                ConnectionHandler.deleteNode(connection, notificationId);
+              }
+            }
+          }
         },
         onCompleted: () => {
           toast.success("Friend request declined");
