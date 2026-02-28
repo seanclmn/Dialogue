@@ -32,14 +32,6 @@ export class User implements Node {
   @JoinTable()
   chats: Chat[]
 
-  @ManyToMany(() => User, (user) => user.friends)
-  @JoinTable({
-    name: 'friends',
-    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'friend_id', referencedColumnName: 'id' },
-  })
-  friends: User[]
-
   @OneToMany(() => FriendRequestEntity, (friendRequest) => friendRequest.sender, { nullable: true })
   @Field(() => [FriendRequestEntity], { nullable: true })
   sentRequests: FriendRequestEntity[]
@@ -47,6 +39,9 @@ export class User implements Node {
   @OneToMany(() => FriendRequestEntity, (friendRequest) => friendRequest.receiver, { nullable: true })
   @Field(() => [FriendRequestEntity], { nullable: true })
   incomingRequests: FriendRequestEntity[]
+
+  @Field(() => Boolean)
+  isFriend: boolean;
 
   @Field(() => NotificationConnection, { nullable: true })
   notifications: NotificationConnection

@@ -24,14 +24,6 @@ export abstract class Notification implements Node {
   @Field(() => ID)
   id: string
 
-  @Field(() => User)
-  @ManyToOne(() => User, (user) => user.sentRequests, { eager: true })
-  sender: User
-
-  @Field(() => User)
-  @ManyToOne(() => User, (user) => user.incomingRequests, { eager: true })
-  receiver: User
-
   @Column()
   @Field(() => ID)
   receiverId: string;
@@ -51,6 +43,14 @@ export abstract class Notification implements Node {
 @ChildEntity(NotificationsType.FRIENDREQUEST)
 @ObjectType({ implements: () => [Notification, Node] })
 export class FriendRequestNotification extends Notification {
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.sentRequests, { eager: true })
+  sender: User
+
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.incomingRequests, { eager: true })
+  receiver: User
+
   @Column({ default: false })
   @Field(() => Boolean)
   accepted: boolean;
@@ -58,4 +58,8 @@ export class FriendRequestNotification extends Notification {
   @Column({ default: false })
   @Field(() => Boolean)
   declined: boolean;
+
+  @Column({ nullable: true })
+  @Field(() => ID, { nullable: true })
+  friendRequestId: string;
 }

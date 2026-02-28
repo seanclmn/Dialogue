@@ -37,7 +37,7 @@ export class UsersService {
       where: {
         username: username,
       },
-      relations: { chats: true },
+      relations: { chats: true, sentRequests: true, incomingRequests: true },
     });
   }
 
@@ -86,25 +86,8 @@ export class UsersService {
   }
 
   async getFriendsForUser(id: string, first?: number, after?: number) {
-    const friends = await this.usersRepository.find({
-      where: { friends: { id: id } },
-      relations: ['friends'],
-      take: first ? first + 1 : undefined,
-    });
-
-    const edges: UserEdge[] = friends ? friends.slice(0, first).map((user) => ({
-      cursor: btoa(user.id), // Use createdAt as cursor
-      node: user,
-    })) : []
-
-    const pageInfo: PageInfo = {
-      startCursor: edges[0]?.cursor,
-      endCursor: edges[edges.length - 1]?.cursor || '',
-      hasPreviousPage: first > 0,
-      hasNextPage: friends.length > first,
-    };
-
-    return { edges, pageInfo };
+    // This method is now effectively handled by the FriendsService via the UsersResolver
+    return { edges: [], pageInfo: { startCursor: '', endCursor: '', hasPreviousPage: false, hasNextPage: false } };
   }
 
   // async invalidateRefreshToken(userId: string) {

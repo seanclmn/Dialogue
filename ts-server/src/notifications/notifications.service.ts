@@ -5,13 +5,14 @@ import { LessThan, Repository } from 'typeorm';
 import { CreateNotificationParams } from './inputs/create-notification.input';
 import { NotificationEdge } from './entities/notification.edge';
 import { PageInfo } from 'src/relay';
-import { Notification, NotificationsType } from './entities/notification.entity';
+import { Notification, NotificationsType, FriendRequestNotification } from './entities/notification.entity';
 
 @Injectable()
 export class NotificationsService {
 
   constructor(
     @InjectRepository(Notification) private notificationsRepository: Repository<Notification>,
+    @InjectRepository(FriendRequestNotification) private friendRequestNotificationsRepository: Repository<FriendRequestNotification>,
   ) { }
 
   async findAll(id: string) {
@@ -24,7 +25,10 @@ export class NotificationsService {
   }
 
   async create(createNotificationInput: CreateNotificationParams) {
-    return await this.notificationsRepository.save(createNotificationInput)
+    if (createNotificationInput.type === NotificationsType.FRIENDREQUEST) {
+      return await this.friendRequestNotificationsRepository.save(createNotificationInput as any);
+    }
+    return await this.notificationsRepository.save(createNotificationInput as any);
   }
 
   async getNotificationsForUser(
@@ -41,7 +45,6 @@ export class NotificationsService {
       where,
       order: { createdAt: "DESC" },
       take: first + 1,
-      relations: ['sender', 'receiver'],
     });
 
     const requestedNotifications = notifications.slice(0, first);
@@ -63,7 +66,7 @@ export class NotificationsService {
   }
 
   async deleteFriendRequestNotification(senderId: string, receiverId: string) {
-    await this.notificationsRepository.delete({
+    await this.friendRequestNotificationsRepository.delete({
       sender: { id: senderId },
       receiverId: receiverId,
       type: NotificationsType.FRIENDREQUEST,

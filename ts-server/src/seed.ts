@@ -6,6 +6,7 @@ import { Chat } from './chats/entities/chat.entity';
 import { Message } from './messages/entities/message.entity';
 import { Notification, NotificationsType, FriendRequestNotification } from './notifications/entities/notification.entity';
 import { FriendRequest } from './friends/entities/friend-request.entity';
+import { Friendship } from './friends/entities/friendship.entity';
 import { hash } from 'bcrypt';
 
 async function seed() {
@@ -17,6 +18,7 @@ async function seed() {
   const notificationRepository = app.get<Repository<Notification>>('NotificationRepository');
   const friendRequestNotificationRepository = app.get<Repository<FriendRequestNotification>>('FriendRequestNotificationRepository');
   const friendRequestRepository = app.get<Repository<FriendRequest>>('FriendRequestRepository');
+  const friendshipRepository = app.get<Repository<Friendship>>('FriendshipRepository');
 
   console.log('Seeding database via CLI...');
 
@@ -24,6 +26,7 @@ async function seed() {
 
   // Clear existing data
   await chatRepository.query('SET FOREIGN_KEY_CHECKS = 0');
+  await friendshipRepository.createQueryBuilder().delete().execute();
   await notificationRepository.createQueryBuilder().delete().execute();
   await friendRequestRepository.createQueryBuilder().delete().execute();
   await messageRepository.createQueryBuilder().delete().execute();
@@ -91,8 +94,14 @@ async function seed() {
 
   await messageRepository.save(allMessages);
 
+  // Alice and Bob are already friends
+  await friendshipRepository.save([
+    { user: alice, friend: bob },
+    { user: bob, friend: alice },
+  ]);
+
   // Create a friend request from Charlie to Alice
-  await friendRequestRepository.save({
+  const fr1 = await friendRequestRepository.save({
     sender: charlie,
     receiver: alice,
     accepted: false,
@@ -107,10 +116,11 @@ async function seed() {
     receiverId: alice.id,
     accepted: false,
     declined: false,
+    friendRequestId: fr1.id,
   });
 
   // Create another friend request from Bob to Charlie
-  await friendRequestRepository.save({
+  const fr2 = await friendRequestRepository.save({
     sender: bob,
     receiver: charlie,
     accepted: false,
@@ -125,6 +135,7 @@ async function seed() {
     receiverId: charlie.id,
     accepted: false,
     declined: false,
+    friendRequestId: fr2.id,
   });
 
   console.log('Seeding completed successfully!');

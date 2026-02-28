@@ -14,6 +14,7 @@ import { NodeResolver } from './node/node.resolver';
 import { Notification, FriendRequestNotification } from './notifications/entities/notification.entity';
 import { FriendsModule } from './friends/friends.module';
 import { FriendRequest as FriendRequestEntity } from './friends/entities/friend-request.entity';
+import { Friendship } from './friends/entities/friendship.entity';
 import { FriendRequest } from './users/entities/friendRequests.entity';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { NotificationsModule } from './notifications/notifications.module';
@@ -55,7 +56,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
       username: 'root',
       password: 'root',
       database: 'chat',
-      entities: [User, Chat, Message, FriendRequest, Notification, FriendRequestEntity, FriendRequestNotification],
+      entities: [User, Chat, Message, FriendRequest, Notification, FriendRequestEntity, FriendRequestNotification, Friendship],
       synchronize: true,
     }),
     UsersModule,
