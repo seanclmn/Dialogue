@@ -55,28 +55,37 @@ async function seed() {
     participants: [alice, bob],
   });
 
-  await messageRepository.save([
-    {
-      text: 'Hello everyone!',
-      userId: alice.id,
-      chat: groupChat,
-    },
-    {
-      text: 'Hey Alice!',
-      userId: bob.id,
-      chat: groupChat,
-    },
-    {
-      text: 'Hi guys!',
-      userId: charlie.id,
-      chat: groupChat,
-    },
-    {
-      text: 'Hey Bob, did you finish the project?',
-      userId: alice.id,
-      chat: directChat,
-    },
-  ]);
+  const possibleMessages = [
+    "Hey, how's it going?",
+    "Did you see the latest update?",
+    "Let's catch up soon!",
+    "I'm working on the new feature now.",
+    "Can you review my PR?",
+    "The weather is great today!",
+    "I'll be a bit late to the meeting.",
+    "That sounds like a plan!",
+    "Have you tried the new coffee shop?",
+    "Let's debug this together."
+  ];
+
+  // Seed chats with 40 messages each
+  const chatsToSeed = [groupChat, directChat];
+  const allMessages = [];
+
+  for (const chat of chatsToSeed) {
+    for (let i = 1; i <= 40; i++) {
+      const randomMessage = possibleMessages[Math.floor(Math.random() * possibleMessages.length)];
+      const sender = i % 2 === 0 ? alice : bob;
+      allMessages.push({
+        text: randomMessage,
+        userId: sender.id,
+        chat: chat,
+        createdAt: new Date(Date.now() - (40 - i) * 60000), // Space them out by 1 minute
+      });
+    }
+  }
+
+  await messageRepository.save(allMessages);
 
   await notificationRepository.save([
     {

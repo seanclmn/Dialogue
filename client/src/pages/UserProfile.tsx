@@ -91,7 +91,7 @@ const Content = ({ queryReference }: ContentProps) => {
                 ? "Requested"
                 : hasReceivedRequest
                   ? "Accept Request"
-                  : "Add"
+                  : "Add Friend"
           }
           styles={
             `my-2 ${hasSentRequest || isFriend
