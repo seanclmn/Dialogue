@@ -50,6 +50,10 @@ export class MessagesService {
     return await this.messagesRepository.save(updateMessageInput)
   }
 
+  /**
+   * Returns messages in reverse chronological order (latest first).
+   * Pagination uses offset cursors; "after" skips that many rows in the DESC list.
+   */
   async getMessagesForChat(
     id: string,
     first: number,
@@ -60,7 +64,7 @@ export class MessagesService {
 
     const [messages, totalCount] = await this.messagesRepository.findAndCount({
       where: { chat: { id } },
-      order: { createdAt: 'DESC' },
+      order: { createdAt: 'DESC' }, // latest first
       skip,
       take,
     });

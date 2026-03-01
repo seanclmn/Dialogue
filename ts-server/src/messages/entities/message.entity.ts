@@ -24,7 +24,6 @@ export class Message implements Node {
   chat: Chat;
 
   @Field()
-  @Column()
   @CreateDateColumn()
   createdAt: Date;
 

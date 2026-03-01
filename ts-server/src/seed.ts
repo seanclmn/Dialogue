@@ -83,11 +83,13 @@ async function seed() {
     for (let i = 1; i <= 40; i++) {
       const randomMessage = possibleMessages[Math.floor(Math.random() * possibleMessages.length)];
       const sender = i % 2 === 0 ? alice : bob;
+      // Use UTC timestamps so stored values match what the API returns (ISO strings in UTC)
+      const createdAt = new Date(Date.now() - (40 - i) * 60000);
       allMessages.push({
         text: randomMessage,
         userId: sender.id,
         chat: chat,
-        createdAt: new Date(Date.now() - (40 - i) * 60000), // Space them out by 1 minute
+        createdAt,
       });
     }
   }

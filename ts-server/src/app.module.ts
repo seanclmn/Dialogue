@@ -58,6 +58,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
       database: 'chat',
       entities: [User, Chat, Message, FriendRequest, Notification, FriendRequestEntity, FriendRequestNotification, Friendship],
       synchronize: true,
+      timezone: 'Z', // Store and read dates in UTC so timestamps match across clients
     }),
     UsersModule,
     AuthModule,

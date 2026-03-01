@@ -62,24 +62,23 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
     return () => container.removeEventListener('scroll', handleScroll);
   }, [hasNext, isLoadingNext, loadNext]);
 
-  const messages = [...data.messages.edges].reverse();
 
   return (
-    <div ref={containerRef} className="w-full h-full overflow-auto">
-      {!hasNext ? <p className="text-center text-gray-500 my-4">Dialogue started!</p> : null}
-      {isLoadingNext ? <div className="w-full flex flex-col items-center my-2"><Loader /></div> : null}
-      {messages.map((edge) => {
+    <div ref={containerRef} className="w-full h-full overflow-auto flex flex-col-reverse">
+      <div ref={endMessagesRef} className="h-1" />
+      {data.messages.edges.map((edge) => {
         return (
           <Message
-            date={edge.node.createdAt}
-            text={edge.node.text}
-            id={edge.node.id}
-            key={edge.node.id}
-            senderIsMe={userContext.user?.id === edge.node.userId}
+          date={edge.node.createdAt}
+          text={edge.node.text}
+          id={edge.node.id}
+          key={edge.node.id}
+          senderIsMe={userContext.user?.id === edge.node.userId}
           />
         );
       })}
-      <div ref={endMessagesRef} className="h-1" />
+        {isLoadingNext ? <div className="w-full flex flex-col items-center my-2"><Loader /></div> : null}
+      {!hasNext ? <p className="text-center text-gray-500 my-4">Dialogue started!</p> : null}
     </div>
   );
 };
