@@ -1,13 +1,101 @@
-### A full stack web chat application written in Typescript
+# Dialogue
 
-### Tools:
-- UI: Typescript, ReactJS, React-Relay, Tailwind
-- API: Typescript, NestJS, GraphQL, TypeORM
-- Database: MySQL
+A full-stack web chat application written in TypeScript.
 
-### Relay Style Schema Design
+## Tech stack
 
-The GraphQL API follows a Relay style GraphQL schema. Every object implements a Node interface, with a unique global ID. Instead of a list of items, we return a connection with edges to item nodes, with cursor style pagination data. Here is a snippet of the schema file:
+- **UI:** TypeScript, React, React Relay, Tailwind CSS, Vite
+- **API:** TypeScript, NestJS, GraphQL (Apollo), TypeORM
+- **Database:** MySQL
+
+## Setup
+
+### 1. Install dependencies
+
+```bash
+# Client
+cd client && npm install
+
+# Server
+cd ts-server && npm install
+```
+
+### 2. Configure the server
+
+Set up your MySQL database and configure the server (e.g. via environment variables or config in `ts-server`). The API uses TypeORM with MySQL.
+
+### 3. Sync GraphQL schema (client)
+
+After the server is running at least once (or if `ts-server/src/schema.graphql` exists), pull the schema into the client:
+
+```bash
+cd client && npm run graphql:generate
+```
+
+Or copy it manually:
+
+```bash
+cp ts-server/src/schema.graphql client/schema.graphql
+```
+
+### 4. Run Relay compiler (client)
+
+Generate Relay artifacts from your GraphQL usage:
+
+```bash
+cd client && npm run relay
+```
+
+## Running the app
+
+**API (NestJS):**
+
+```bash
+cd ts-server
+npm run start:dev
+```
+
+**Client (Vite):**
+
+```bash
+cd client
+npm run dev
+```
+
+Open the client URL (e.g. `http://localhost:5173`) in your browser.
+
+## Scripts
+
+**Client**
+
+| Script                     | Description                           |
+| -------------------------- | ------------------------------------- |
+| `npm run dev`              | Start Vite dev server                 |
+| `npm run build`            | Relay compile, TypeScript, Vite build |
+| `npm run relay`            | Run Relay compiler                    |
+| `npm run graphql:generate` | Copy schema from server to client     |
+| `npm run preview`          | Preview production build              |
+| `npm run lint`             | Run ESLint                            |
+
+**Server**
+
+| Script              | Description                  |
+| ------------------- | ---------------------------- |
+| `npm run start:dev` | Start Nest in watch mode     |
+| `npm run start`     | Start Nest (and copy schema) |
+| `npm run build`     | Build Nest app               |
+| `npm run seed`      | Run database seed            |
+| `npm run lint`      | Run ESLint                   |
+
+---
+
+## Relay-style schema design
+
+The GraphQL API follows a Relay-style schema. Every object implements the `Node` interface with a unique global ID. Lists are exposed as **connections** with edges and cursor-based pagination.
+
+### Example schema
+
+From `ts-server/src/schema.graphql` (core types used by the client):
 
 ```graphql
 type Chat implements Node {
@@ -43,15 +131,49 @@ type PageInfo {
   hasPreviousPage: Boolean!
   startCursor: String!
 }
+
+type Subscription {
+  newMessage(chatIds: [ID!]!): ChatUpdate!
+}
+
+type ChatUpdate {
+  chatId: String!
+  newMessage: Message!
+}
 ```
 
-On the client side we statically compose many data fragments, like the one below, into one big query with the Relay compiler. We write queries and fragments per component with a GraphQL string, and load the data into the React component using a hook. In this case we use a refetchable paginated query:
+### Client usage
+
+Components use fragments and hooks. The Relay compiler turns `graphql` literals into artifacts; data is loaded via `usePaginationFragment`, `usePreloadedQuery`, etc.
+
+**Root query** (`Page.tsx`): load current user and compose fragments for chats and notifications:
+
+```graphql
+query PageQuery {
+  currentUser {
+    username
+    id
+    bio
+    friends {
+      edges {
+        node {
+          id
+        }
+      }
+    }
+    ...Chats_user
+    ...NotificationsList_user
+  }
+}
+```
+
+**Paginated messages fragment** (`Messages.tsx`): refetchable connection with scroll-to-load more:
 
 ```typescript
 const fragment = graphql`
   fragment Messages_chat on Chat
   @argumentDefinitions(
-    first: { type: "Int", defaultValue: 300 }
+    first: { type: "Int", defaultValue: 20 }
     after: { type: "String" }
   )
   @refetchable(queryName: "MessagesRefetchQuery") {
@@ -74,34 +196,40 @@ const fragment = graphql`
   }
 `;
 
-type MessagesProps = {
-  fragmentKey: Messages_chat$key;
-};
-
 export const Messages = ({ fragmentKey }: MessagesProps) => {
-  const { data } = usePaginationFragment(fragment, fragmentKey);
+  const { data, loadNext, hasNext, isLoadingNext } = usePaginationFragment(fragment, fragmentKey);
   const userContext = useContext(UserContext);
-  const endMessagesRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (endMessagesRef.current)
-      endMessagesRef.current.scrollIntoView({ behavior: "auto" });
-  }, [data.messages.edges.length]);
-
+  // ... scroll handler calls loadNext(20) when user scrolls to top
   return (
-    <>
-      {data.messages.edges.map((edge) => {
-        return (
-          <Message
-            text={edge.node.text}
-            id={edge.node.id}
-            key={edge.node.id}
-            senderIsMe={userContext.user?.id === edge.node.userId}
-          />
-        );
-      })}
-      <div ref={endMessagesRef} />
-    </>
+    <div ref={containerRef} className="w-full h-full overflow-auto flex flex-col-reverse">
+      {data.messages.edges.map((edge) => (
+        <Message
+          date={edge.node.createdAt}
+          text={edge.node.text}
+          id={edge.node.id}
+          key={edge.node.id}
+          senderIsMe={userContext.user?.id === edge.node.userId}
+        />
+      ))}
+      {isLoadingNext ? <Loader /> : null}
+      {!hasNext ? <p>Dialogue started!</p> : null}
+    </div>
   );
 };
+```
+
+**Real-time subscription** (`Page.tsx`): subscribe to new messages and update the Relay store:
+
+```graphql
+subscription PageChatsSubscription($chatIds: [ID!]!) {
+  newMessage(chatIds: $chatIds) {
+    chatId
+    newMessage {
+      createdAt
+      id
+      text
+      userId
+    }
+  }
+}
 ```

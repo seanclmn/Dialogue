@@ -5,6 +5,7 @@ docker/
 client/__generated__/
 client/node_modules 
 client/yarn.lock
+client/dist
 
 ts-server/node_modules
 ts-server/dist
