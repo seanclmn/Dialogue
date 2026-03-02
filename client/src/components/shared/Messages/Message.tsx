@@ -29,6 +29,8 @@ export const Message = memo(({ date, text, senderIsMe, first }: MessageProps) =>
         >
           {text ? text : "No text provided"}
         </p>
+        {/* add date, only visible on hover */}
+        <p className="text-[10px] ">{date}</p>
       </div>
     </div>
   );

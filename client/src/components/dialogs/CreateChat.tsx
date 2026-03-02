@@ -1,7 +1,6 @@
 import { Input } from "@components/shared/Inputs/GenericInput";
 import { CreateChatMutation } from "@generated/CreateChatMutation.graphql";
 import {
-  Description,
   Dialog,
   DialogPanel,
   DialogTitle,
@@ -25,12 +24,12 @@ const mutation = graphql`
 `;
 
 export const CreateChat = ({ open, setIsOpen }: CreateChatProps) => {
-  const [chatName, setChatName] = useState("");
+  const [chatName,] = useState("");
   const currentUserName = useContext(UserContext).user?.username;
   const [participants, setParticipants] = useState<string[]>(
     currentUserName ? [currentUserName] : [],
   );
-  const [commitMutation, isMutationInFlight] =
+  const [commitMutation,] =
     useMutation<CreateChatMutation>(mutation);
   if (!currentUserName) return null;
   return (

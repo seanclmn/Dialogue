@@ -10,7 +10,6 @@ import {
   SignupMutation,
   SignupMutation$data,
 } from "@generated/SignupMutation.graphql";
-import logo from "../assets/logo.png";
 
 const mutation = graphql`
   mutation SignupMutation($username: String!, $password: String!) {
