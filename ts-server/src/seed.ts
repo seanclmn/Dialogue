@@ -75,9 +75,10 @@ async function seed() {
     "Let's debug this together."
   ];
 
-  // Seed chats with 40 messages each
+  // Seed chats with 40 messages each (i=40 is the latest by createdAt)
   const chatsToSeed = [groupChat, directChat];
   const allMessages = [];
+  const lastMessageByChat = new Map<string, { text: string; userId: string; chat: Chat; createdAt: Date }>();
 
   for (const chat of chatsToSeed) {
     for (let i = 1; i <= 40; i++) {
@@ -85,16 +86,27 @@ async function seed() {
       const sender = i % 2 === 0 ? alice : bob;
       // Use UTC timestamps so stored values match what the API returns (ISO strings in UTC)
       const createdAt = new Date(Date.now() - (40 - i) * 60000);
-      allMessages.push({
+      const msg = {
         text: randomMessage,
         userId: sender.id,
         chat: chat,
         createdAt,
-      });
+      };
+      allMessages.push(msg);
+      lastMessageByChat.set(chat.id, msg);
     }
   }
 
-  await messageRepository.save(allMessages);
+  const savedMessages = await messageRepository.save(allMessages);
+
+  // Set lastMessage on each chat to the most recent message (saved entities are mutated in place with ids)
+  for (const chat of chatsToSeed) {
+    const lastMsg = lastMessageByChat.get(chat.id) as Message | undefined;
+    if (lastMsg?.id) {
+      chat.lastMessage = lastMsg;
+      await chatRepository.save(chat);
+    }
+  }
 
   // Alice and Bob are already friends
   await friendshipRepository.save([

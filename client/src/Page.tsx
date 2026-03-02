@@ -13,7 +13,7 @@ import {
 import { PageQuery } from "@generated/PageQuery.graphql";
 import { Loader } from "@components/shared/loaders/Loader";
 import { UserContext } from "./contexts/UserContext";
-import { Outlet, useParams } from "react-router";
+import { Outlet} from "react-router";
 import { PageChatsSubscription } from "@generated/PageChatsSubscription.graphql";
 import { Nav } from "@components/nav/Nav";
 import { Link } from "react-router";
@@ -32,6 +32,7 @@ const query = graphql`
         }
       }
       ...Chats_user
+      ...NotificationsList_user
     }
   }
 `;
@@ -71,8 +72,8 @@ type ContentProps = {
 };
 
 const Content = ({ queryReference }: ContentProps) => {
-  const { currentUser, } = usePreloadedQuery(query, queryReference);
-  const { user, setUser } = useContext(UserContext);
+  const { currentUser } = usePreloadedQuery(query, queryReference);
+  const { user, setUser, setCurrentUserRef } = useContext(UserContext);
   const config: GraphQLSubscriptionConfig<PageChatsSubscription> = useMemo(
     () => ({
       subscription: subscription,
@@ -124,6 +125,7 @@ const Content = ({ queryReference }: ContentProps) => {
       username: currentUser.username,
       bio: currentUser.bio ?? ""
     });
+    setCurrentUserRef(currentUser);
   }, [currentUser.username]);
 
   if (!currentUser.id) return <Loader />;
@@ -139,7 +141,7 @@ const Content = ({ queryReference }: ContentProps) => {
         </Link>
         <div className="flex flex-row items-start flex-grow flex-1 h-1">
           <Nav />
-          <Outlet context={{ currentUser }} />
+          <Outlet />
         </div>
       </div>
     </>

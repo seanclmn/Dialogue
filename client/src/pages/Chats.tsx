@@ -3,7 +3,7 @@ import { CreateChat } from "@components/dialogs/CreateChat";
 import { EmptyChat } from "@components/chat/EmptyChat";
 import { Loader } from "@components/shared/loaders/Loader";
 import { useContext, useEffect, useState } from "react";
-import { Outlet, useParams, useOutletContext } from "react-router";
+import { Outlet, useParams } from "react-router";
 import { graphql } from "relay-runtime";
 import { usePaginationFragment } from "react-relay";
 import { Chats_user$key } from "@generated/Chats_user.graphql";
@@ -33,16 +33,15 @@ const fragment = graphql`
   }
 `;
 
-type ChatsOutletContext = {
-  currentUser: Chats_user$key;
+type ChatsContentProps = {
+  fragmentKey: Chats_user$key;
 };
 
-export const Chats = () => {
+const ChatsContent = ({ fragmentKey }: ChatsContentProps) => {
   const { id: chatId } = useParams();
-  const { currentUser } = useOutletContext<ChatsOutletContext>();
   const [open, setOpen] = useState(false);
   const { user, setUser } = useContext(UserContext);
-  const { data } = usePaginationFragment(fragment, currentUser);
+  const { data } = usePaginationFragment(fragment, fragmentKey);
 
   useEffect(() => {
     const chatIds: string[] = data.chats.edges.map(
@@ -51,7 +50,7 @@ export const Chats = () => {
     setUser({ ...user, chatIds });
   }, [user?.id]);
 
-  if (!currentUser || !data.chats) return <Loader />;
+  if (!data.chats) return <Loader />;
 
   return (
     <>
@@ -77,4 +76,12 @@ export const Chats = () => {
       </div>
     </>
   );
+};
+
+export const Chats = () => {
+  const { currentUserRef } = useContext(UserContext);
+
+  if (!currentUserRef) return <Loader />;
+
+  return <ChatsContent fragmentKey={currentUserRef as Chats_user$key} />;
 };

@@ -1,49 +1,106 @@
-import { useContext, useEffect } from "react";
-import {
-  graphql,
-  PreloadedQuery,
-  usePreloadedQuery,
-  useQueryLoader,
-} from "react-relay";
+import { useContext } from "react";
+import { NotificationsList_user$key } from "@generated/NotificationsList_user.graphql";
+import { usePaginationFragment, graphql } from "react-relay";
+import { FriendRequest } from "@components/notifications/FriendRequest";
 import { UserContext } from "@contexts/UserContext";
-import { NotificationsQuery } from "@generated/NotificationsQuery.graphql";
-import { NotificationsList } from "@components/notifications/NotificationsList";
 
-const query = graphql`
-  query NotificationsQuery {
-      currentUser {
-        id
-        ...NotificationsList_user
+const fragment = graphql`
+  fragment NotificationsList_user on User
+  @argumentDefinitions(
+    first: { type: "Int", defaultValue: 20 }
+    cursor: { type: "String" }
+  )
+  @refetchable(queryName: "NotificationsListPaginationRefetchQuery") {
+    id
+    notifications(first: $first, after: $cursor)
+      @connection(key: "NotificationsList_notifications") {
+      edges {
+        cursor
+        node {
+          __typename
+          id
+          createdAt
+          ... on FriendRequestNotification {
+            sender {
+              username
+              id
+            }
+            receiver {
+              username
+              id
+            }
+            accepted
+            declined
+            friendRequestId
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
       }
     }
-`
+  }
+`;
 
-type ContentProps = {
-  queryReference: PreloadedQuery<NotificationsQuery>;
-};
+const NotificationsContent = ({ fragmentKey }: { fragmentKey: NotificationsList_user$key }) => {
+  const { hasNext, loadNext, data } = usePaginationFragment(fragment, fragmentKey);
 
-const Content = ({ queryReference }: ContentProps) => {
+  if (!data.notifications || data.notifications.edges.length === 0) {
+    return (
+      <div className="p-4 bg-bgd-color text-txt-color min-h-full w-full">
+        <h1>No new Notifications!</h1>
+      </div>
+    );
+  }
 
-  const data = usePreloadedQuery<NotificationsQuery>(query, queryReference);
-  if (!data.currentUser) return null
   return (
-    <NotificationsList fragmentKey={data.currentUser} />
+    <div className="bg-bgd-color text-txt-color min-h-full w-full flex flex-col">
+      <div className="divide-y divide-brd-color">
+        {data.notifications.edges.map(({ node }) => {
+          const renderNotificationContent = () => {
+            switch (node.__typename) {
+              case "FriendRequestNotification":
+                return (
+                  <FriendRequest
+                    data={{
+                      accepted: node.accepted ?? false,
+                      declined: node.declined ?? false,
+                      friendRequestId: node.friendRequestId ?? "",
+                      notificationId: node.id,
+                      sender: node.sender!,
+                    }}
+                  />
+                );
+              default:
+                return (
+                  <div className="p-4">
+                    <p className="text-sm">New notification: {node.id}</p>
+                  </div>
+                );
+            }
+          };
+
+          return <div key={node.id}>{renderNotificationContent()}</div>;
+        })}
+      </div>
+
+      {hasNext && (
+        <button
+          onClick={() => loadNext(20)}
+          className="bg-primary text-white px-4 py-2 rounded-md m-4 self-center text-sm font-medium"
+        >
+          Load More
+        </button>
+      )}
+    </div>
   );
 };
 
 export const Notifications = () => {
-  const data = useContext(UserContext);
-  const [queryReference, loadQuery] = useQueryLoader<NotificationsQuery>(query);
+  const { currentUserRef } = useContext(UserContext);
 
-  useEffect(() => {
-    if (data.user.id) {
-      loadQuery({});
-    }
-  }, [data.user.id]);
+  if (!currentUserRef) return null;
 
-  if (!queryReference) return null;
-
-  return <Content
-    queryReference={queryReference}
-  />;
+  return <NotificationsContent fragmentKey={currentUserRef as NotificationsList_user$key} />;
 };
