@@ -76,6 +76,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   const [friendTyping, setFriendTyping] = useState<boolean>(false);
 
   useEffect(() => {
+    console.log(isTyping)
     const { id: userId } = user;
     const delayDebounceFn = setTimeout(() => {
       if (isTyping === false && userId) {
@@ -85,6 +86,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     }, 400);
 
     if (isTyping && userId) {
+      console.log(isTyping)
       updateTyping({ chatId, isTyping, userId });
     }
 
@@ -135,7 +137,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
       {!queryReference ? <Loader /> : null}
       <ChatHeader title={data.node?.name ?? "(unnamed chat)"} />
 
-      <div className="flex flex-col items-start grow px-2 py-4 h-1">
+      <div className="flex flex-col items-start grow pl-2 py-4 h-1">
         {data.node ? <Messages fragmentKey={data.node} /> : null}
         {friendTyping ? (
           <div className="flex flex-row">

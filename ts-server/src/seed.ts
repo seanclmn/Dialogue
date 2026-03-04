@@ -93,8 +93,9 @@ async function seed() {
         lastSender && Math.random() < chanceToKeepSameSender;
       const sender = keepSame ? lastSender! : otherSender;
       lastSender = sender;
-      // Use UTC timestamps so stored values match what the API returns (ISO strings in UTC)
-      const createdAt = new Date(Date.now() - (40 - i) * 60000);
+      // All messages at least 24h ago: most recent (i=40) at now-24h, older messages 1 min apart
+      const twentyFourHoursMs = 24 * 60 * 60 * 1000;
+      const createdAt = new Date(Date.now() - twentyFourHoursMs - (40 - i) * 60000);
       const msg = {
         text: randomMessage,
         userId: sender.id,

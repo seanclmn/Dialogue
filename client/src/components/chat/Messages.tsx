@@ -67,16 +67,20 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
     <div ref={containerRef} className="w-full h-full overflow-auto flex flex-col-reverse">
       <div ref={endMessagesRef} className="h-1" />
       {data.messages.edges.map((edge, index) => {
+        const previousMessageDate = new Date(data.messages.edges[index + 1]?.node?.createdAt);
+        const currentMessageDate = new Date(edge.node.createdAt);
+        const startOfConversation = (currentMessageDate.getTime() - previousMessageDate.getTime()) > 3600000;
         return (
           <Message
-          first={edge.node.userId !== data.messages.edges[index + 1]?.node?.userId}
-          last={edge.node.userId !== data.messages.edges[index - 1]?.node?.userId}
-          date={edge.node.createdAt}
-          text={edge.node.text}
-          id={edge.node.id}
-          key={edge.node.id}
-          senderIsMe={userContext.user?.id === edge.node.userId}
-          />
+            startOfConversation={startOfConversation}
+            first={edge.node.userId !== data.messages.edges[index + 1]?.node?.userId}
+            last={edge.node.userId !== data.messages.edges[index - 1]?.node?.userId}
+            date={currentMessageDate.toLocaleString()}
+            text={edge.node.text}
+            id={edge.node.id}
+            key={edge.node.id}
+            senderIsMe={userContext.user?.id === edge.node.userId}
+            />
         );
       })}
         {isLoadingNext ? <div className="w-full flex flex-col items-center my-2"><Loader /></div> : null}
