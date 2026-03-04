@@ -69,7 +69,8 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
       {data.messages.edges.map((edge, index) => {
         return (
           <Message
-          first={edge.node.userId !== data.messages.edges[index - 1]?.node?.userId}
+          first={edge.node.userId !== data.messages.edges[index + 1]?.node?.userId}
+          last={edge.node.userId !== data.messages.edges[index - 1]?.node?.userId}
           date={edge.node.createdAt}
           text={edge.node.text}
           id={edge.node.id}

@@ -8,17 +8,18 @@ export interface MessageProps extends React.DOMAttributes<HTMLElement> {
   id: string;
   senderIsMe?: boolean;
   first?: boolean;
+  last?: boolean;
 }
 
-export const Message = memo(({ date, text, senderIsMe, first }: MessageProps) => {
+export const Message = memo(({ date, text, senderIsMe, first, last }: MessageProps) => {
   const [, setVisible] = useState(false);
   return (
     <div className={`flex w-full items-start`}
     >
-      {first && !senderIsMe ? <Avatar src={img} containerStyle="h-10 w-10 mx-2" /> : null}
+      {last && !senderIsMe ? <Avatar src={img} containerStyle="h-10 w-10 mx-2" /> : null}
       <div
         className={`${senderIsMe ? "bg-primary ml-auto" : "bg-secondary"
-          } my-[1px] p-1 py-2 rounded-[18px] inline-flex`}
+          } ${!last && !senderIsMe ? "ml-14" : ""} my-[1px] p-1 py-2 rounded-[18px] inline-flex`}
       >
         <p
           onMouseEnter={() => setVisible(true)}

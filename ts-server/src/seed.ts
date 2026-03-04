@@ -75,15 +75,24 @@ async function seed() {
     "Let's debug this together."
   ];
 
-  // Seed chats with 40 messages each (i=40 is the latest by createdAt)
+  // Seed chats with 40 messages each; chunk messages by same user (not strict back-and-forth)
   const chatsToSeed = [groupChat, directChat];
+  const participants = [alice, bob];
   const allMessages = [];
   const lastMessageByChat = new Map<string, { text: string; userId: string; chat: Chat; createdAt: Date }>();
+  const chanceToKeepSameSender = 0.4; // 40% chance next message is from same user
 
   for (const chat of chatsToSeed) {
+    let lastSender: User | null = null;
     for (let i = 1; i <= 40; i++) {
       const randomMessage = possibleMessages[Math.floor(Math.random() * possibleMessages.length)];
-      const sender = i % 2 === 0 ? alice : bob;
+      const otherSender = lastSender
+        ? participants.find((p) => p.id !== lastSender!.id)!
+        : participants[Math.floor(Math.random() * participants.length)];
+      const keepSame =
+        lastSender && Math.random() < chanceToKeepSameSender;
+      const sender = keepSame ? lastSender! : otherSender;
+      lastSender = sender;
       // Use UTC timestamps so stored values match what the API returns (ISO strings in UTC)
       const createdAt = new Date(Date.now() - (40 - i) * 60000);
       const msg = {
