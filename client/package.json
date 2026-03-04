@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "relay": "relay-compiler",
     "graphql:generate": "./scripts/pull-schema.sh",
-    "prettify": "prettier --write ."
+    "prettify": "prettier --write .",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
@@ -37,6 +39,12 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",
+    "@storybook/addon-essentials": "^10.0.0",
+    "@storybook/addon-themes": "^10.0.0",
+    "@storybook/addon-interactions": "^10.0.0",
+    "@storybook/blocks": "^10.0.0",
+    "@storybook/react": "^10.0.0",
+    "@storybook/react-vite": "^10.0.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.0.0",
     "@types/react": "^18.3.3",
@@ -55,6 +63,7 @@
     "eslint-plugin-react-refresh": "^0.4.7",
     "globals": "^15.14.0",
     "relay-compiler": "17.0.0",
+    "storybook": "^10.0.0",
     "typescript": "^5.2.2",
     "typescript-eslint": "^8.23.0",
     "vite": "^5.3.4",

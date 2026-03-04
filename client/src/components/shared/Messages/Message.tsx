@@ -15,7 +15,7 @@ export const Message = memo(({ date, text, senderIsMe, first }: MessageProps) =>
   return (
     <div className={`flex w-full items-start`}
     >
-      {first && !senderIsMe ? <Avatar src={img} /> : null}
+      {first && !senderIsMe ? <Avatar src={img} containerStyle="h-10 w-10 mx-2" /> : null}
       <div
         className={`${senderIsMe ? "bg-primary ml-auto" : "bg-secondary"
           } my-[1px] p-1 py-2 rounded-[18px] inline-flex`}
@@ -30,7 +30,7 @@ export const Message = memo(({ date, text, senderIsMe, first }: MessageProps) =>
           {text ? text : "No text provided"}
         </p>
         {/* add date, only visible on hover */}
-        <p className="text-[10px] ">{date}</p>
+        {/* <p className="text-[10px] text-gray-500 dden group-hover:block">{date}</p> */}
       </div>
     </div>
   );

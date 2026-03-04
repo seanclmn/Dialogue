@@ -76,8 +76,7 @@ const Content = ({ queryReference }: ContentProps) => {
   const { declineFriendRequest, isMutationInFlight: isDeclining } = useDeclineFriendRequest(hasReceivedRequest?.id || "");
 
   const isFriend = data.user.isFriend;
-  console.log(isFriend)
-
+  
   return (
     <div className="w-full flex flex-col items-center py-2 max-w-96 mx-auto bg-bgd-color text-txt-color min-h-full">
       {data.user.username === currentUser.user.username ? (

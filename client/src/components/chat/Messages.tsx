@@ -66,9 +66,10 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
   return (
     <div ref={containerRef} className="w-full h-full overflow-auto flex flex-col-reverse">
       <div ref={endMessagesRef} className="h-1" />
-      {data.messages.edges.map((edge) => {
+      {data.messages.edges.map((edge, index) => {
         return (
           <Message
+          first={edge.node.userId !== data.messages.edges[index - 1]?.node?.userId}
           date={edge.node.createdAt}
           text={edge.node.text}
           id={edge.node.id}
