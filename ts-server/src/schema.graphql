@@ -43,6 +43,7 @@ input CreateChatInput {
 
 input CreateMessageInput {
   chatId: String!
+  gifUrl: String
   text: String!
   userId: String!
 }
@@ -107,6 +108,7 @@ input LoginUserInput {
 type Message implements Node {
   chat: Chat!
   createdAt: DateTime!
+  gifUrl: String
   id: ID!
   text: String!
   userId: String!
@@ -205,6 +207,7 @@ input UpdateChatInput {
 
 input UpdateMessageInput {
   chatId: String
+  gifUrl: String
   id: String!
   text: String!
   userId: String!

@@ -10,4 +10,7 @@ export class CreateMessageInput {
 
   @Field()
   chatId: string;
+
+  @Field({ nullable: true })
+  gifUrl?: string;
 }

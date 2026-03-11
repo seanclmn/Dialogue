@@ -45,6 +45,7 @@ const subscription = graphql`
         createdAt
         id
         text
+        gifUrl
         userId
       }
     }

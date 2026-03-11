@@ -46,6 +46,17 @@ Generate Relay artifacts from your GraphQL usage:
 cd client && npm run relay
 ```
 
+### 5. Optional: GIF search (client)
+
+In-chat GIF search uses the Giphy API. Create a [Giphy API key](https://developers.giphy.com/) and set it in the client:
+
+```bash
+# client/.env or client/.env.local
+VITE_GIPHY_API_KEY=your_key_here
+```
+
+Without it, the GIF button shows a short setup message instead of the search UI.
+
 ## Running the app
 
 **API (NestJS):**

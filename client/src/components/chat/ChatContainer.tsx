@@ -21,6 +21,7 @@ import { ChatHeader } from "./ChatHeader";
 import { ChatSendButton } from "@components/shared/Buttons/ChatSendButton";
 import { useUpdateTyping } from "@mutations/UpdateTyping";
 import { ChatContainerSubscription } from "@generated/ChatContainerSubscription.graphql";
+import { GifPicker } from "./GifPicker";
 
 const query = graphql`
   query ChatContainerQuery($id: ID!) {
@@ -39,13 +40,15 @@ const mutation = graphql`
     $text: String!
     $userId: String!
     $chatId: String!
+    $gifUrl: String
   ) {
     createMessage(
-      createMessageInput: { text: $text, userId: $userId, chatId: $chatId }
+      createMessageInput: { text: $text, userId: $userId, chatId: $chatId, gifUrl: $gifUrl }
     ) {
       createdAt
       id
       text
+      gifUrl
       userId
     }
   }
@@ -68,6 +71,8 @@ interface ContentProps {
 
 export const Content = ({ queryReference, chatId }: ContentProps) => {
   const [messageMap, setMessageMap] = useState<Record<string, string>>({});
+  const [gifUrlMap, setGifUrlMap] = useState<Record<string, string>>({});
+  const [showGifPicker, setShowGifPicker] = useState<Record<string, boolean>>({});
   const [isTyping, setIsTyping] = useState<boolean | null>(null);
   const { user } = useContext(UserContext);
   const [commitMutation] = useMutation<ChatContainerMutation>(mutation);
@@ -119,16 +124,21 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   useSubscription(config);
 
   const handleSendMessage = () => {
-    const text = messageMap[chatId];
-    if (user?.id && text && text.trim().length > 0) {
+    const text = messageMap[chatId]?.trim() ?? "";
+    const gifUrl = gifUrlMap[chatId]?.trim() || null;
+    const hasContent = text.length > 0 || gifUrl;
+    if (user?.id && hasContent) {
       commitMutation({
         variables: {
-          text: text,
+          text: text || " ",
           userId: user.id,
           chatId: chatId,
+          gifUrl: gifUrl ?? undefined,
         },
       }).dispose();
       setMessageMap({ ...messageMap, [chatId]: "" });
+      setGifUrlMap({ ...gifUrlMap, [chatId]: "" });
+      setShowGifPicker({ ...showGifPicker, [chatId]: false });
     }
   };
 
@@ -137,7 +147,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
       {!queryReference ? <Loader /> : null}
       <ChatHeader title={data.node?.name ?? "(unnamed chat)"} />
 
-      <div className="flex flex-col items-start grow pl-2 py-4 h-1">
+      <div className="flex flex-col items-start grow h-1">
         {data.node ? <Messages fragmentKey={data.node} /> : null}
         {friendTyping ? (
           <div className="flex flex-row">
@@ -146,34 +156,71 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
           </div>
         ) : null}
       </div>
+      {showGifPicker[chatId] ? (
+        <div className="mx-2 mb-2 flex justify-start">
+          <GifPicker
+            onSelect={(url) => {
+              setGifUrlMap({ ...gifUrlMap, [chatId]: url });
+            }}
+            onClose={() => setShowGifPicker({ ...showGifPicker, [chatId]: false })}
+          />
+        </div>
+      ) : null}
+      {gifUrlMap[chatId] ? (
+        <div className="mx-2 mb-1 flex items-center gap-2">
+          <span className="text-txt-color text-sm">Selected GIF:</span>
+          <img
+            src={gifUrlMap[chatId]}
+            alt=""
+            className="h-12 w-auto rounded object-cover border border-brd-color"
+          />
+          <button
+            type="button"
+            onClick={() => setGifUrlMap({ ...gifUrlMap, [chatId]: "" })}
+            className="text-sm text-txt-color hover:underline"
+          >
+            Remove
+          </button>
+        </div>
+      ) : null}
       <form
-        className="mx-2 mb-2 border-[1px] rounded-[15px] 
-         px-[1rem] py-[4px]
-        border-brd-color flex items-center bg-bgd-color
-        "
+        className="mx-2 mb-2 border-[1px] rounded-[15px] px-[1rem] py-[4px] border-brd-color flex flex-wrap items-center gap-1 bg-bgd-color"
         onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
           handleSendMessage();
         }}
       >
-        <ChatInput
-          value={messageMap[chatId] ?? ""}
-          onChange={(e: React.FormEvent<HTMLTextAreaElement>) => {
-            setIsTyping(true);
-            e.preventDefault();
-            const obj = { ...messageMap };
-            obj[chatId] = e.currentTarget.value;
-            setMessageMap(obj);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
+        <div className="flex-1 min-w-[120px]">
+          <ChatInput
+            value={messageMap[chatId] ?? ""}
+            onChange={(e: React.FormEvent<HTMLTextAreaElement>) => {
+              setIsTyping(true);
               e.preventDefault();
-              handleSendMessage();
-            }
-          }}
-        />
+              const obj = { ...messageMap };
+              obj[chatId] = e.currentTarget.value;
+              setMessageMap(obj);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage();
+              }
+            }}
+          />
+        </div>
+        <button
+          type="button"
+          title="Search GIFs"
+          className="px-2 py-1 rounded text-txt-color hover:bg-bgd-highlight shrink-0"
+          onClick={() => setShowGifPicker({ ...showGifPicker, [chatId]: !showGifPicker[chatId] })}
+          aria-label="Search GIFs"
+        >
+          GIF
+        </button>
         <ChatSendButton
-          disabled={!messageMap[chatId] || messageMap[chatId].trim().length === 0}
+          disabled={
+            !((messageMap[chatId]?.trim().length ?? 0) > 0 || (gifUrlMap[chatId]?.trim().length ?? 0) > 0)
+          }
           onClick={handleSendMessage}
         />
       </form>

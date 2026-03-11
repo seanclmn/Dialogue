@@ -20,6 +20,7 @@ const fragment = graphql`
         node {
           id
           text
+          gifUrl
           createdAt
           userId
         }
@@ -77,6 +78,7 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
             last={edge.node.userId !== data.messages.edges[index - 1]?.node?.userId}
             date={currentMessageDate.toLocaleString()}
             text={edge.node.text}
+            gifUrl={edge.node.gifUrl}
             id={edge.node.id}
             key={edge.node.id}
             senderIsMe={userContext.user?.id === edge.node.userId}

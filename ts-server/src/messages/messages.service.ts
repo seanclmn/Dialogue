@@ -23,7 +23,8 @@ export class MessagesService {
     const newMessage = await this.messagesRepository.save({
       text: createMessageInput.text,
       chat: chat,
-      userId: createMessageInput.userId
+      userId: createMessageInput.userId,
+      ...(createMessageInput.gifUrl && { gifUrl: createMessageInput.gifUrl }),
     })
     await this.chatsRepository.save({
       ...chat,

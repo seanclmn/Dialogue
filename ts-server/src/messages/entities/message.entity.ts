@@ -15,6 +15,10 @@ export class Message implements Node {
   @Field()
   text: string;
 
+  @Column({ type: 'varchar', length: 2048, nullable: true })
+  @Field({ nullable: true })
+  gifUrl?: string;
+
   @Column()
   @Field()
   userId: string;

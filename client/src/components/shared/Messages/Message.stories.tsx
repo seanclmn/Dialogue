@@ -43,3 +43,14 @@ export const LongMessage: Story = {
     first: false,
   },
 };
+
+export const WithGif: Story = {
+  args: {
+    id: "4",
+    text: "Check this out!",
+    gifUrl: "https://media.giphy.com/media/3o7TKsQ82J2q7bFpSo/giphy.gif",
+    date: "2024-01-15 14:33",
+    senderIsMe: true,
+    first: false,
+  },
+};
