@@ -55,7 +55,7 @@ const ChatsContent = ({ fragmentKey }: ChatsContentProps) => {
   return (
     <>
       <Suspense fallback={<Loader />}>
-        <div className="border-brd-color border-r-[1px] min-w-60 h-full flex flex-col items-center">
+        <div className="border-brd-color border-r-[1px] w-16 min-w-0 shrink-0 md:w-60 md:min-w-60 h-full flex flex-col items-center">
           {data.chats.edges.length > 0 ? (
             <div className="overflow-auto w-full h-full">
               {data.chats.edges.map((edge) => (
