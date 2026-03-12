@@ -1,6 +1,6 @@
 import { Message } from "@components/shared/Messages/Message";
 import { Messages_chat$key } from "@generated/Messages_chat.graphql";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { usePaginationFragment } from "react-relay";
 import { graphql } from "relay-runtime";
 import { UserContext } from "../../contexts/UserContext";
@@ -9,7 +9,7 @@ import { Loader } from "@components/shared/loaders/Loader";
 const fragment = graphql`
   fragment Messages_chat on Chat
   @argumentDefinitions(
-    first: { type: "Int", defaultValue: 20 }
+    first: { type: "Int", defaultValue: 10 }
     after: { type: "String" }
   )
   @refetchable(queryName: "MessagesRefetchQuery") {
@@ -39,10 +39,11 @@ type MessagesProps = {
 
 export const Messages = ({ fragmentKey }: MessagesProps) => {
   const { data, loadNext, hasNext, isLoadingNext } = usePaginationFragment(fragment, fragmentKey);
-  const [, setIsAtTop] = useState(false);
   const userContext = useContext(UserContext);
   const endMessagesRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const previousIntersecting = useRef(false);
 
   useEffect(() => {
     if (endMessagesRef.current)
@@ -51,21 +52,38 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
-    const handleScroll = () => {
-      const isNowAtTop = container.scrollTop < 100;
-      setIsAtTop(isNowAtTop);
-      if (isNowAtTop && hasNext) {
-        loadNext(20);
-      }
-    };
-    container.addEventListener('scroll', handleScroll);
-    return () => container.removeEventListener('scroll', handleScroll);
+    const loadMore = loadMoreRef.current;
+    if (!container || !loadMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry) return;
+        const nowIntersecting = entry.isIntersecting;
+        if (
+          nowIntersecting &&
+          !previousIntersecting.current &&
+          hasNext &&
+          !isLoadingNext
+        ) {
+          loadNext(10);
+        }
+        previousIntersecting.current = nowIntersecting;
+      },
+      {
+        root: container,
+        rootMargin: "0px",
+        threshold: 0,
+      },
+    );
+
+    observer.observe(loadMore);
+    return () => observer.disconnect();
   }, [hasNext, isLoadingNext, loadNext]);
 
 
   return (
-    <div ref={containerRef} className="w-full h-full overflow-auto flex flex-col-reverse">
+    <div ref={containerRef} className="w-full h-full overflow-auto flex flex-col-reverse no-anchor">
       <div ref={endMessagesRef} className="h-1" />
       {data.messages.edges.map((edge, index) => {
         const previousMessageDate = new Date(data.messages.edges[index + 1]?.node?.createdAt);
@@ -85,8 +103,17 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
             />
         );
       })}
-        {isLoadingNext ? <div className="w-full flex flex-col items-center my-2"><Loader /></div> : null}
-      {!hasNext ? <p className="text-center text-gray-500 my-4">Dialogue started!</p> : null}
+      <div className="w-full flex flex-col items-center my-2">
+        {isLoadingNext ? <Loader /> : null}
+      </div>
+      <div
+        ref={loadMoreRef}
+        className="h-1 w-full shrink-0"
+        aria-hidden
+      />
+      {!hasNext ? (
+        <p className="text-center text-gray-500 my-4">Dialogue started!</p>
+      ) : null}
     </div>
   );
 };
