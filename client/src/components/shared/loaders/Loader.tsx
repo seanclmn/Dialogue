@@ -2,17 +2,13 @@ interface LoaderProps {
   styles?: string;
 }
 
-export const Loader = ({ styles }: LoaderProps) => {
+export const Loader = ({ styles = "" }: LoaderProps) => {
   return (
     <div
-      className={`inline-block h-6 w-6
-				animate-spin rounded-full border-[1px]
-				border-solid border-primary border-current border-e-transparent 
-				align-[-0.125em] text-surface 
-				motion-reduce:animate-[spin_linear_infinite] 
-				${styles}`}
-      style={{ animationDuration: "0.5s" }}
+      className={`inline-block h-8 w-8 rounded-full border-2 border-brd-color border-t-primary animate-spin ${styles}`}
+      style={{ animationDuration: "0.8s" }}
       role="status"
-    ></div>
+      aria-label="Loading"
+    />
   );
 };
