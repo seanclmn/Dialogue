@@ -127,7 +127,7 @@ const Content = ({ queryReference }: ContentProps) => {
       bio: currentUser.bio ?? ""
     });
     setCurrentUserRef(currentUser);
-  }, [currentUser.username]);
+  }, [currentUser.id]);
 
   if (!currentUser.id) return <Loader />;
 

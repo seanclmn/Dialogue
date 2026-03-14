@@ -1,10 +1,10 @@
 import { Message } from "@components/shared/Messages/Message";
 import { Messages_chat$key } from "@generated/Messages_chat.graphql";
+import { Loader } from "@components/shared/loaders/Loader";
+import { UserContext } from "../../contexts/UserContext";
 import { useContext, useEffect, useRef } from "react";
 import { usePaginationFragment } from "react-relay";
 import { graphql } from "relay-runtime";
-import { UserContext } from "../../contexts/UserContext";
-import { Loader } from "@components/shared/loaders/Loader";
 
 const fragment = graphql`
   fragment Messages_chat on Chat
@@ -83,23 +83,24 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
 
 
   return (
-    <div ref={containerRef} className="w-full h-full overflow-auto flex flex-col-reverse no-anchor">
+    <div ref={containerRef} className="w-full h-full overflow-auto flex flex-col-reverse">
       <div ref={endMessagesRef} className="h-1" />
       {data.messages.edges.map((edge, index) => {
-        const previousMessageDate = new Date(data.messages.edges[index + 1]?.node?.createdAt);
+
         const currentMessageDate = new Date(edge.node.createdAt);
-        const startOfConversation = (currentMessageDate.getTime() - previousMessageDate.getTime()) > 3600000;
         return (
           <Message
-            startOfConversation={startOfConversation}
-            first={edge.node.userId !== data.messages.edges[index + 1]?.node?.userId}
-            last={edge.node.userId !== data.messages.edges[index - 1]?.node?.userId}
-            date={currentMessageDate.toLocaleString()}
-            text={edge.node.text}
-            gifUrl={edge.node.gifUrl}
-            id={edge.node.id}
+            props={{
+              previousMessageUserId: data.messages.edges[index + 1]?.node?.userId,
+              nextMessageUserId: data.messages.edges[index - 1]?.node?.userId,
+              previousMessageDate: data.messages.edges[index + 1]?.node?.createdAt,
+              date: currentMessageDate.toLocaleString(),
+              text: edge.node.text,
+              gifUrl: edge.node.gifUrl,
+              id: edge.node.id,
+              userId: edge.node.userId,
+            }}
             key={edge.node.id}
-            senderIsMe={userContext.user?.id === edge.node.userId}
             />
         );
       })}
