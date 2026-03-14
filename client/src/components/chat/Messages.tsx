@@ -94,6 +94,7 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
               previousMessageUserId: data.messages.edges[index + 1]?.node?.userId,
               nextMessageUserId: data.messages.edges[index - 1]?.node?.userId,
               previousMessageDate: data.messages.edges[index + 1]?.node?.createdAt,
+              nextMessageDate: data.messages.edges[index - 1]?.node?.createdAt,
               date: currentMessageDate.toLocaleString(),
               text: edge.node.text,
               gifUrl: edge.node.gifUrl,

@@ -26,7 +26,7 @@ export const MessageMedia = memo(({ type, url, styles}: MessageMediaProps) => {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className={`block max-w-[280px] m-1 mx-2 ${styles}`}
+      className={`block max-w-[280px] my-1 ${styles}`}
     >
       <img
         src={url}

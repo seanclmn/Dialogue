@@ -14,6 +14,7 @@ export interface MessageProps extends React.DOMAttributes<HTMLElement> {
   previousMessageUserId?: string;
   nextMessageUserId?: string;
   previousMessageDate?: string;
+  nextMessageDate?: string;
   userId?: string;
 }
 
@@ -27,13 +28,9 @@ export const Message = memo(({ props }: { props: MessageProps }) => {
     previousMessageUserId,
     nextMessageUserId,
     previousMessageDate,
+    nextMessageDate,
     userId,
   } = props;
-
-  const first = previousMessageUserId !== userId;
-  const last = nextMessageUserId !== userId && previousMessageUserId === userId;
-  const isolatedMessage = previousMessageUserId !== userId && nextMessageUserId !== userId;
-  const senderIsMe = userId === user?.id;
 
   const startOfConversation = useMemo(() => {
     if (previousMessageDate) {
@@ -42,9 +39,23 @@ export const Message = memo(({ props }: { props: MessageProps }) => {
     return false;
   }, [date, previousMessageDate]);
 
+  // const endOfConversation = useMemo(() => {
+  //   if (nextMessageDate) {
+  //     return new Date(date).getTime() - new Date(nextMessageDate).getTime() > 3600000;
+  //   }
+  //   return false;
+  // }, [date, nextMessageDate]);
+
+
+  const first = previousMessageUserId !== userId;
+  const last = nextMessageUserId !== userId && previousMessageUserId === userId;
+  const isolatedMessage = previousMessageUserId !== userId && nextMessageUserId !== userId || startOfConversation;
+  const senderIsMe = userId === user?.id;
+
+
   const rowStyles = useMemo(() => {
     if (senderIsMe) {
-      return `w-full flex items-start justify-end ${styles ?? ""}`;
+      return `w-full flex items-end justify-end pr-2 ${styles ?? ""}`;
     }
     return `w-full flex items-start justify-start ${!last && !isolatedMessage ? "pl-14" : ""} ${styles ?? ""}`;
   }, [userId, styles, last, isolatedMessage, senderIsMe]);
@@ -61,25 +72,25 @@ export const Message = memo(({ props }: { props: MessageProps }) => {
   const textColor = senderIsMe ? "text-my-txt-color" : "text-txt-color";
 
   return (
-    <div className={rowStyles}>
+    <div>
       {startOfConversation ? (
         <p className="text-center text-gray-500 mb-4 mt-16">{date}</p>
       ) : null}
-      {(last || isolatedMessage) && !senderIsMe ? (
-        <Avatar src={img} containerStyle="h-10 w-10 mx-2" />
-      ) : null}
+      <div className={rowStyles}>
+        {(last || isolatedMessage) && !senderIsMe ? (
+          <Avatar src={img} containerStyle="h-10 w-10 mx-2" />
+        ) : null}
 
-      {gifUrl ? (
-        <MessageMedia type="gif" url={gifUrl} styles={senderIsMe ? "ml-auto" : ""} />
-      ) : text && text.length > 0 ? (
-        <div className="flex w-full items-start">
-          <div className={bubbleStyles}>
-            <p lang="en" className={`px-2 whitespace-break-spaces break-keep text-[15px] ${textColor}`}>
-              {text}
-            </p>
-          </div>
-        </div>
-      ) : null}
+        {gifUrl ? (
+          <MessageMedia type="gif" url={gifUrl} styles={senderIsMe ? "ml-auto" : ""} />
+        ) : text && text.length > 0 ? (
+            <div className={bubbleStyles}>
+              <p lang="en" className={`px-2 whitespace-break-spaces break-keep text-[15px] ${textColor}`}>
+                {text} 
+              </p>
+            </div>
+        ) : null}
+      </div>
     </div>
   );
 });
