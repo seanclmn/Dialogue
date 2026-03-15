@@ -21,6 +21,8 @@ const fragment = graphql`
           id
           text
           gifUrl
+          gifWidth
+          gifHeight
           createdAt
           userId
         }
@@ -98,6 +100,8 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
               date: currentMessageDate.toLocaleString(),
               text: edge.node.text,
               gifUrl: edge.node.gifUrl,
+              gifWidth: edge.node.gifWidth ?? undefined,
+              gifHeight: edge.node.gifHeight ?? undefined,
               id: edge.node.id,
               userId: edge.node.userId,
             }}

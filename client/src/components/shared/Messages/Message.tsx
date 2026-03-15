@@ -11,6 +11,8 @@ export interface MessageProps extends React.DOMAttributes<HTMLElement> {
   text: string;
   id: string;
   gifUrl?: string | null;
+  gifWidth?: number | null;
+  gifHeight?: number | null;
   previousMessageUserId?: string;
   nextMessageUserId?: string;
   previousMessageDate?: string;
@@ -25,6 +27,8 @@ export const Message = memo(({ props }: { props: MessageProps }) => {
     date,
     text,
     gifUrl,
+    gifWidth,
+    gifHeight,
     previousMessageUserId,
     nextMessageUserId,
     previousMessageDate,
@@ -82,7 +86,13 @@ export const Message = memo(({ props }: { props: MessageProps }) => {
         ) : null}
 
         {gifUrl ? (
-          <MessageMedia type="gif" url={gifUrl} styles={senderIsMe ? "ml-auto" : ""} />
+          <MessageMedia
+            type="gif"
+            url={gifUrl}
+            width={gifWidth ?? undefined}
+            height={gifHeight ?? undefined}
+            styles={senderIsMe ? "ml-auto" : ""}
+          />
         ) : text && text.length > 0 ? (
             <div className={bubbleStyles}>
               <p lang="en" className={`px-2 whitespace-break-spaces break-keep text-[15px] ${textColor}`}>

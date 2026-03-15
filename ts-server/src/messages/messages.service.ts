@@ -25,6 +25,8 @@ export class MessagesService {
       chat: chat,
       userId: createMessageInput.userId,
       ...(createMessageInput.gifUrl && { gifUrl: createMessageInput.gifUrl }),
+      ...(createMessageInput.gifWidth != null && { gifWidth: createMessageInput.gifWidth }),
+      ...(createMessageInput.gifHeight != null && { gifHeight: createMessageInput.gifHeight }),
     })
     await this.chatsRepository.save({
       ...chat,

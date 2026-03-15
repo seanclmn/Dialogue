@@ -19,6 +19,14 @@ export class Message implements Node {
   @Field({ nullable: true })
   gifUrl?: string;
 
+  @Column({ type: 'int', nullable: true })
+  @Field(() => Int, { nullable: true })
+  gifWidth?: number;
+
+  @Column({ type: 'int', nullable: true })
+  @Field(() => Int, { nullable: true })
+  gifHeight?: number;
+
   @Column()
   @Field()
   userId: string;

@@ -1,4 +1,4 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { InputType, Field, Int } from '@nestjs/graphql';
 
 @InputType()
 export class CreateMessageInput {
@@ -13,4 +13,10 @@ export class CreateMessageInput {
 
   @Field({ nullable: true })
   gifUrl?: string;
+
+  @Field(() => Int, { nullable: true })
+  gifWidth?: number;
+
+  @Field(() => Int, { nullable: true })
+  gifHeight?: number;
 }

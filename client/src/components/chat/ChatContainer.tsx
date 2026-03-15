@@ -21,7 +21,7 @@ import { ChatHeader } from "./ChatHeader";
 import { ChatSendButton } from "@components/shared/Buttons/ChatSendButton";
 import { useUpdateTyping } from "@mutations/UpdateTyping";
 import { ChatContainerSubscription } from "@generated/ChatContainerSubscription.graphql";
-import { GifPicker } from "./GifPicker";
+import { GifPicker, type GifPayload } from "./GifPicker";
 
 const query = graphql`
   query ChatContainerQuery($id: ID!) {
@@ -41,14 +41,18 @@ const mutation = graphql`
     $userId: String!
     $chatId: String!
     $gifUrl: String
+    $gifWidth: Int
+    $gifHeight: Int
   ) {
     createMessage(
-      createMessageInput: { text: $text, userId: $userId, chatId: $chatId, gifUrl: $gifUrl }
+      createMessageInput: { text: $text, userId: $userId, chatId: $chatId, gifUrl: $gifUrl, gifWidth: $gifWidth, gifHeight: $gifHeight }
     ) {
       createdAt
       id
       text
       gifUrl
+      gifWidth
+      gifHeight
       userId
     }
   }
@@ -71,7 +75,7 @@ interface ContentProps {
 
 export const Content = ({ queryReference, chatId }: ContentProps) => {
   const [messageMap, setMessageMap] = useState<Record<string, string>>({});
-  const [gifUrlMap, setGifUrlMap] = useState<Record<string, string>>({});
+  const [gifPayloadMap, setGifPayloadMap] = useState<Record<string, GifPayload | undefined>>({});
   const [showGifPicker, setShowGifPicker] = useState<Record<string, boolean>>({});
   const [isTyping, setIsTyping] = useState<boolean | null>(null);
   const { user } = useContext(UserContext);
@@ -125,7 +129,8 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
 
   const handleSendMessage = () => {
     const text = messageMap[chatId]?.trim() ?? "";
-    const gifUrl = gifUrlMap[chatId]?.trim() || null;
+    const gif = gifPayloadMap[chatId];
+    const gifUrl = gif?.url?.trim() || null;
     const hasContent = text.length > 0 || gifUrl;
     if (user?.id && hasContent) {
       commitMutation({
@@ -134,10 +139,12 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
           userId: user.id,
           chatId: chatId,
           gifUrl: gifUrl ?? undefined,
+          gifWidth: gif?.width ?? undefined,
+          gifHeight: gif?.height ?? undefined,
         },
       }).dispose();
       setMessageMap({ ...messageMap, [chatId]: "" });
-      setGifUrlMap({ ...gifUrlMap, [chatId]: "" });
+      setGifPayloadMap({ ...gifPayloadMap, [chatId]: undefined });
       setShowGifPicker({ ...showGifPicker, [chatId]: false });
     }
   };
@@ -159,24 +166,24 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
       {showGifPicker[chatId] ? (
         <div className="mx-2 mb-2 flex justify-start">
           <GifPicker
-            onSelect={(url) => {
-              setGifUrlMap({ ...gifUrlMap, [chatId]: url });
+            onSelect={(payload) => {
+              setGifPayloadMap({ ...gifPayloadMap, [chatId]: payload });
             }}
             onClose={() => setShowGifPicker({ ...showGifPicker, [chatId]: false })}
           />
         </div>
       ) : null}
-      {gifUrlMap[chatId] ? (
+      {gifPayloadMap[chatId]?.url ? (
         <div className="mx-2 mb-1 flex items-center gap-2">
           <span className="text-txt-color text-sm">Selected GIF:</span>
           <img
-            src={gifUrlMap[chatId]}
+            src={gifPayloadMap[chatId].url}
             alt=""
             className="h-12 w-auto rounded object-cover border border-brd-color"
           />
           <button
             type="button"
-            onClick={() => setGifUrlMap({ ...gifUrlMap, [chatId]: "" })}
+            onClick={() => setGifPayloadMap({ ...gifPayloadMap, [chatId]: undefined })}
             className="text-sm text-txt-color hover:underline"
           >
             Remove
@@ -219,7 +226,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
         </button>
         <ChatSendButton
           disabled={
-            !((messageMap[chatId]?.trim().length ?? 0) > 0 || (gifUrlMap[chatId]?.trim().length ?? 0) > 0)
+            !((messageMap[chatId]?.trim().length ?? 0) > 0 || (gifPayloadMap[chatId]?.url?.trim().length ?? 0) > 0)
           }
           onClick={handleSendMessage}
         />

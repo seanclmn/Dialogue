@@ -4,7 +4,7 @@ import { Loader } from "@components/shared/loaders/Loader";
 const GIPHY_API_KEY = import.meta.env.VITE_GIPHY_API_KEY ?? "";
 const GIPHY_SEARCH_URL = "https://api.giphy.com/v1/gifs/search";
 
-type GiphyImage = { url: string };
+type GiphyImage = { url: string; width?: string; height?: string };
 type GiphyGif = {
   id: string;
   title: string;
@@ -16,6 +16,8 @@ type GiphyGif = {
     original?: GiphyImage;
   };
 };
+
+export type GifPayload = { url: string; width?: number; height?: number };
 
 type GiphyResponse = {
   data: GiphyGif[];
@@ -37,7 +39,7 @@ function searchGifs(query: string, signal?: AbortSignal): Promise<GiphyGif[]> {
 }
 
 export interface GifPickerProps {
-  onSelect: (gifUrl: string) => void;
+  onSelect: (payload: GifPayload) => void;
   onClose: () => void;
 }
 
@@ -70,12 +72,16 @@ export function GifPicker({ onSelect, onClose }: GifPickerProps) {
 
   const handleSelect = useCallback(
     (gif: GiphyGif) => {
-      const url =
-        gif.images.downsized_medium?.url ??
-        gif.images.downsized?.url ??
-        gif.images.fixed_height?.url ??
-        gif.images.original?.url;
-      if (url) onSelect(url);
+      const img =
+        gif.images.downsized_medium ??
+        gif.images.downsized ??
+        gif.images.fixed_height ??
+        gif.images.original;
+      const url = img?.url;
+      if (!url) return;
+      const width = img?.width != null ? parseInt(img.width, 10) : undefined;
+      const height = img?.height != null ? parseInt(img.height, 10) : undefined;
+      onSelect({ url, width: Number.isNaN(width) ? undefined : width, height: Number.isNaN(height) ? undefined : height });
       onClose();
     },
     [onSelect, onClose],
