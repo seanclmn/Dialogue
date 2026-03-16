@@ -1,4 +1,4 @@
-import { Button } from "@components/shared/Buttons/GenericButton";
+import { Button } from "@components/shared/Buttons/Button";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
 
 export const EmptyChat = () => {

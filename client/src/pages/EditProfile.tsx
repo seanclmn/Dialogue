@@ -5,7 +5,7 @@ import img from "../assets/jennie.jpeg";
 import { Input } from "@components/shared/Inputs/GenericInput";
 import { Controller, useForm } from "react-hook-form";
 import { InputError } from "@components/error/InputError";
-import { Button } from "@components/shared/Buttons/GenericButton";
+import { Button } from "@components/shared/Buttons/Button";
 import { useUpdateUserMutation } from "@mutations/UpdateUser";
 import { TextAreaInput } from "@components/shared/Inputs/TextAreaInput";
 import { useNavigate } from "react-router";

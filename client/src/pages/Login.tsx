@@ -1,4 +1,4 @@
-import { Button } from "../components/shared/Buttons/GenericButton";
+import { Button } from "../components/shared/Buttons/Button";
 import { Input } from "../components/shared/Inputs/GenericInput";
 import { graphql } from "relay-runtime";
 import { useMutation } from "react-relay";

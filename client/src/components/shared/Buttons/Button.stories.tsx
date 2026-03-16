@@ -1,14 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button } from "./GenericButton";
+import { Button } from "./Button";
 
 const meta: Meta<typeof Button> = {
   component: Button,
-  title: "Shared/GenericButton",
+  title: "Shared/Button",
   argTypes: {
-    type: {
-      control: "select",
-      options: ["button", "submit", "reset"],
-    },
     loading: { control: "boolean" },
     disabled: { control: "boolean" },
     onClick: { action: "clicked" },
@@ -22,7 +18,6 @@ type Story = StoryObj<typeof Button>;
 export const Default: Story = {
   args: {
     title: "Click me",
-    type: "button",
   },
 };
 
@@ -50,6 +45,5 @@ export const WithCustomStyles: Story = {
 export const Submit: Story = {
   args: {
     title: "Submit",
-    type: "submit",
   },
 };
