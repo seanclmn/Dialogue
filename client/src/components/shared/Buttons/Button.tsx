@@ -2,14 +2,12 @@ import { Loader } from "../loaders/Loader";
 
 export interface ButtonProps extends React.DOMAttributes<HTMLButtonElement> {
   styles?: string;
-  title: string;
   loading?: boolean;
   disabled?: boolean;
 }
 
 export const Button = ({
   styles,
-  title,
   loading,
   disabled,
   onClick,
@@ -24,7 +22,7 @@ export const Button = ({
       onClick={onClick}
       disabled={disabled || loading}
     >
-      {loading ? <Loader color="gray-100" width={2} height={6} radius={8} styles="animate-spin" /> : children || title}
+      {loading ? <Loader color="gray-100" width={2} height={6} radius={8} styles="animate-spin" /> : children}
     </button>
   );
 };

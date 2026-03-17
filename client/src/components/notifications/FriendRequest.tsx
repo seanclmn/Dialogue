@@ -1,4 +1,4 @@
-import { TextButton } from "@components/shared/Buttons/TextButton";
+import { Button } from "@components/shared/Buttons/Button";
 import { useAcceptFriendRequest } from "@mutations/AcceptFriendRequest";
 import { useDeclineFriendRequest } from "@mutations/DeclineFriendRequest";
 
@@ -34,16 +34,12 @@ export const FriendRequest = ({ data }: FriendRequestProps) => {
 
       {!data.accepted ? (
         <div className="flex flex-row">
-          <TextButton
-            text="Approve"
-            className="mx-2"
+          <Button
             onClick={() => acceptFriendRequest()}
-          />
-          <TextButton
-            text="Decline"
-            className="mx-2"
+          > Approve </Button>
+          <Button
             onClick={() => declineFriendRequest()}
-          />
+          > Decline </Button>
         </div>
       ) : null}
     </div>
