@@ -79,7 +79,7 @@ async function seed() {
   const chatsToSeed = [groupChat, directChat];
   const participants = [alice, bob];
   const allMessages = [];
-  const lastMessageByChat = new Map<string, { text: string; userId: string; chat: Chat; createdAt: Date }>();
+  const lastMessageByChat = new Map<string, { text: string; userId: string; username: string; chat: Chat; createdAt: Date }>();
   const chanceToKeepSameSender = 0.4; // 40% chance next message is from same user
 
   for (const chat of chatsToSeed) {
@@ -99,6 +99,7 @@ async function seed() {
       const msg = {
         text: randomMessage,
         userId: sender.id,
+        username: sender.username,
         chat: chat,
         createdAt,
       };

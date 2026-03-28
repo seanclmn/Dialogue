@@ -132,6 +132,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     const gif = gifPayloadMap[chatId];
     const gifUrl = gif?.url?.trim() || null;
     const hasContent = text.length > 0 || gifUrl;
+    console.log(text, gifUrl, hasContent);
     if (user?.id && hasContent) {
       commitMutation({
         variables: {
@@ -208,15 +209,14 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
               setMessageMap(obj);
             }}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
+              if (e.key === "Enter") {
                 handleSendMessage();
               }
             }}
           />
         </div>
         <button
-          type="button"
+          type="submit"
           title="Search GIFs"
           className="px-2 py-1 rounded text-txt-color hover:bg-bgd-highlight shrink-0"
           onClick={() => setShowGifPicker({ ...showGifPicker, [chatId]: !showGifPicker[chatId] })}

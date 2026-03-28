@@ -76,11 +76,11 @@ export const Message = memo(({ props }: { props: MessageProps }) => {
   const textColor = senderIsMe ? "text-my-txt-color" : "text-txt-color";
 
   return (
-    <div>
+    <div className={styles}>
       {startOfConversation ? (
         <p className="text-center text-gray-500 mb-4 mt-16">{date}</p>
       ) : null}
-      <div className={rowStyles}>
+      <div className={`${rowStyles} ${styles} `}>
         {(last || isolatedMessage) && !senderIsMe ? (
           <Avatar src={img} containerStyle="h-10 w-10 mx-2" />
         ) : null}
@@ -94,7 +94,7 @@ export const Message = memo(({ props }: { props: MessageProps }) => {
             styles={senderIsMe ? "ml-auto" : ""}
           />
         ) : text && text.length > 0 ? (
-            <div className={bubbleStyles}>
+            <div className={`${bubbleStyles} max-w-md`}>
               <p lang="en" className={`px-2 whitespace-break-spaces break-keep text-[15px] ${textColor}`}>
                 {text} 
               </p>

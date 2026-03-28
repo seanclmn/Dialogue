@@ -6,7 +6,7 @@ export const EmptyChat = () => {
     <div className="w-full h-full flex flex-col items-center justify-center bg-bgd-color text-txt-color">
       <ChatBubbleLeftRightIcon className="w-32 h-32 text-gray-400" />
       <p>Send a message to start a dialogue.</p>
-      <Button title={"Send message"} styles="w-auto mt-4" />
+      <Button styles="w-auto mt-4">Send message</Button>
     </div>
   );
 };

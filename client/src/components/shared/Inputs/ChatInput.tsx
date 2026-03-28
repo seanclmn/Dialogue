@@ -3,12 +3,14 @@ import React, { useEffect, useRef, useState } from "react";
 interface ChatInputProps
   extends React.InputHTMLAttributes<HTMLTextAreaElement> {
   styles?: string;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 }
 
 export const ChatInput = ({
   onChange,
   value,
   styles,
+  onKeyDown,
 }: ChatInputProps) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -41,6 +43,7 @@ export const ChatInput = ({
       ref={textAreaRef}
       onChange={onChange}
       value={value}
+      onKeyDown={onKeyDown}
     />
   );
 };

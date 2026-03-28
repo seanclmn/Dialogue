@@ -31,6 +31,10 @@ export class Message implements Node {
   @Field()
   userId: string;
 
+  @Column()
+  @Field()
+  username: string;
+
   @Field(() => Chat)
   @ManyToOne(() => Chat, (chat) => chat.messages)
   chat: Chat;

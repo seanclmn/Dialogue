@@ -116,6 +116,7 @@ type Message implements Node {
   id: ID!
   text: String!
   userId: String!
+  username: String!
 }
 
 type MessageConnection {

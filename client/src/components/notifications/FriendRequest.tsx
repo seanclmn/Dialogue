@@ -16,7 +16,6 @@ type FriendRequestProps = {
 };
 
 export const FriendRequest = ({ data }: FriendRequestProps) => {
-  console.log("FriendRequest.tsx", data.notificationId, data.friendRequestId);
   const { acceptFriendRequest } = useAcceptFriendRequest(data.friendRequestId, data.notificationId);
   const { declineFriendRequest } = useDeclineFriendRequest(data.friendRequestId, data.notificationId);
 

@@ -10,6 +10,7 @@ interface ChatGroupProps {
   lastMessage?: {
     text: string;
     userId: string;
+    username: string;
     gifUrl?: string;
   } | null;
 }
@@ -38,21 +39,21 @@ export const ChatGroup = ({ name, chatId, lastMessage }: ChatGroupProps) => {
   );
 };
 
-const LastMessage = ({ lastMessage }: { lastMessage: { text: string; userId: string; gifUrl?: string } }) => {
+const LastMessage = ({ lastMessage }: { lastMessage: { text: string; userId: string; username: string; gifUrl?: string } }) => {
   const userContext = useContext(UserContext);
 
 
   if(lastMessage.gifUrl) {
     return (
       <p className="text-xs">
-        {userContext.user.id === lastMessage.userId ? <b>You sent a gif </b> : <b>{lastMessage.userId} sent a gif </b>}
+        {userContext.user.id === lastMessage.userId ? <b>You sent a gif </b> : <b>{lastMessage.username} sent a gif </b>}
       </p>
     );
   }
 
   return (
     <p className="text-xs">
-      {userContext.user.id === lastMessage.userId ? <b>You: </b> : <b>{lastMessage.userId}: </b>}
+      {userContext.user.id === lastMessage.userId ? <b>You: </b> : <b>{lastMessage.username}: </b>}
       {lastMessage.text.length > 20
         ? lastMessage.text.slice(0, 20) + "..."
         : lastMessage.text}

@@ -17,33 +17,33 @@ type Story = StoryObj<typeof Button>;
 
 export const Default: Story = {
   args: {
-    title: "Click me",
+    children: "Click me",
   },
 };
 
 export const Loading: Story = {
   args: {
-    title: "Saving...",
+    children: "Saving...",
     loading: true,
   },
 };
 
 export const Disabled: Story = {
   args: {
-    title: "Disabled",
+    children: "Disabled",
     disabled: true,
   },
 };
 
 export const WithCustomStyles: Story = {
   args: {
-    title: "Custom style",
+    children: "Custom style",
     styles: "bg-primary text-my-txt-color px-4",
   },
 };
 
 export const Submit: Story = {
   args: {
-    title: "Submit",
+    children: "Submit",
   },
 };

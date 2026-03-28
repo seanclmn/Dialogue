@@ -116,6 +116,7 @@ type Message implements Node {
   id: ID!
   text: String!
   userId: String!
+  username: String!
 }
 
 type MessageConnection {
@@ -211,6 +212,9 @@ input UpdateChatInput {
 
 input UpdateMessageInput {
   chatId: String
+  gifHeight: Int
+  gifUrl: String
+  gifWidth: Int
   id: String!
   text: String!
   userId: String!

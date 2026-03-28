@@ -65,7 +65,7 @@ export const Signup = () => {
             setCreds({ ...creds, password: e.currentTarget.value })
           }
         />
-        <Button title="Sign up" type="submit" styles="text-sm py-[5px]" />
+        <Button styles="text-sm py-[5px]" type="submit">Sign up</Button>
         <Link to="/login">
           <p className="my-2">Log in here</p>
         </Link>

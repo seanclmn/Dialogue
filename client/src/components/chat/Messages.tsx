@@ -85,7 +85,7 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
 
 
   return (
-    <div ref={containerRef} className="w-full h-full overflow-auto flex flex-col-reverse">
+    <div ref={containerRef} className="w-full h-full overflow-auto flex flex-col-reverse scroll-py-48 py-4">
       <div ref={endMessagesRef} className="h-1" />
       {data.messages.edges.map((edge, index) => {
 

@@ -1,6 +1,6 @@
 import { Loader } from "../loaders/Loader";
 
-export interface ButtonProps extends React.DOMAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   styles?: string;
   loading?: boolean;
   disabled?: boolean;
@@ -12,6 +12,7 @@ export const Button = ({
   disabled,
   onClick,
   children,
+  ...rest
 }: ButtonProps) => {
   return (
     <button
@@ -21,6 +22,7 @@ export const Button = ({
       ${styles}`}
       onClick={onClick}
       disabled={disabled || loading}
+      {...rest}
     >
       {loading ? <Loader color="gray-100" width={2} height={6} radius={8} styles="animate-spin" /> : children}
     </button>

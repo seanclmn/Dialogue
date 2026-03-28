@@ -7,17 +7,23 @@ import { Repository } from 'typeorm';
 import { MessageConnection } from './entities/Message.Connection.entity';
 import { Chat } from 'src/chats/entities/chat.entity';
 import { buildRelayConnection, decodeCursor } from 'src/relay-helpers';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class MessagesService {
   constructor(
     @InjectRepository(Message) private messagesRepository: Repository<Message>,
     @InjectRepository(Chat) private chatsRepository: Repository<Chat>,
+    @InjectRepository(User) private usersRepository: Repository<User>,
   ) { }
 
   async create(createMessageInput: CreateMessageInput) {
     const chat = await this.chatsRepository.findOne({
       where: { id: createMessageInput.chatId }
+    })
+
+    const user = await this.usersRepository.findOne({
+      where: { id: createMessageInput.userId }
     })
     if (!chat) throw new NotFoundException(`Chat with ID ${createMessageInput.chatId} not found`);
     const newMessage = await this.messagesRepository.save({
@@ -27,6 +33,7 @@ export class MessagesService {
       ...(createMessageInput.gifUrl && { gifUrl: createMessageInput.gifUrl }),
       ...(createMessageInput.gifWidth != null && { gifWidth: createMessageInput.gifWidth }),
       ...(createMessageInput.gifHeight != null && { gifHeight: createMessageInput.gifHeight }),
+      username: user.username,
     })
     await this.chatsRepository.save({
       ...chat,
@@ -53,10 +60,6 @@ export class MessagesService {
     return await this.messagesRepository.save(updateMessageInput)
   }
 
-  /**
-   * Returns messages in reverse chronological order (latest first).
-   * Pagination uses offset cursors; "after" skips that many rows in the DESC list.
-   */
   async getMessagesForChat(
     id: string,
     first: number,

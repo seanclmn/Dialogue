@@ -102,12 +102,11 @@ export const Login = () => {
           <InputError message={"Password is required"} />
         )}
         <Button
-          title="Log in"
           type="submit"
           styles="w-full text-sm my-2"
           loading={isMutationInFlight}
           disabled={isMutationInFlight}
-        />
+        >Log in</Button>
       </form>
 
       <div className="flex flex-col gap-2 mt-4">
@@ -121,7 +120,7 @@ export const Login = () => {
               styles="text-[10px] py-1 bg-gray-100 !text-gray-600 border-gray-200 w-20"
               onClick={() => loginAs(user)}
               disabled={isMutationInFlight}
-            />
+            >{user}</Button>
           ))}
         </div>
       </div>
