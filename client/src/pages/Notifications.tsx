@@ -3,6 +3,7 @@ import { NotificationsList_user$key } from "@generated/NotificationsList_user.gr
 import { usePaginationFragment, graphql } from "react-relay";
 import { FriendRequest } from "@components/notifications/FriendRequest";
 import { UserContext } from "@contexts/UserContext";
+import { Loader } from "@components/shared/loaders/Loader";
 
 const fragment = graphql`
   fragment NotificationsList_user on User
@@ -100,7 +101,7 @@ const NotificationsContent = ({ fragmentKey }: { fragmentKey: NotificationsList_
 export const Notifications = () => {
   const { currentUserRef } = useContext(UserContext);
 
-  if (!currentUserRef) return null;
+  if (!currentUserRef) return <Loader styles="w-full h-full" />;
 
   return <NotificationsContent fragmentKey={currentUserRef as NotificationsList_user$key} />;
 };
