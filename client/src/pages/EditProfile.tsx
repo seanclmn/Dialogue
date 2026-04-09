@@ -67,12 +67,13 @@ const EditProfileForm = ({ username, bio, id }: EditProfileProps) => {
           rules={{ required: true }}
         />
         <Button
-          title="Edit"
           type="submit"
           styles="text-sm my-2"
           loading={isMutationInFlight}
           disabled={isMutationInFlight}
-        />
+        >
+          Update
+        </Button>
       </form>
     </div>
   );

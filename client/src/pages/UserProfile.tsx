@@ -147,13 +147,6 @@ const Content = ({ queryReference }: ContentProps) => {
           </Menu>
         ) : (
           <Button
-            title={
-              isFriend
-                ? "Friends"
-                : hasSentRequest
-                  ? "Requested"
-                  : "Add Friend"
-            }
             styles={
               `my-2 ${hasSentRequest || isFriend
                 ? "bg-gray-400 border-gray-400 cursor-not-allowed"
@@ -170,7 +163,9 @@ const Content = ({ queryReference }: ContentProps) => {
                 }).dispose();
               }
             }}
-          />
+          >
+            {isFriend ? "Friends" : hasSentRequest ? "Requested" : "Add Friend"}
+          </Button>
         )
       ) : null}
     </div>
