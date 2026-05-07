@@ -159,7 +159,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
         {data.node ? <Messages fragmentKey={data.node} /> : null}
         {friendTyping ? (
           <div className="flex flex-row">
-            <Avatar src={img} containerStyle="h-8" />
+            <Avatar src={user?.avatarUrl || img} containerStyle="h-8" />
             <Typing />
           </div>
         ) : null}

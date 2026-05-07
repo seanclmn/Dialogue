@@ -16,15 +16,26 @@ import {
 } from "relay-runtime";
 import { createClient, ExecutionResult, Sink } from "graphql-ws";
 import { PayloadExtensions } from "relay-runtime/lib/network/RelayNetworkTypes";
+import { API_ORIGIN } from "./config";
+
+const HTTP_ENDPOINT = `${API_ORIGIN}/graphql`;
+const wsUrl = (() => {
+  try {
+    const u = new URL(API_ORIGIN);
+    const wsProtocol = u.protocol === "https:" ? "wss:" : "ws:";
+    return `${wsProtocol}//${u.host}/graphql`;
+  } catch {
+    return "ws://localhost:3000/graphql";
+  }
+})();
 
 export const RelayProvider = ({ children }: PropsWithChildren) => {
   const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
-  const HTTP_ENDPOINT = "http://localhost:3000/graphql";
 
   const wsClient = useMemo(
     () =>
       createClient({
-        url: "ws://localhost:3000/graphql",
+        url: wsUrl,
         connectionParams: () => {
           const token = cookies["accessToken"];
           if (token && token !== "undefined" && token !== "null") {

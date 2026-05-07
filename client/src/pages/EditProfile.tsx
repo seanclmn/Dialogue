@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useRef, useState } from "react";
 import { UserContext } from "@contexts/UserContext";
 import { Avatar } from "@components/shared/users/Avatar";
 import img from "../assets/jennie.jpeg";
@@ -9,6 +9,9 @@ import { Button } from "@components/shared/Buttons/Button";
 import { useUpdateUserMutation } from "@mutations/UpdateUser";
 import { TextAreaInput } from "@components/shared/Inputs/TextAreaInput";
 import { useNavigate } from "react-router";
+import { useCookies } from "react-cookie";
+import toast from "react-hot-toast";
+import { API_ORIGIN } from "../config";
 
 type Inputs = {
   username: string;
@@ -19,9 +22,10 @@ type EditProfileProps = {
   id: string;
   username: string;
   bio?: string;
+  avatarUrl?: string | null;
 };
 
-const EditProfileForm = ({ username, bio, id }: EditProfileProps) => {
+const EditProfileForm = ({ username, bio, id, avatarUrl }: EditProfileProps) => {
   const {
     control,
     formState: { errors },
@@ -29,7 +33,53 @@ const EditProfileForm = ({ username, bio, id }: EditProfileProps) => {
   } = useForm<Inputs>({ defaultValues: { username, bio } });
 
   const { updateUser, isMutationInFlight } = useUpdateUserMutation();
-  const navigate = useNavigate()
+  const { user, setUser } = useContext(UserContext);
+  const [cookies] = useCookies(["accessToken"]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+
+  const onAvatarFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    const token = cookies["accessToken"];
+    if (!token || token === "undefined" || token === "null") {
+      toast.error("You must be logged in to upload a photo.");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch(`${API_ORIGIN}/uploads/avatar`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const msg =
+          typeof body?.message === "string"
+            ? body.message
+            : Array.isArray(body?.message)
+              ? body.message.join(", ")
+              : "Upload failed";
+        throw new Error(msg);
+      }
+      setUser({
+        ...user,
+        id: body.id,
+        username: body.username,
+        bio: body.bio ?? user.bio,
+        avatarUrl: body.avatarUrl ?? null,
+      });
+      toast.success("Profile photo updated");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Upload failed");
+    }
+  };
+
   const onSubmit = (data: Inputs) => {
     const input = {
       username: data.username,
@@ -41,7 +91,21 @@ const EditProfileForm = ({ username, bio, id }: EditProfileProps) => {
 
   return (
     <div className="w-full flex flex-col items-center py-2">
-      <Avatar src={img} containerStyle="w-28 h-28 my-2 " editable />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+        className="hidden"
+        onChange={onAvatarFile}
+      />
+      <Avatar src={avatarUrl || img} containerStyle="w-28 h-28 my-2 object-cover" />
+      <Button
+        type="button"
+        styles="text-sm my-1"
+        onClick={() => fileInputRef.current?.click()}
+      >
+        Change photo
+      </Button>
       <form
         className="my-4"
         onSubmit={handleSubmit(onSubmit)}
@@ -89,7 +153,12 @@ export const EditProfile = () => {
   return (
     <div className="w-full flex flex-col items-center py-2 bg-bgd-color text-txt-color min-h-full">
       <h1 className="text-2xl font-bold">Edit Profile</h1>
-      <EditProfileForm username={data.user.username} bio={data.user.bio ?? ""} id={data.user.id} />
+      <EditProfileForm
+        username={data.user.username}
+        bio={data.user.bio ?? ""}
+        id={data.user.id}
+        avatarUrl={data.user.avatarUrl}
+      />
     </div>
   );
 }

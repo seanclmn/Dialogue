@@ -25,6 +25,7 @@ const fragment = graphql`
             sender {
               username
               id
+              avatarUrl
             }
             receiver {
               username

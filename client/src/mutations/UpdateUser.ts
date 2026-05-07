@@ -13,6 +13,7 @@ const updateUserMutation = graphql`
       id
       username
       bio
+      avatarUrl
     }
   }
 `
@@ -21,7 +22,12 @@ export const useUpdateUserMutation = () => {
   const { user, setUser } = useContext(UserContext);
   const [commitMutation, isMutationInFlight] = useMutation<UpdateUserMutation>(updateUserMutation);
 
-  const updateUser = (input: { id: string; username: string; bio?: string }) => {
+  const updateUser = (input: {
+    id: string;
+    username: string;
+    bio?: string;
+    avatarUrl?: string | null;
+  }) => {
     commitMutation({
       variables: {
         updateUserInput: input,
@@ -32,6 +38,7 @@ export const useUpdateUserMutation = () => {
           ...user,
           username: data.updateUser.username,
           bio: data.updateUser.bio ?? user.bio,
+          avatarUrl: data.updateUser.avatarUrl ?? user.avatarUrl,
         };
         setUser(updatedUser);
         toast.success("Profile updated!");

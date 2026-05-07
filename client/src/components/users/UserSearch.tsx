@@ -10,6 +10,7 @@ const query = graphql`
     users(username: $username) {
       id
       username
+      avatarUrl
     }
   }
 `;
@@ -19,7 +20,7 @@ export const UserSearch = () => {
   const [input, setInput] = useState<string>("");
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [res, setRes] = useState<
-    ReadonlyArray<{ id: string; username: string }>
+    ReadonlyArray<{ id: string; username: string; avatarUrl?: string | null }>
   >([]);
 
   const fetch = useCallback(
@@ -56,7 +57,12 @@ export const UserSearch = () => {
       />
       {res.length > 0 ? (
         res.map((user) => (
-          <UserSearchItem id={user.id} username={user.username} />
+          <UserSearchItem
+            key={user.id}
+            id={user.id}
+            username={user.username}
+            avatarUrl={user.avatarUrl}
+          />
         ))
       ) : (
         <>

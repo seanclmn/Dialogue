@@ -82,7 +82,19 @@ export class UsersService {
       username: updateUserInput.username,
       bio: updateUserInput.bio,
     };
+    if (updateUserInput.avatarUrl !== undefined) {
+      updatedUser.avatarUrl = updateUserInput.avatarUrl;
+    }
     return await this.usersRepository.save(updatedUser);
+  }
+
+  async updateUserAvatar(userId: string, avatarUrl: string): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    user.avatarUrl = avatarUrl;
+    return await this.usersRepository.save(user);
   }
 
   async getFriendsForUser(id: string, first?: number, after?: number) {

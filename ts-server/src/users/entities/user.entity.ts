@@ -24,6 +24,10 @@ export class User implements Node {
   @Field({ nullable: true })
   bio?: string;
 
+  @Column({ type: 'varchar', length: 2048, nullable: true })
+  @Field({ nullable: true })
+  avatarUrl?: string;
+
   // @Column()
   // hashedRefreshToken?: string;
 

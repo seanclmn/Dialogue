@@ -24,6 +24,7 @@ const query = graphql`
       username
       id
       bio
+      avatarUrl
       friends {
         edges {
           node {
@@ -126,7 +127,8 @@ const Content = ({ queryReference }: ContentProps) => {
       ...user,
       id: currentUser.id,
       username: currentUser.username,
-      bio: currentUser.bio ?? ""
+      bio: currentUser.bio ?? "",
+      avatarUrl: currentUser.avatarUrl ?? null,
     });
     setCurrentUserRef(currentUser);
   }, [currentUser.id]);

@@ -26,6 +26,7 @@ const query = graphql`
       username
       id
       bio
+      avatarUrl
       isFriend
       friendRequests {
         id
@@ -76,18 +77,18 @@ const Content = ({ queryReference }: ContentProps) => {
   const { declineFriendRequest, isMutationInFlight: isDeclining } = useDeclineFriendRequest(hasReceivedRequest?.id || "");
 
   const isFriend = data.user.isFriend;
-  
+ console.log("Avatar URL: ", data.user.avatarUrl);
   return (
     <div className="w-full flex flex-col items-center py-2 max-w-96 mx-auto bg-bgd-color text-txt-color min-h-full">
       {data.user.username === currentUser.user.username ? (
         <Avatar
-          src={img}
+          src={data.user.avatarUrl || img}
           containerStyle="w-28 h-28 my-2"
           editable
           link="/editprofile"
         />
       ) : (
-        <Avatar src={img} containerStyle="w-28 h-28 my-2" />
+        <Avatar src={data.user.avatarUrl || img} containerStyle="w-28 h-28 my-2" />
       )}
       <p className="my-2">{data.user.username}</p>
       <p className="text-sm text-gray-500">{data.user.bio}</p>

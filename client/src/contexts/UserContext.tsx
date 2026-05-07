@@ -7,6 +7,7 @@ export interface User {
   username: string | null;
   chatIds: string[];
   bio: string | null;
+  avatarUrl: string | null;
 }
 
 export type CurrentUserRef = Chats_user$key | NotificationsList_user$key;
@@ -23,6 +24,7 @@ const defaultUser = {
   username: null,
   chatIds: [],
   bio: null,
+  avatarUrl: null,
 };
 
 export const UserContext = createContext<UserContextType>({

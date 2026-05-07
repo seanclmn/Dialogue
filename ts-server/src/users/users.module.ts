@@ -1,4 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { AuthModule } from 'src/auth/auth.module';
+import { StorageModule } from 'src/storage/storage.module';
+import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { UsersResolver } from './users.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -15,7 +18,10 @@ import { FriendsModule } from 'src/friends/friends.module';
     ChatsModule,
     NotificationsModule,
     forwardRef(() => FriendsModule),
+    forwardRef(() => AuthModule),
+    StorageModule,
   ],
+  controllers: [UsersController],
   providers: [UsersResolver, UsersService],
   exports: [UsersService],
 })

@@ -11,7 +11,7 @@ export const Avatar = ({ src, containerStyle, editable, link }: AvatarProps): Re
     <>
       {editable ? (
         <div className={"relative border-none" + containerStyle}>
-          <img src={src} className={containerStyle + " rounded-full"} />
+          <img src={src} className={containerStyle + " rounded-full object-cover"} />
           <Link to={link ?? ""}>
             <div className={"rounded-full flex items-center justify-center absolute top-0 bg-black/50 cursor-pointer " + containerStyle}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="size-6" fill="white">

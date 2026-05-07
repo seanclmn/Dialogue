@@ -67,11 +67,11 @@ export const Nav = () => {
         <Link to={`/u/${data.user.username}`}>
           {pathname.includes(`/u/${data.user.username}`) ? (
             <Avatar
-              src={img}
-              containerStyle="m-0 my-4 w-7 border-bgd-highlight border-[1px]"
+              src={data.user.avatarUrl || img}
+              containerStyle="m-0 my-4 w-7 h-7 border-bgd-highlight border-[1px] object-cover"
             />
           ) : (
-            <Avatar src={img} containerStyle="m-0 my-4 w-7" />
+            <Avatar src={data.user.avatarUrl || img} containerStyle="m-0 my-4 w-7 h-7 object-cover" />
           )}
         </Link>
       </div>

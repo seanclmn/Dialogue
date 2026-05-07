@@ -14,7 +14,10 @@ export class UpdateUserInput {
   @Field({ nullable: true })
   bio?: string;
 
+  @Field({ nullable: true })
+  avatarUrl?: string;
+
   @Field(() => [ChatInput], { nullable: true })
-  chats: ChatInput[]
+  chats?: ChatInput[];
 
 }

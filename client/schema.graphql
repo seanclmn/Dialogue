@@ -221,6 +221,7 @@ input UpdateMessageInput {
 }
 
 input UpdateUserInput {
+  avatarUrl: String
   bio: String
   chats: [ChatInput!]
   id: ID!
@@ -228,6 +229,7 @@ input UpdateUserInput {
 }
 
 type User implements Node {
+  avatarUrl: String
   bio: String
   chats(after: String, first: Int): ChatConnection!
   friendRequests: [FriendRequest!]!

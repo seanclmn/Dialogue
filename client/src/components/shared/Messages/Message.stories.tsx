@@ -9,7 +9,7 @@ const meta: Meta<typeof Message> = {
     (Story) => (
       <UserContext.Provider
         value={{
-          user: { id: "me", username: "me", bio: null, chatIds: [] },
+          user: { id: "me", username: "me", bio: null, avatarUrl: null, chatIds: [] },
           setUser: () => {},
           currentUserRef: null,
           setCurrentUserRef: () => {},
