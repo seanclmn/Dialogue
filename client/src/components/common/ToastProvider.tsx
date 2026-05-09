@@ -9,7 +9,7 @@ export const ToastProvider = () => {
       toastOptions={{
         duration: 5000,
         style: {
-          background: 'var(--bg-highlight-color)',
+          background: 'var(--bg-color)',
           color: 'var(--text-color)',
           border: '1px solid var(--border-color)',
         },
@@ -17,7 +17,14 @@ export const ToastProvider = () => {
           duration: 3000,
           iconTheme: {
             primary: 'green',
-            secondary: 'black',
+            secondary: 'white',
+          },
+        },
+        error: {
+          duration: 3000,
+          iconTheme: {
+            primary: 'red',
+            secondary: 'white',
           },
         },
       }}
