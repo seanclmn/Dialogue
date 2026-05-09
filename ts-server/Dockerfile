@@ -1,24 +1,38 @@
+# ---------- Build Stage ----------
+  FROM node:20-alpine AS builder
 
-# Use the official Node.js image as the base image
-FROM node:20
-
-# Set the working directory inside the container
-WORKDIR /usr/src/app
-
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
-
-# Install the application dependencies
-RUN yarn install
-
-# Copy the rest of the application files
-COPY . .
-
-# Build the NestJS application
-RUN yarn build
-
-# Expose the application port
-EXPOSE 8080
-
-# Command to run the application
-CMD ["node", "dist/main"]
+  WORKDIR /app
+  
+  # Copy dependency files
+  COPY package.json yarn.lock ./
+  
+  # Install dependencies
+  RUN yarn install --frozen-lockfile
+  
+  # Copy app source
+  COPY . .
+  
+  # Build NestJS app
+  RUN yarn build
+  
+  
+  # ---------- Production Stage ----------
+  FROM node:20-alpine
+  
+  WORKDIR /app
+  
+  # Copy dependency files
+  COPY package.json yarn.lock ./
+  
+  # Install ONLY production deps
+  RUN yarn install --frozen-lockfile --production
+  
+  # Copy built app from builder
+  COPY --from=builder /app/dist ./dist
+  
+  # Cloud Run uses PORT env var
+  ENV PORT=8080
+  
+  EXPOSE 8080
+  
+  CMD ["node", "dist/main"]
