@@ -14,7 +14,6 @@ import {
   MagnifyingGlassCircleIcon as MagnifyingGlassCircleIconSolid,
 } from "@heroicons/react/24/solid";
 import { Link, useLocation, useNavigate } from "react-router";
-import img from "../../assets/jennie.jpeg";
 import { useContext } from "react";
 import { UserContext } from "@contexts/UserContext";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
@@ -67,11 +66,11 @@ export const Nav = () => {
         <Link to={`/u/${data.user.username}`}>
           {pathname.includes(`/u/${data.user.username}`) ? (
             <Avatar
-              src={data.user.avatarUrl || img}
+              src={data.user.avatarUrl}
               containerStyle="m-0 my-4 w-7 h-7 border-bgd-highlight border-[1px] object-cover"
             />
           ) : (
-            <Avatar src={data.user.avatarUrl || img} containerStyle="m-0 my-4 w-7 h-7 object-cover" />
+            <Avatar src={data.user.avatarUrl} containerStyle="m-0 my-4 w-7 h-7 object-cover" />
           )}
         </Link>
       </div>

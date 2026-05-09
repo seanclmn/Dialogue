@@ -1,7 +1,6 @@
 import { useContext, useRef, useState } from "react";
 import { UserContext } from "@contexts/UserContext";
 import { Avatar } from "@components/shared/users/Avatar";
-import img from "../assets/jennie.jpeg";
 import { Input } from "@components/shared/Inputs/GenericInput";
 import { Controller, useForm } from "react-hook-form";
 import { InputError } from "@components/error/InputError";
@@ -98,7 +97,7 @@ const EditProfileForm = ({ username, bio, id, avatarUrl }: EditProfileProps) => 
         className="hidden"
         onChange={onAvatarFile}
       />
-      <Avatar src={avatarUrl || img} containerStyle="w-28 h-28 my-2 object-cover" />
+      <Avatar src={avatarUrl} containerStyle="w-28 h-28 my-2 object-cover" />
       <Button
         type="button"
         styles="text-sm my-1"

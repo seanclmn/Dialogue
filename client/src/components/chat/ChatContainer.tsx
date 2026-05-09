@@ -2,7 +2,6 @@ import { Suspense, useContext, useEffect, useMemo, useState } from "react";
 import { ChatInput } from "../shared/Inputs/ChatInput";
 import { Typing } from "./Typing";
 import { Avatar } from "../shared/users/Avatar";
-import img from "../../assets/jennie.jpeg";
 import { Loader } from "../shared/loaders/Loader";
 import { graphql, GraphQLSubscriptionConfig } from "relay-runtime";
 import {
@@ -159,7 +158,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
         {data.node ? <Messages fragmentKey={data.node} /> : null}
         {friendTyping ? (
           <div className="flex flex-row">
-            <Avatar src={user?.avatarUrl || img} containerStyle="h-8" />
+            <Avatar src={user?.avatarUrl} containerStyle="h-8 w-8" />
             <Typing />
           </div>
         ) : null}

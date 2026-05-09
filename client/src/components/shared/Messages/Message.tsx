@@ -1,5 +1,4 @@
 import { Avatar } from "../users/Avatar";
-import img from "../../../assets/jennie.jpeg";
 import { memo, useContext, useMemo } from "react";
 import { MessageMedia } from "./MessageMedia";
 import { UserContext } from "@contexts/UserContext";
@@ -82,7 +81,7 @@ export const Message = memo(({ props }: { props: MessageProps }) => {
       ) : null}
       <div className={`${rowStyles} ${styles} `}>
         {(last || isolatedMessage) && !senderIsMe ? (
-          <Avatar src={img} containerStyle="h-10 w-10 mx-2" />
+          <Avatar containerStyle="h-10 w-10 mx-2" />
         ) : null}
 
         {gifUrl ? (

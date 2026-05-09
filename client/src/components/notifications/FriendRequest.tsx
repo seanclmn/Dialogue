@@ -2,7 +2,6 @@ import { Button } from "@components/shared/Buttons/Button";
 import { useAcceptFriendRequest } from "@mutations/AcceptFriendRequest";
 import { useDeclineFriendRequest } from "@mutations/DeclineFriendRequest";
 import { Avatar } from "@components/shared/users/Avatar";
-import img from "../../assets/jennie.jpeg";
 
 type FriendRequestProps = {
   data: {
@@ -25,7 +24,7 @@ export const FriendRequest = ({ data }: FriendRequestProps) => {
   return (
     <div>
       <div className="p-2 flex flex-row items-center gap-2">
-        <Avatar containerStyle="w-10 h-10 shrink-0" src={data.sender.avatarUrl || img} />
+        <Avatar containerStyle="w-10 h-10 shrink-0" src={data.sender.avatarUrl} />
         {!data.accepted ? (
           <p className="text-sm">
             {data.sender.username} requested to be your friend!
