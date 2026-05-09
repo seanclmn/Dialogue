@@ -1,28 +1,24 @@
-# Build stage
-FROM node:20-bookworm-slim AS builder
 
-WORKDIR /app
+# Use the official Node.js image as the base image
+FROM node:24
 
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+# Set the working directory inside the container
+WORKDIR /usr/src/app
 
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
+
+# Install the application dependencies
+RUN yarn install
+
+# Copy the rest of the application files
 COPY . .
 
-# nest-cli post-build runs copy-schema → ../client/schema.graphql
-RUN mkdir -p /client && yarn build
+# Build the NestJS application
+RUN yarn build
 
-# Production stage
-FROM node:20-bookworm-slim AS production
-
-WORKDIR /app
-
-ENV NODE_ENV=production
-
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --production && yarn cache clean
-
-COPY --from=builder /app/dist ./dist
-
+# Expose the application port
 EXPOSE 3000
 
-CMD ["node", "dist/main.js"]
+# Command to run the application
+CMD ["node", "dist/main"]

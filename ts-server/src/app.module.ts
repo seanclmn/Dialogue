@@ -53,11 +53,11 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: process.env.DB_HOST || 'localhost',
       port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'chat',
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
       entities: [User, Chat, Message, FriendRequest, Notification, FriendRequestEntity, FriendRequestNotification, Friendship],
       synchronize: true,
       timezone: 'Z', // Store and read dates in UTC so timestamps match across clients
