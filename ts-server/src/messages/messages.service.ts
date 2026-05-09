@@ -4,7 +4,7 @@ import { UpdateMessageInput } from './dto/update-message.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Message } from './entities/message.entity';
 import { Repository } from 'typeorm';
-import { MessageConnection } from './entities/Message.Connection.entity';
+import { MessageConnection } from './entities/message.connection.entity';
 import { Chat } from 'src/chats/entities/chat.entity';
 import { buildRelayConnection, decodeCursor } from 'src/relay-helpers';
 import { User } from 'src/users/entities/user.entity';

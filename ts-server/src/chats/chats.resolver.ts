@@ -8,7 +8,7 @@ import { UseGuards } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { UpdateUserInput } from 'src/users/dto/update-user.input';
 import { MessagesService } from 'src/messages/messages.service';
-import { MessageConnection } from 'src/messages/entities/Message.Connection.entity';
+import { MessageConnection } from 'src/messages/entities/message.connection.entity';
 import { ChatUpdate } from './dto/chatUpdate';
 import { pubSub } from 'src/messages/messages.resolver';
 import { EventEmitter2 } from '@nestjs/event-emitter';
