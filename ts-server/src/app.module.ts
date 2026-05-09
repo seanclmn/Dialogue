@@ -23,12 +23,36 @@ import { APP_FILTER } from '@nestjs/core';
 import { GraphQLErrorFilter } from './common/filters/graphql-error.filter';
 
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+
+const dbHost = process.env.DB_HOST || 'localhost';
+const useCloudSqlSocket = dbHost.startsWith('/cloudsql/');
+
+const typeOrmOptions: TypeOrmModuleOptions = {
+  type: 'mysql',
+  ...(useCloudSqlSocket
+    ? { socketPath: dbHost }
+    : { host: dbHost, port: 3306 }),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  entities: [User, Chat, Message, FriendRequest, Notification, FriendRequestEntity, FriendRequestNotification, Friendship],
+  synchronize: true,
+  timezone: 'Z',
+  retryAttempts: 5,
+  retryDelay: 2000,
+  connectTimeout: 10000,
+};
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     GraphQLModule.forRoot({
-      autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
+      // Cloud Run image has no `src/`; K_SERVICE is set by Cloud Run on every revision
+      autoSchemaFile:
+        process.env.K_SERVICE != null
+          ? true
+          : join(process.cwd(), 'src/schema.graphql'),
       sortSchema: true,
       driver: ApolloDriver,
       playground: false,
@@ -51,17 +75,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
         return { req };
       },
     }),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: process.env.DB_HOST || 'localhost',
-      port: 3306,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
-      entities: [User, Chat, Message, FriendRequest, Notification, FriendRequestEntity, FriendRequestNotification, Friendship],
-      synchronize: true,
-      timezone: 'Z', // Store and read dates in UTC so timestamps match across clients
-    }),
+    TypeOrmModule.forRoot(typeOrmOptions),
     UsersModule,
     AuthModule,
     ChatsModule,
