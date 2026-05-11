@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver } from '@nestjs/apollo';
 import { join } from 'path';
@@ -24,25 +24,6 @@ import { GraphQLErrorFilter } from './common/filters/graphql-error.filter';
 
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-
-const dbHost = process.env.DB_HOST || 'localhost';
-const useCloudSqlSocket = dbHost.startsWith('/cloudsql/');
-
-const typeOrmOptions: TypeOrmModuleOptions = {
-  type: 'mysql',
-  ...(useCloudSqlSocket
-    ? { socketPath: dbHost }
-    : { host: dbHost, port: 3306 }),
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-  entities: [User, Chat, Message, FriendRequest, Notification, FriendRequestEntity, FriendRequestNotification, Friendship],
-  synchronize: true,
-  timezone: 'Z',
-  retryAttempts: 5,
-  retryDelay: 2000,
-  connectTimeout: 10000,
-};
 
 @Module({
   imports: [
@@ -75,7 +56,35 @@ const typeOrmOptions: TypeOrmModuleOptions = {
         return { req };
       },
     }),
-    TypeOrmModule.forRoot(typeOrmOptions),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+    
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT) || 3306,
+      extra: {
+        socketPath: '/cloudsql/dialogue-495321:us-central1:dialogue-cloud',
+      },  
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+    
+      entities: [
+        User,
+        Chat,
+        Message,
+        FriendRequest,
+        Notification,
+        FriendRequestEntity,
+        FriendRequestNotification,
+        Friendship,
+      ],
+    
+      synchronize: true,
+      timezone: 'Z',
+    
+      retryAttempts: 5,
+      retryDelay: 2000,
+    }),
     UsersModule,
     AuthModule,
     ChatsModule,

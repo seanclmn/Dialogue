@@ -25,7 +25,7 @@ const wsUrl = (() => {
     const wsProtocol = u.protocol === "https:" ? "wss:" : "ws:";
     return `${wsProtocol}//${u.host}/graphql`;
   } catch {
-    return "ws://localhost:3000/graphql";
+    return "ws://localhost:8080/graphql";
   }
 })();
 
