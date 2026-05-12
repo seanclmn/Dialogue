@@ -60,3 +60,4 @@ dialogue-gcp-key.json
 
 # cloudrun
 cloudrun.sh
+seed.sh

@@ -18,14 +18,14 @@ import { createClient, ExecutionResult, Sink } from "graphql-ws";
 import { PayloadExtensions } from "relay-runtime/lib/network/RelayNetworkTypes";
 import { API_ORIGIN } from "./config";
 
-const HTTP_ENDPOINT = `${API_ORIGIN}/graphql`;
+const HTTP_ENDPOINT = `https://dialogue-api-1043694315311.us-east4.run.app/graphql`;
 const wsUrl = (() => {
   try {
     const u = new URL(API_ORIGIN);
     const wsProtocol = u.protocol === "https:" ? "wss:" : "ws:";
     return `${wsProtocol}//${u.host}/graphql`;
   } catch {
-    return "ws://localhost:8080/graphql";
+    return "wss://dialogue-api-1043694315311.us-east4.run.app/graphql";
   }
 })();
 
