@@ -10,7 +10,7 @@ export const Loader = ({ styles = "", color = "primary", width = 2, height = 8, 
   return (
     <div
       className={`relative inline-block animate-spin w-${width} h-${height} ${styles}`}
-      style={{ animationDuration: "1.5s" }}
+      style={{ animationDuration: "3s" }}
       role="status"
       aria-label="Loading"
     >
