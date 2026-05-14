@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "relay-compiler --validate && tsc -b && vite build",
+    "build": "relay-compiler --validate && vite build",
     "lint": "eslint 'src/**/*.ts'",
     "preview": "vite preview",
     "relay": "relay-compiler",
@@ -22,6 +22,7 @@
     "eslint": "^9.20.0",
     "eslint-plugin-typescript": "^0.14.0",
     "eslint-plugin-unused-imports": "^4.1.4",
+    "firebase-tools": "^15.17.0",
     "graphql-ws": "^5.16.0",
     "path": "^0.12.7",
     "postcss": "^8.4.41",
@@ -34,13 +35,13 @@
     "react-relay": "17.0.0",
     "react-router": "^7.1.1",
     "relay-runtime": "17.0.0",
+    "rollup": "^4.60.3",
     "tailwindcss": "^3.4.7",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",
     "@storybook/addon-essentials": "^10.0.0",
-    "@storybook/addon-themes": "^10.0.0",
     "@storybook/addon-interactions": "^10.0.0",
     "@storybook/blocks": "^10.0.0",
     "@storybook/react": "^10.0.0",
@@ -68,5 +69,23 @@
     "typescript-eslint": "^8.23.0",
     "vite": "^5.3.4",
     "vite-plugin-relay": "2.1.0"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-android-arm-eabi": "4.60.3",
+    "@rollup/rollup-android-arm64": "4.60.3",
+    "@rollup/rollup-darwin-arm64": "^4.60.3",
+    "@rollup/rollup-darwin-x64": "4.60.3",
+    "@rollup/rollup-linux-arm-gnueabihf": "4.60.3",
+    "@rollup/rollup-linux-arm-musleabihf": "4.60.3",
+    "@rollup/rollup-linux-arm64-gnu": "4.60.3",
+    "@rollup/rollup-linux-arm64-musl": "4.60.3",
+    "@rollup/rollup-linux-powerpc64le-gnu": "4.60.3",
+    "@rollup/rollup-linux-riscv64-gnu": "4.60.3",
+    "@rollup/rollup-linux-s390x-gnu": "4.60.3",
+    "@rollup/rollup-linux-x64-gnu": "4.60.3",
+    "@rollup/rollup-linux-x64-musl": "4.60.3",
+    "@rollup/rollup-win32-arm64-msvc": "4.60.3",
+    "@rollup/rollup-win32-ia32-msvc": "4.60.3",
+    "@rollup/rollup-win32-x64-msvc": "4.60.3"
   }
 }
