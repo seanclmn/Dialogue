@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver } from '@nestjs/apollo';
 import { join } from 'path';
@@ -23,11 +23,16 @@ import { APP_FILTER } from '@nestjs/core';
 import { GraphQLErrorFilter } from './common/filters/graphql-error.filter';
 
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
+
+const nodeEnv = process.env.NODE_ENV ?? 'development';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['.env', `.env.${nodeEnv}`],
+    }),
     GraphQLModule.forRoot({
       // Cloud Run image has no `src/`; K_SERVICE is set by Cloud Run on every revision
       autoSchemaFile:
@@ -37,7 +42,11 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
       sortSchema: true,
       driver: ApolloDriver,
       playground: false,
-      plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
+      plugins: [
+        nodeEnv === 'production'
+          ? ApolloServerPluginLandingPageDisabled()
+          : ApolloServerPluginLandingPageLocalDefault({ embed: true }),
+      ],
       buildSchemaOptions: {
         orphanedTypes: [FriendRequestNotification],
       },
@@ -79,7 +88,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
         Friendship,
       ],
     
-      synchronize: true,
+      synchronize: nodeEnv !== 'production',
       timezone: 'Z',
     
       retryAttempts: 5,
