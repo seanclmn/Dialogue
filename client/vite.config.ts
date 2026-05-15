@@ -7,7 +7,7 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [relay, react()],
-  base: "./",
+  base: "/",
   resolve: {
     alias: {
       //@ts-ignore
