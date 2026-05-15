@@ -17,7 +17,6 @@ export class User implements Node {
   username: string;
 
   @Column()
-  @Field()
   password: string;
 
   @Column("longtext", { nullable: true })

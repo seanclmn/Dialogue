@@ -15,9 +15,11 @@ export class StorageService {
   private readonly storage: Storage;
 
   constructor(private readonly config: ConfigService) {
+    const keyFilename = config.get<string>('GCS_KEY_FILENAME');
+    const projectId = config.get<string>('GCS_PROJECT_ID');
     this.storage = new Storage({
-      keyFilename: "dialogue-gcp-key.json",
-      projectId: "dialogue-495321",
+      ...(keyFilename ? { keyFilename } : {}),
+      ...(projectId ? { projectId } : {}),
     });
   }
 

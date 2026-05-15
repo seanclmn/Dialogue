@@ -238,7 +238,6 @@ type User implements Node {
   incomingRequests: [FriendRequest!]
   isFriend: Boolean!
   notifications(after: String, first: Int): NotificationConnection
-  password: String!
   sentRequests: [FriendRequest!]
   username: String!
 }

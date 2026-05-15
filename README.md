@@ -114,7 +114,7 @@ type Chat implements Node {
   id: ID!
   lastMessage: Message
   messages(after: String, first: Int): MessageConnection!
-  name: String!
+  name: String
   participants: [User!]
 }
 
