@@ -8,7 +8,7 @@ import { User } from 'src/users/entities/user.entity';
 import { UpdateUserInput } from 'src/users/dto/update-user.input';
 
 export interface CreateChatFuncInput {
-  name: string;
+  name?: string | null;
   participants: UpdateUserInput[]
 }
 

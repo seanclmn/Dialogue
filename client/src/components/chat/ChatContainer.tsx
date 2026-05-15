@@ -1,4 +1,5 @@
 import { Suspense, useContext, useEffect, useMemo, useState } from "react";
+import { getChatDisplayName } from "@utils/chatName";
 import { ChatInput } from "../shared/Inputs/ChatInput";
 import { Typing } from "./Typing";
 import { Avatar } from "../shared/users/Avatar";
@@ -28,6 +29,9 @@ const query = graphql`
       ... on Chat {
         id
         name
+        participants {
+          username
+        }
         ...Messages_chat
       }
     }
@@ -153,7 +157,11 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   return (
     <div className="h-full w-full flex flex-col justify-between">
       {!queryReference ? <Loader /> : null}
-      <ChatHeader title={data.node?.name ?? "(unnamed chat)"} />
+      <ChatHeader title={getChatDisplayName(
+        data.node?.name,
+        (data.node?.participants ?? []).map((p) => p.username),
+        user.username
+      )} />
 
       <div className="flex flex-col items-start grow h-1">
         {data.node ? <Messages fragmentKey={data.node} /> : null}
@@ -251,7 +259,7 @@ export const ChatContainer = () => {
     </div>);
 
   return (
-    <Suspense>
+    <Suspense fallback={<div className="h-full w-full flex flex-col justify-between"><Loader /></div>}>
       <Content queryReference={queryReference} chatId={id} />
     </Suspense>
   );

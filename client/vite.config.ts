@@ -21,6 +21,8 @@ export default defineConfig({
       //@ts-ignore
       "@contexts": path.resolve(__dirname, "src/contexts/"),
       //@ts-ignore
+      "@utils": path.resolve(__dirname, "src/utils/"),
+      //@ts-ignore
       "@assets/*": path.resolve(__dirname, "src/assets/"),
     },
   },

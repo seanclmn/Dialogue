@@ -6,6 +6,6 @@ export class CreateChatInput {
   @Field(() => [String])
   participants: string[];
 
-  @Field()
-  name: string;
+  @Field({ nullable: true })
+  name?: string | null;
 }

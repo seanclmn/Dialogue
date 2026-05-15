@@ -43,6 +43,9 @@
       ],
       "@pages/*": [
         "./src/pages/*"
+      ],
+      "@utils/*": [
+        "./src/utils/*"
       ]
     }
   },

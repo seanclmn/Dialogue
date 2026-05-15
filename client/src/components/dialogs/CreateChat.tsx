@@ -8,6 +8,7 @@ import { useContext, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { Avatar } from "@components/shared/users/Avatar";
 import { useCreateChat } from "@mutations/CreateChat";
+import { getChatDisplayName } from "@utils/chatName";
 
 interface CreateChatProps {
   open: boolean;
@@ -17,6 +18,7 @@ interface CreateChatProps {
 export const CreateChat = ({ open, setIsOpen }: CreateChatProps) => {
   const { user } = useContext(UserContext);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [title, setTitle] = useState("");
   const { createChat, isInFlight } = useCreateChat();
 
   if (!user.username) return null;
@@ -35,13 +37,15 @@ export const CreateChat = ({ open, setIsOpen }: CreateChatProps) => {
 
   const handleClose = () => {
     setSelected(new Set());
+    setTitle("");
     setIsOpen(false);
   };
 
   const handleCreate = () => {
     if (!selected.size || isInFlight) return;
     const participants = [user.username!, ...Array.from(selected)];
-    createChat(participants, { onCompleted: handleClose });
+    const name = title.trim() || null;
+    createChat(participants, { name, onCompleted: handleClose });
   };
 
   return (
@@ -51,6 +55,23 @@ export const CreateChat = ({ open, setIsOpen }: CreateChatProps) => {
           <div className="px-6 pt-6 pb-4 border-b border-brd-color">
             <DialogTitle className="text-lg font-semibold">New message</DialogTitle>
             <p className="text-sm text-gray-400 mt-0.5">Select friends to start a chat with</p>
+          </div>
+
+          <div className="px-6 py-3 border-b border-brd-color">
+            <label className="block text-xs font-medium text-gray-400 mb-1">
+              Chat name <span className="font-normal">(optional)</span>
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.currentTarget.value)}
+              placeholder={
+                selected.size
+                  ? getChatDisplayName(null, Array.from(selected), user.username)
+                  : "e.g. Weekend plans"
+              }
+              className="w-full bg-transparent text-sm text-txt-color placeholder-gray-400 border border-brd-color rounded-lg px-3 py-2 outline-none focus:border-primary transition-colors"
+            />
           </div>
 
           <div className="overflow-y-auto max-h-72 divide-y divide-brd-color">

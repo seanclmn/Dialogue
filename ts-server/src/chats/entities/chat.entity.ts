@@ -15,9 +15,9 @@ export class Chat implements Node {
   @ManyToMany(() => User, (user) => user.chats, { cascade: true })
   participants: User[];
 
-  @Column()
-  @Field()
-  name: string;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  name: string | null;
 
   @OneToMany(() => Message, (message) => message.chat, { cascade: true })
   messages: Message[];

@@ -9,6 +9,7 @@ import { usePaginationFragment } from "react-relay";
 import { Chats_user$key } from "@generated/Chats_user.graphql";
 import { UserContext } from "@contexts/UserContext";
 import { Suspense } from "react";
+import { getChatDisplayName } from "@utils/chatName";
 
 const fragment = graphql`
   fragment Chats_user on User
@@ -23,6 +24,9 @@ const fragment = graphql`
         node {
           id
           name
+          participants {
+            username
+          }
           lastMessage {
             text
             userId
@@ -61,7 +65,11 @@ const ChatsContent = ({ fragmentKey }: ChatsContentProps) => {
             <div className="overflow-auto w-full h-full">
               {data.chats.edges.map((edge) => (
                 <ChatGroup
-                  name={edge.node.name}
+                  name={getChatDisplayName(
+                    edge.node.name,
+                    (edge.node.participants ?? []).map((p) => p.username),
+                    user.username
+                  )}
                   key={edge.node.id}
                   chatId={edge.node.id}
                   lastMessage={edge.node.lastMessage}

@@ -11,6 +11,9 @@ const createChatMutation = graphql`
     createChat(createChatInput: $input) {
       id
       name
+      participants {
+        username
+      }
       lastMessage {
         text
         userId
@@ -27,7 +30,7 @@ export const useCreateChat = () => {
 
   const createChat = (
     participants: string[],
-    { onCompleted }: { onCompleted?: () => void } = {}
+    { name = null, onCompleted }: { name?: string | null; onCompleted?: () => void } = {}
   ) => {
     if (!user.id) return;
 
