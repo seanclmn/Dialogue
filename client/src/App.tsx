@@ -1,17 +1,18 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
-import ErrorPage from "./pages/404";
-import { Login } from "./pages/Login";
-import { Signup } from "./pages/Signup";
-import Page from "./Page";
 import { useCookies } from "react-cookie";
-import { ChatContainer } from "@components/chat/ChatContainer";
-import { EditProfile } from "./pages/EditProfile";
-import { Chats } from "./pages/Chats";
-import { SearchUsers } from "./pages/SearchUsers";
-import { UserProfile } from "./pages/UserProfile";
-import { Notifications } from "./pages/Notifications";
 import { ToastProvider } from "./components/common/ToastProvider";
+
+const ErrorPage = lazy(() => import("./pages/404"));
+const Login = lazy(() => import("./pages/Login").then((m) => ({ default: m.Login })));
+const Signup = lazy(() => import("./pages/Signup").then((m) => ({ default: m.Signup })));
+const Page = lazy(() => import("./Page"));
+const ChatContainer = lazy(() => import("@components/chat/ChatContainer").then((m) => ({ default: m.ChatContainer })));
+const EditProfile = lazy(() => import("./pages/EditProfile").then((m) => ({ default: m.EditProfile })));
+const Chats = lazy(() => import("./pages/Chats").then((m) => ({ default: m.Chats })));
+const SearchUsers = lazy(() => import("./pages/SearchUsers").then((m) => ({ default: m.SearchUsers })));
+const UserProfile = lazy(() => import("./pages/UserProfile").then((m) => ({ default: m.UserProfile })));
+const Notifications = lazy(() => import("./pages/Notifications").then((m) => ({ default: m.Notifications })));
 
 export const RouterParent = () => {
   const [cookies, setCookies] = useCookies(["accessToken", "theme"]);
@@ -80,7 +81,11 @@ export const RouterParent = () => {
       errorElement: <ErrorPage />,
     },
   ]);
-  return <RouterProvider router={router} />;
+  return (
+    <Suspense fallback={null}>
+      <RouterProvider router={router} />
+    </Suspense>
+  );
 };
 
 export const App = () => {
