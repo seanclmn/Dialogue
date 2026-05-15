@@ -101,9 +101,6 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     return () => clearTimeout(delayDebounceFn);
   }, [isTyping, chatId]);
 
-  if (!queryReference || !data.node) {
-    return null;
-  }
   const config: GraphQLSubscriptionConfig<ChatContainerSubscription> = useMemo(
     () => ({
       subscription: subscription,
@@ -125,6 +122,10 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   );
 
   useSubscription(config);
+
+  if (!queryReference || !data.node) {
+    return null;
+  }
 
   const handleSendMessage = () => {
     const text = messageMap[chatId]?.trim() ?? "";

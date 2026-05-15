@@ -74,7 +74,7 @@ const ChatsContent = ({ fragmentKey }: ChatsContentProps) => {
       </div>
       <Suspense fallback={<p>wonton</p>}>
         <div className="w-full h-full flex-grow relative">
-          {chatId ? <Outlet /> : <EmptyChat />}
+          {chatId ? <Outlet /> : <EmptyChat onNewChat={() => setOpen(true)} />}
         </div>
       </Suspense>
     </>

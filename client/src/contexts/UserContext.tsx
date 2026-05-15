@@ -2,12 +2,19 @@ import { createContext, ReactNode, useState } from "react";
 import { Chats_user$key } from "@generated/Chats_user.graphql";
 import { NotificationsList_user$key } from "@generated/NotificationsList_user.graphql";
 
+export interface Friend {
+  id: string;
+  username: string;
+  avatarUrl: string | null;
+}
+
 export interface User {
   id: string | null;
   username: string | null;
   chatIds: string[];
   bio: string | null;
   avatarUrl: string | null;
+  friends: Friend[];
 }
 
 export type CurrentUserRef = Chats_user$key | NotificationsList_user$key;
@@ -19,12 +26,13 @@ export interface UserContextType {
   setCurrentUserRef: (ref: CurrentUserRef | null) => void;
 }
 
-const defaultUser = {
+const defaultUser: User = {
   id: null,
   username: null,
   chatIds: [],
   bio: null,
   avatarUrl: null,
+  friends: [],
 };
 
 export const UserContext = createContext<UserContextType>({

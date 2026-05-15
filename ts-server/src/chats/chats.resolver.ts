@@ -45,7 +45,7 @@ export class ChatsResolver {
 
     const res = await this.chatsService.create(input);
 
-    return Promise.all(res.participants.map(async (user) => {
+    await Promise.all(res.participants.map(async (user) => {
       const userObj: UpdateUserInput = structuredClone(user)
 
       if (userObj.chats) {
@@ -55,6 +55,8 @@ export class ChatsResolver {
       }
       return await this.usersService.update(userObj)
     }))
+
+    return res;
 
   }
 
