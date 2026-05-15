@@ -6,17 +6,11 @@ import { join } from 'path';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/entities/user.entity';
 import { ChatsModule } from './chats/chats.module';
-import { Chat } from './chats/entities/chat.entity';
 import { MessagesModule } from './messages/messages.module';
-import { Message } from './messages/entities/message.entity';
 import { NodeResolver } from './node/node.resolver';
-import { Notification, FriendRequestNotification } from './notifications/entities/notification.entity';
 import { FriendsModule } from './friends/friends.module';
-import { FriendRequest as FriendRequestEntity } from './friends/entities/friend-request.entity';
-import { Friendship } from './friends/entities/friendship.entity';
-import { FriendRequest } from './users/entities/friendRequests.entity';
+import { getTypeOrmRootOptions } from './database/typeorm.config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { NotificationsModule } from './notifications/notifications.module';
 import { APP_FILTER } from '@nestjs/core';
@@ -24,6 +18,7 @@ import { GraphQLErrorFilter } from './common/filters/graphql-error.filter';
 
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
+import { Notification } from './notifications/entities/notification.entity';
 
 const nodeEnv = process.env.NODE_ENV ?? 'development';
 
@@ -48,7 +43,7 @@ const nodeEnv = process.env.NODE_ENV ?? 'development';
           : ApolloServerPluginLandingPageLocalDefault({ embed: true }),
       ],
       buildSchemaOptions: {
-        orphanedTypes: [FriendRequestNotification],
+        orphanedTypes: [Notification],
       },
       subscriptions: {
         'graphql-ws': {
@@ -65,35 +60,7 @@ const nodeEnv = process.env.NODE_ENV ?? 'development';
         return { req };
       },
     }),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-    
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT) || 3306,
-      extra: {
-        socketPath: '/cloudsql/dialogue-495321:us-central1:dialogue-cloud',
-      },  
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
-    
-      entities: [
-        User,
-        Chat,
-        Message,
-        FriendRequest,
-        Notification,
-        FriendRequestEntity,
-        FriendRequestNotification,
-        Friendship,
-      ],
-    
-      synchronize: nodeEnv !== 'production',
-      timezone: 'Z',
-    
-      retryAttempts: 5,
-      retryDelay: 2000,
-    }),
+    TypeOrmModule.forRoot(getTypeOrmRootOptions()),
     UsersModule,
     AuthModule,
     ChatsModule,
