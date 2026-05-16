@@ -38,6 +38,14 @@ export class ChatsResolver {
       return await this.usersService.findOne(username)
     }))
 
+    if (participantObjects.length === 2) {
+      const existingDM = await this.chatsService.findExistingDM(
+        participantObjects[0].id,
+        participantObjects[1].id,
+      );
+      if (existingDM) return existingDM;
+    }
+
     const input: CreateChatFuncInput = {
       ...createChatInput,
       participants: [...participantObjects]

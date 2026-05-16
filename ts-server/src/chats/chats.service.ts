@@ -20,6 +20,22 @@ export class ChatsService {
     private usersService: UsersService,
   ) { }
 
+  async findExistingDM(userId1: string, userId2: string): Promise<Chat | null> {
+    const candidates = await this.chatsRepository
+      .createQueryBuilder('chat')
+      .innerJoin('chat.participants', 'p1', 'p1.id = :userId1', { userId1 })
+      .leftJoinAndSelect('chat.participants', 'participant')
+      .getMany();
+
+    return (
+      candidates.find(
+        (chat) =>
+          chat.participants.length === 2 &&
+          chat.participants.some((p) => p.id === userId2),
+      ) ?? null
+    );
+  }
+
   async create(createChatInput: CreateChatFuncInput) {
 
     const chat = {
