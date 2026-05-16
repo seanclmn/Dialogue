@@ -94,7 +94,7 @@ export const RelayProvider = ({ children }: PropsWithChildren) => {
               err.extensions?.code === "UNAUTHORIZED",
           );
 
-          if (isUnauthorized) {
+          if (isUnauthorized && cookies.accessToken) {
             removeCookie("accessToken", { path: "/" });
             window.location.href = "/login";
           }

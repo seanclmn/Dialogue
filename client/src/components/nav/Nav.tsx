@@ -29,8 +29,10 @@ export const Nav = () => {
   ]);
 
   const handleLogout = () => {
+    data.setUser({ id: null, username: null, chatIds: [], bio: null, avatarUrl: null, friends: [] });
+    data.setCurrentUserRef(null);
     removeCookie("accessToken", { path: "/" });
-    navigate("/")
+    navigate("/");
   };
 
   const toggleTheme = () => {

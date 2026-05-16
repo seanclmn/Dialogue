@@ -21,7 +21,7 @@ body,
 
 @layer base {
   :root {
-    --error: #ff0000;
+    --error: #ef4444;
     --success: #00ff00;
   }
 

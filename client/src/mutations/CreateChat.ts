@@ -37,7 +37,7 @@ export const useCreateChat = () => {
     commitMutation({
       variables: {
         input: {
-          name: "",
+          name: name ?? "",
           participants,
         },
       },
@@ -53,6 +53,14 @@ export const useCreateChat = () => {
 
         const newChat = store.getRootField("createChat");
         if (!newChat) return;
+
+        // Server may return an existing DM — don't insert a duplicate edge
+        const chatId = newChat.getDataID();
+        const existingEdges = connection.getLinkedRecords("edges");
+        const alreadyInConnection = existingEdges?.some(
+          (edge) => edge?.getLinkedRecord("node")?.getDataID() === chatId
+        );
+        if (alreadyInConnection) return;
 
         const newEdge = ConnectionHandler.createEdge(
           store,

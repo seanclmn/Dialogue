@@ -59,9 +59,11 @@ const subscription = graphql`
 
 const Page = () => {
   const [queryReference, loadQuery] = useQueryLoader<PageQuery>(query);
+  const { setCurrentUserRef } = useContext(UserContext);
 
   useEffect(() => {
-    loadQuery({});
+    setCurrentUserRef(null);
+    loadQuery({}, { fetchPolicy: "network-only" });
   }, []);
 
   if (!queryReference) return null;

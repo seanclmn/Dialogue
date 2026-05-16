@@ -12,6 +12,7 @@ import { Link } from "react-router";
 import { InputError } from "@components/error/InputError";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+
 const mutation = graphql`
   mutation LoginMutation($username: String!, $password: String!) {
     login(loginUserInput: { username: $username, password: $password }) {
@@ -36,8 +37,9 @@ export const Login = () => {
   const {
     handleSubmit,
     control,
+    setError,
     formState: { errors },
-  } = useForm<Inputs>();
+  } = useForm<Inputs>({ defaultValues: { username: "", password: "" } });
 
   if (cookies["accessToken"]) return <Navigate to="/" />;
 
@@ -52,8 +54,21 @@ export const Login = () => {
         toast.success("Logged in successfully!");
       },
       onError: (e: any) => {
-        const message = e.source?.errors?.[0]?.message || e.message || "Invalid username or password";
-        toast.error(message);
+        const message =
+          e.source?.errors?.[0]?.message || e.message || "Login failed";
+        if (message === "User does not exist") {
+          setError("username", {
+            type: "server",
+            message: "No account found with this username",
+          });
+        } else if (message === "Invalid password") {
+          setError("password", {
+            type: "server",
+            message: "Incorrect password",
+          });
+        } else {
+          setError("root", { type: "server", message });
+        }
       },
     });
   };
@@ -69,7 +84,8 @@ export const Login = () => {
         toast.success(`Logged in as ${username}`);
       },
       onError: (e: any) => {
-        const message = e.source?.errors?.[0]?.message || e.message || "Quick login failed";
+        const message =
+          e.source?.errors?.[0]?.message || e.message || "Quick login failed";
         toast.error(message);
       },
     });
@@ -77,7 +93,10 @@ export const Login = () => {
 
   return (
     <div className="w-full flex flex-col items-center pt-32 min-h-screen bg-bgd-color text-txt-color">
-      <form className="flex flex-col items-center " onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="flex flex-col items-center w-60"
+        onSubmit={(e) => { e.preventDefault(); handleSubmit(onSubmit)(e); }}
+      >
         <p className="text-5xl my-4 cedarville-cursive-regular">Dialogue</p>
         <Controller
           control={control}
@@ -85,28 +104,48 @@ export const Login = () => {
             <Input styles="my-1 text-sm" title="Username" {...field} />
           )}
           name="username"
-          rules={{ required: true }}
+          rules={{
+            required: "Username is required",
+            minLength: {
+              value: 3,
+              message: "Username must be at least 3 characters",
+            },
+          }}
         />
-        {errors.username?.type === "required" && (
-          <InputError message={"Username is required"} />
+        {errors.username && (
+          <InputError message={errors.username.message!} />
         )}
         <Controller
           control={control}
           render={({ field }) => (
-            <Input styles="my-1 text-sm" title="Password" {...field} />
+            <Input
+              styles="my-1 text-sm"
+              title="Password"
+              type="password"
+              {...field}
+            />
           )}
           name="password"
-          rules={{ required: true }}
+          rules={{
+            required: "Password is required",
+            minLength: {
+              value: 6,
+              message: "Password must be at least 6 characters",
+            },
+          }}
         />
-        {errors.password?.type === "required" && (
-          <InputError message={"Password is required"} />
+        {errors.password && (
+          <InputError message={errors.password.message!} />
         )}
+        {errors.root && <InputError message={errors.root.message!} />}
         <Button
           type="submit"
           styles="w-full text-sm my-2"
           loading={isMutationInFlight}
           disabled={isMutationInFlight}
-        >Log in</Button>
+        >
+          Log in
+        </Button>
       </form>
 
       <div className="flex flex-col gap-2 mt-4">
@@ -119,7 +158,9 @@ export const Login = () => {
               styles="text-[10px] py-1 bg-gray-100 !text-gray-600 border-gray-200 w-20"
               onClick={() => loginAs(user)}
               disabled={isMutationInFlight}
-            >{user}</Button>
+            >
+              {user}
+            </Button>
           ))}
         </div>
       </div>
