@@ -24,17 +24,14 @@ export class StorageService {
   }
 
   async uploadUserAvatar(userId: string, buffer: Buffer, mimetype: string): Promise<string> {
-    console.log("Uploading user avatar");
     const bucketName = this.config.get<string>('GCS_BUCKET_NAME');
-    console.log("Bucket name: ", bucketName);
     if (!bucketName) {
-      console.log("Bucket name not found");
       throw new BadRequestException(
-        'Avatar upload is not configured. Set GCS_BUCKET_NAME and GOOGLE_APPLICATION_CREDENTIALS (or run on GCP with a service account).',
+        'Avatar upload is not configured. Set GCS_BUCKET_NAME in your environment.',
       );
     }
+
     const ext = ALLOWED_MIME[mimetype];
-    console.log("Extension: ", ext);
     if (!ext) {
       throw new BadRequestException('Only JPEG, PNG, WebP, and GIF images are allowed.');
     }
@@ -42,10 +39,16 @@ export class StorageService {
     const objectName = `avatars/${userId}/${randomUUID()}.${ext}`;
     const bucket = this.storage.bucket(bucketName);
     const file = bucket.file(objectName);
-    console.log("File: ", file.name);
+
     await file.save(buffer, {
       metadata: { contentType: mimetype, cacheControl: 'public, max-age=31536000' },
     });
+
+    try {
+      await file.makePublic();
+    } catch (e) {
+      console.warn('makePublic() failed — bucket may use uniform access control:', e.message);
+    }
 
     const base =
       this.config.get<string>('GCS_PUBLIC_URL_BASE')?.replace(/\/$/, '') ||

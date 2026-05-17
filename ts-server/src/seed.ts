@@ -53,12 +53,12 @@ async function seed() {
   });
 
   const groupChat = await chatRepository.save({
-    name: 'General Chat',
+    name: null,
     participants: [alice, bob, charlie],
   });
 
   const directChat = await chatRepository.save({
-    name: 'Alice & Bob',
+    name: null,
     participants: [alice, bob],
   });
 

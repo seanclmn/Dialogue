@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { CreateUserInput } from './dto/create-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { ILike, MoreThan, Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { UpdateUserInput } from './dto/update-user.input';
 import { ChatEdge } from 'src/chats/entities/chat.edge.entity';
 import { Chat } from 'src/chats/entities/chat.entity';
@@ -46,16 +46,21 @@ export class UsersService {
   }
 
   async getChatsForUser(id: string, first?: number, after?: Date) {
-    const where = after
-      ? { participants: { id: id }, createdAt: MoreThan(after) }
-      : { participants: { id: id } };
+    let query = this.chatsRepository
+      .createQueryBuilder('chat')
+      .innerJoin('chat.participants', 'filterP', 'filterP.id = :id', { id })
+      .leftJoinAndSelect('chat.participants', 'participant')
+      .leftJoinAndSelect('chat.lastMessage', 'lastMessage')
+      .orderBy('chat.updatedAt', 'ASC');
 
-    const chats = await this.chatsRepository.find({
-      where,
-      order: { updatedAt: 'ASC' },
-      relations: ['participants'],
-      take: first + 1, // Fetch one extra to determine if there's a next page
-    });
+    if (after) {
+      query = query.andWhere('chat.createdAt > :after', { after });
+    }
+    if (first !== undefined) {
+      query = query.take(first + 1);
+    }
+
+    const chats = await query.getMany();
 
     const edges: ChatEdge[] = chats.slice(0, first).map((chat) => ({
       cursor: chat.updatedAt.toISOString(), // Use createdAt as cursor
