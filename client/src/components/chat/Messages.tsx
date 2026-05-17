@@ -37,9 +37,10 @@ const fragment = graphql`
 
 type MessagesProps = {
   fragmentKey: Messages_chat$key;
+  participantAvatars: Record<string, string | null>;
 };
 
-export const Messages = ({ fragmentKey }: MessagesProps) => {
+export const Messages = ({ fragmentKey, participantAvatars }: MessagesProps) => {
   const { data, loadNext, hasNext, isLoadingNext } = usePaginationFragment(fragment, fragmentKey);
   const userContext = useContext(UserContext);
   const endMessagesRef = useRef<HTMLDivElement | null>(null);
@@ -83,12 +84,10 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
     return () => observer.disconnect();
   }, [hasNext, isLoadingNext, loadNext]);
 
-
   return (
     <div ref={containerRef} className="w-full h-full overflow-auto flex flex-col-reverse scroll-py-48 py-4">
       <div ref={endMessagesRef} className="h-1" />
       {data.messages.edges.map((edge, index) => {
-
         const currentMessageDate = new Date(edge.node.createdAt);
         return (
           <Message
@@ -104,9 +103,10 @@ export const Messages = ({ fragmentKey }: MessagesProps) => {
               gifHeight: edge.node.gifHeight ?? undefined,
               id: edge.node.id,
               userId: edge.node.userId,
+              senderAvatarUrl: participantAvatars[edge.node.userId] ?? null,
             }}
             key={edge.node.id}
-            />
+          />
         );
       })}
       <div className="w-full flex flex-col items-center my-2">

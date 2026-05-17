@@ -6,6 +6,7 @@ import { UserContext } from "../../contexts/UserContext";
 interface ChatGroupProps {
   name: string;
   chatId: string;
+  avatarUrl?: string | null;
   lastMessage?: {
     text: string;
     userId: string;
@@ -14,7 +15,7 @@ interface ChatGroupProps {
   } | null;
 }
 
-export const ChatGroup = ({ name, chatId, lastMessage }: ChatGroupProps) => {
+export const ChatGroup = ({ name, chatId, avatarUrl, lastMessage }: ChatGroupProps) => {
   const { id } = useParams();
   return (
     <Link to={`/chats/${chatId}`}>
@@ -24,7 +25,7 @@ export const ChatGroup = ({ name, chatId, lastMessage }: ChatGroupProps) => {
         p-2 h-18 hover:bg-bgd-highlight
         ${id === chatId ? "bg-bgd-highlight" : ""}`}
       >
-        <Avatar containerStyle="h-10 w-10 md:h-14 md:w-14 shrink-0" />
+        <Avatar src={avatarUrl} containerStyle="h-10 w-10 md:h-14 md:w-14 shrink-0" />
         <div className="hidden md:flex mx-2 h-full flex-col justify-between min-w-0">
           <p className="text-sm font-bold mb-1 text-txt-color truncate">{name}</p>
           {lastMessage ? (

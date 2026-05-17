@@ -1,5 +1,5 @@
 import { Suspense, useContext, useEffect, useMemo, useState } from "react";
-import { getChatDisplayName } from "@utils/chatName";
+import { getChatDisplayName, getDMAvatar } from "@utils/chatName";
 import { ChatInput } from "../shared/Inputs/ChatInput";
 import { Typing } from "./Typing";
 import { Avatar } from "../shared/users/Avatar";
@@ -30,7 +30,9 @@ const query = graphql`
         id
         name
         participants {
+          id
           username
+          avatarUrl
         }
         ...Messages_chat
       }
@@ -69,7 +71,7 @@ const subscription = graphql`
       userId
     } 
   }
-`
+`;
 
 interface ContentProps {
   queryReference: PreloadedQuery<ChatContainerQuery>;
@@ -81,14 +83,21 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   const [gifPayloadMap, setGifPayloadMap] = useState<Record<string, GifPayload | undefined>>({});
   const [showGifPicker, setShowGifPicker] = useState<Record<string, boolean>>({});
   const [isTyping, setIsTyping] = useState<boolean | null>(null);
+  const [typingUserId, setTypingUserId] = useState<string | null>(null);
   const { user } = useContext(UserContext);
   const [commitMutation] = useMutation<ChatContainerMutation>(mutation);
   const { updateTyping } = useUpdateTyping();
   const data = usePreloadedQuery(query, queryReference);
-  const [friendTyping, setFriendTyping] = useState<boolean>(false);
+
+  const participantAvatars = useMemo<Record<string, string | null>>(
+    () => Object.fromEntries(
+      (data.node?.participants ?? []).map((p) => [p.id, p.avatarUrl ?? null])
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [data.node?.id],
+  );
 
   useEffect(() => {
-    console.log(isTyping)
     const { id: userId } = user;
     const delayDebounceFn = setTimeout(() => {
       if (isTyping === false && userId) {
@@ -98,7 +107,6 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     }, 400);
 
     if (isTyping && userId) {
-      console.log(isTyping)
       updateTyping({ chatId, isTyping, userId });
     }
 
@@ -111,9 +119,11 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
       variables: { chatId: chatId },
       updater: (store) => {
         const newEventField = store.getRootField("userTyping");
-        const typingUser = newEventField.getValue("userId");
+        const typingUser = newEventField.getValue("userId") as string;
         const isTyping = newEventField.getValue("isTyping");
-        if (typingUser !== user.id) setFriendTyping(() => isTyping);
+        if (typingUser !== user.id) {
+          setTypingUserId(isTyping ? typingUser : null);
+        }
       },
       onError: (e) => {
         console.log(e);
@@ -136,7 +146,6 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     const gif = gifPayloadMap[chatId];
     const gifUrl = gif?.url?.trim() || null;
     const hasContent = text.length > 0 || gifUrl;
-    console.log(text, gifUrl, hasContent);
     if (user?.id && hasContent) {
       commitMutation({
         variables: {
@@ -157,17 +166,22 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   return (
     <div className="h-full w-full flex flex-col justify-between">
       {!queryReference ? <Loader /> : null}
-      <ChatHeader title={getChatDisplayName(
-        data.node?.name,
-        (data.node?.participants ?? []).map((p) => p.username),
-        user.username
-      )} />
+      <ChatHeader
+        title={getChatDisplayName(
+          data.node?.name,
+          (data.node?.participants ?? []).map((p) => p.username),
+          user.username
+        )}
+        avatarUrl={getDMAvatar(data.node?.participants ?? [], user.id)}
+      />
 
       <div className="flex flex-col items-start grow h-1">
-        {data.node ? <Messages fragmentKey={data.node} /> : null}
-        {friendTyping ? (
-          <div className="flex flex-row">
-            <Avatar src={user?.avatarUrl} containerStyle="h-8 w-8" />
+        {data.node ? (
+          <Messages fragmentKey={data.node} participantAvatars={participantAvatars} />
+        ) : null}
+        {typingUserId ? (
+          <div className="flex flex-row items-center">
+            <Avatar src={participantAvatars[typingUserId]} containerStyle="h-8 w-8 mx-2" />
             <Typing />
           </div>
         ) : null}
@@ -248,7 +262,6 @@ export const ChatContainer = () => {
   const [queryReference, loadQuery] = useQueryLoader<ChatContainerQuery>(query);
 
   useEffect(() => {
-    console.log("wonton")
     if (id) loadQuery({ id: id });
   }, [id]);
 

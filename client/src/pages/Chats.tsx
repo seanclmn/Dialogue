@@ -9,7 +9,7 @@ import { usePaginationFragment } from "react-relay";
 import { Chats_user$key } from "@generated/Chats_user.graphql";
 import { UserContext } from "@contexts/UserContext";
 import { Suspense } from "react";
-import { getChatDisplayName } from "@utils/chatName";
+import { getChatDisplayName, getDMAvatar } from "@utils/chatName";
 
 const fragment = graphql`
   fragment Chats_user on User
@@ -25,7 +25,9 @@ const fragment = graphql`
           id
           name
           participants {
+            id
             username
+            avatarUrl
           }
           lastMessage {
             text
@@ -63,18 +65,23 @@ const ChatsContent = ({ fragmentKey }: ChatsContentProps) => {
         <Suspense fallback={<p>wontons</p>}>
           {data.chats.edges.length > 0 ? (
             <div className="overflow-auto w-full h-full">
-              {data.chats.edges.map((edge) => (
-                <ChatGroup
-                  name={getChatDisplayName(
-                    edge.node.name,
-                    (edge.node.participants ?? []).map((p) => p.username),
-                    user.username
-                  )}
-                  key={edge.node.id}
-                  chatId={edge.node.id}
-                  lastMessage={edge.node.lastMessage}
-                />
-              ))}
+              {data.chats.edges.map((edge) => {
+                const participants = edge.node.participants ?? [];
+                return (
+                  <ChatGroup
+                    name={getChatDisplayName(
+                      edge.node.name,
+                      participants.map((p) => p.username),
+                      user.username
+                    )}
+                    avatarUrl={getDMAvatar(participants, user.id)}
+                    key={edge.node.id}
+                    chatId={edge.node.id}
+                    lastMessage={edge.node.lastMessage}
+                  />
+                );
+              }
+              )}
             </div>
           ) : null}
           <CreateChat open={open} setIsOpen={setOpen} />

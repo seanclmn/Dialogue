@@ -1,8 +1,13 @@
-/**
- * Returns a display name for a chat. If the chat has an explicit name, use it.
- * Otherwise build one from the other participants' usernames (alphabetical order,
- * Oxford-comma list), excluding the current user.
- */
+
+export const getDMAvatar = (
+  participants: readonly { id: string; avatarUrl?: string | null | undefined }[],
+  currentUserId: string | null | undefined,
+): string | null => {
+  const others = participants.filter((p) => p.id !== currentUserId);
+  if (others.length !== 1) return null;
+  return others[0].avatarUrl ?? null;
+};
+
 export const getChatDisplayName = (
   name: string | null | undefined,
   participantUsernames: string[],

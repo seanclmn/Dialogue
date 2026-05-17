@@ -17,9 +17,10 @@ export interface MessageProps extends React.DOMAttributes<HTMLElement> {
   previousMessageDate?: string;
   nextMessageDate?: string;
   userId?: string;
+  senderAvatarUrl?: string | null;
 }
 
-export const Message = memo(({ props }: { props: MessageProps }) => {
+export const Message = memo(({ props, isNew }: { props: MessageProps; isNew?: boolean }) => {
   const { user } = useContext(UserContext);
   const {
     styles,
@@ -33,6 +34,7 @@ export const Message = memo(({ props }: { props: MessageProps }) => {
     previousMessageDate,
     nextMessageDate,
     userId,
+    senderAvatarUrl,
   } = props;
 
   const startOfConversation = useMemo(() => {
@@ -42,19 +44,10 @@ export const Message = memo(({ props }: { props: MessageProps }) => {
     return false;
   }, [date, previousMessageDate]);
 
-  // const endOfConversation = useMemo(() => {
-  //   if (nextMessageDate) {
-  //     return new Date(date).getTime() - new Date(nextMessageDate).getTime() > 3600000;
-  //   }
-  //   return false;
-  // }, [date, nextMessageDate]);
-
-
   const first = previousMessageUserId !== userId;
   const last = nextMessageUserId !== userId && previousMessageUserId === userId;
   const isolatedMessage = previousMessageUserId !== userId && nextMessageUserId !== userId || startOfConversation;
   const senderIsMe = userId === user?.id;
-
 
   const rowStyles = useMemo(() => {
     if (senderIsMe) {
@@ -66,8 +59,8 @@ export const Message = memo(({ props }: { props: MessageProps }) => {
   const bubbleStyles = useMemo(() => {
     const base = "my-[1px] p-1 py-2 rounded-[18px] inline-flex flex-col gap-1";
     const color = senderIsMe ? "bg-primary" : "bg-secondary";
-    if (isolatedMessage) return `${color} ${base}`;
-    if (last) return `${color} ${base} ${senderIsMe ? "rounded-tr-none" : "rounded-tl-none"}`;
+    if (isolatedMessage) return `${color} ${base} mb-4`;
+    if (last) return `${color} ${base} ${senderIsMe ? "rounded-tr-none" : "rounded-tl-none"} mb-4`;
     if (first) return `${color} ${base} ${senderIsMe ? "rounded-br-none" : "rounded-bl-none"}`;
     return `${color} ${base} ${senderIsMe ? "rounded-r-none" : "rounded-l-none"}`;
   }, [first, last, isolatedMessage, senderIsMe]);
@@ -75,13 +68,13 @@ export const Message = memo(({ props }: { props: MessageProps }) => {
   const textColor = senderIsMe ? "text-my-txt-color" : "text-txt-color";
 
   return (
-    <div className={styles}>
+    <div className={`${isNew ? "message-in" : ""}${styles ?? ""}`}>
       {startOfConversation ? (
         <p className="text-center text-gray-500 mb-4 mt-16">{date}</p>
       ) : null}
       <div className={`${rowStyles} ${styles} `}>
         {(last || isolatedMessage) && !senderIsMe ? (
-          <Avatar containerStyle="h-10 w-10 mx-2" />
+          <Avatar src={senderAvatarUrl} containerStyle="h-10 w-10 mx-2" />
         ) : null}
 
         {gifUrl ? (
