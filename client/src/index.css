@@ -37,12 +37,12 @@ body,
 
   :root[data-theme="dark"] {
     --primary-color: #3b82f6;
-    --secondary-color: #9a6eff;
+    --secondary-color: #454545;
     --bg-color: #121212;
     --bg-highlight-color: #1e1e1e;
     --border-color: #333333;
     --text-color: #ffffff;
-    --my-text-color: #000000;
+    --my-text-color: #ffffff;
   }
 }
 
