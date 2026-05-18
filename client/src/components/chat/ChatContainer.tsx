@@ -180,8 +180,8 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
           <Messages fragmentKey={data.node} participantAvatars={participantAvatars} />
         ) : null}
         {typingUserId ? (
-          <div className="flex flex-row items-center">
-            <Avatar src={participantAvatars[typingUserId]} containerStyle="h-8 w-8 mx-2" />
+          <div className="flex flex-row items-center mb-4">
+            <Avatar src={participantAvatars[typingUserId]} containerStyle="h-10 w-10 mx-2" />
             <Typing />
           </div>
         ) : null}
