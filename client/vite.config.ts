@@ -8,6 +8,16 @@ import path from "path";
 export default defineConfig({
   plugins: [relay, react()],
   base: "/",
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "react-vendor": ["react", "react-dom", "react-router", "@headlessui/react", "@heroicons/react/24/outline", "@heroicons/react/16/solid"],
+          "relay-vendor": ["relay-runtime", "react-relay"],
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       //@ts-ignore
