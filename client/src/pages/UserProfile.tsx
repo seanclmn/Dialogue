@@ -3,7 +3,6 @@ import { useParams } from "react-router";
 import { useContext, useEffect } from "react";
 import {
   PreloadedQuery,
-  useMutation,
   usePreloadedQuery,
   useQueryLoader,
 } from "react-relay";
@@ -11,10 +10,10 @@ import { graphql } from "relay-runtime";
 import { UserProfileQuery } from "@generated/UserProfileQuery.graphql";
 import { Loader } from "@components/shared/loaders/Loader";
 import { Button } from "@components/shared/Buttons/Button";
-import { UserProfileMutation } from "@generated/UserProfileMutation.graphql";
 import { UserContext } from "../contexts/UserContext";
 import { useAcceptFriendRequest } from "@mutations/AcceptFriendRequest";
 import { useDeclineFriendRequest } from "@mutations/DeclineFriendRequest";
+import { useSendFriendRequest } from "@mutations/SendFriendRequest";
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
@@ -42,18 +41,6 @@ const query = graphql`
   }
 `;
 
-const mutation = graphql`
-  mutation UserProfileMutation($receiverId: String!, $senderId: String!) {
-    sendFriendRequest(
-      sendFriendRequestInput: { receiverId: $receiverId, senderId: $senderId }
-    ) {
-      id
-      accepted
-      declined
-    }
-  }
-`;
-
 type ContentProps = {
   queryReference: PreloadedQuery<UserProfileQuery>;
 };
@@ -61,8 +48,7 @@ type ContentProps = {
 const Content = ({ queryReference }: ContentProps) => {
   const data = usePreloadedQuery<UserProfileQuery>(query, queryReference);
   const currentUser = useContext(UserContext);
-  const [commitMutation, isMutationInFlight] =
-    useMutation<UserProfileMutation>(mutation);
+  const { sendFriendRequest, isMutationInFlight } = useSendFriendRequest(data.user.id);
 
   const hasSentRequest = data.user.friendRequests?.some(
     (req) => req.sender.id === currentUser.user.id && !req.accepted && !req.declined
@@ -154,14 +140,7 @@ const Content = ({ queryReference }: ContentProps) => {
             }
             disabled={isMutationInFlight || hasSentRequest || isFriend}
             onClick={() => {
-              if (currentUser.user.id && !hasSentRequest && !isFriend) {
-                commitMutation({
-                  variables: {
-                    receiverId: data.user.id,
-                    senderId: currentUser.user.id,
-                  },
-                }).dispose();
-              }
+              if (!hasSentRequest && !isFriend) sendFriendRequest();
             }}
           >
             {isFriend ? "Friends" : hasSentRequest ? "Requested" : "Add Friend"}
@@ -182,7 +161,7 @@ export const UserProfile = () => {
     }
   }, [username]);
 
-  if (!queryReference) return <Loader />;
+  if (!queryReference) return <Loader styles="w-full h-full" />;
 
   return <Content queryReference={queryReference} />;
 };

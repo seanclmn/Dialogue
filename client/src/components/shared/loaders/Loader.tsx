@@ -9,7 +9,7 @@ interface LoaderProps {
 export const Loader = ({ styles = "", color = "primary", width = 2, height = 8, radius = 10 }: LoaderProps) => {
   return (
     <div
-      className={`relative inline-block animate-spin w-${width} h-${height} ${styles}`}
+      className={`relative inline-block animate-spin w-full h-full ${styles}`}
       style={{ animationDuration: "3s" }}
       role="status"
       aria-label="Loading"

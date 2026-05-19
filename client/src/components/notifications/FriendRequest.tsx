@@ -1,4 +1,3 @@
-import { Button } from "@components/shared/Buttons/Button";
 import { useAcceptFriendRequest } from "@mutations/AcceptFriendRequest";
 import { useDeclineFriendRequest } from "@mutations/DeclineFriendRequest";
 import { Avatar } from "@components/shared/users/Avatar";
