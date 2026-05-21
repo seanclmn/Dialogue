@@ -7,6 +7,7 @@ interface AvatarProps extends Omit<React.AllHTMLAttributes<HTMLImageElement>, "s
   containerStyle?: string;
   editable?: boolean;
   link?: string;
+  username?: string;
 }
 
 export const Avatar = ({
@@ -14,6 +15,7 @@ export const Avatar = ({
   containerStyle = "",
   editable,
   link,
+  username,
   ...imgRest
 }: AvatarProps): ReactElement => {
   const photoUrl = (src ?? "").trim();
@@ -50,6 +52,12 @@ export const Avatar = ({
       </div>
     );
   }
+
+  return (
+    <Link to={link ?? `/u/${username}`}>
+      {body}
+    </Link>
+  );
 
   return <>{body}</>;
 };

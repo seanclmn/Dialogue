@@ -65,16 +65,14 @@ export const Nav = () => {
             <BellAlertIcon className="my-4 w-7" />
           )}
         </Link>
-        <Link to={`/u/${data.user.username}`}>
           {pathname.includes(`/u/${data.user.username}`) ? (
             <Avatar
               src={data.user.avatarUrl}
               containerStyle="m-0 my-4 w-7 h-7 border-bgd-highlight border-[1px] object-cover"
             />
           ) : (
-            <Avatar src={data.user.avatarUrl} containerStyle="m-0 my-4 w-7 h-7 object-cover" />
+            <Avatar src={data.user.avatarUrl} containerStyle="m-0 my-4 w-7 h-7 object-cover" username={data.user.username ?? ''} />
           )}
-        </Link>
       </div>
 
       <div className="mt-auto">

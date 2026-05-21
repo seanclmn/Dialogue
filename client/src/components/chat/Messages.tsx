@@ -25,6 +25,7 @@ const fragment = graphql`
           gifHeight
           createdAt
           userId
+          username
         }
       }
       pageInfo {
@@ -104,6 +105,7 @@ export const Messages = ({ fragmentKey, participantAvatars }: MessagesProps) => 
               id: edge.node.id,
               userId: edge.node.userId,
               senderAvatarUrl: participantAvatars[edge.node.userId] ?? null,
+              senderUsername: edge.node.username,
             }}
             key={edge.node.id}
           />

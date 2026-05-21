@@ -18,6 +18,7 @@ export interface MessageProps extends React.DOMAttributes<HTMLElement> {
   nextMessageDate?: string;
   userId?: string;
   senderAvatarUrl?: string | null;
+  senderUsername?: string;
 }
 
 export const Message = memo(({ props, isNew }: { props: MessageProps; isNew?: boolean }) => {
@@ -35,6 +36,7 @@ export const Message = memo(({ props, isNew }: { props: MessageProps; isNew?: bo
     nextMessageDate,
     userId,
     senderAvatarUrl,
+    senderUsername,
   } = props;
 
   const startOfConversation = useMemo(() => {
@@ -74,7 +76,7 @@ export const Message = memo(({ props, isNew }: { props: MessageProps; isNew?: bo
       ) : null}
       <div className={`${rowStyles} ${styles} `}>
         {(last || isolatedMessage) && !senderIsMe ? (
-          <Avatar src={senderAvatarUrl} containerStyle="h-10 w-10 mx-2" />
+          <Avatar src={senderAvatarUrl} containerStyle="h-10 w-10 mx-2" username={senderUsername} />
         ) : null}
 
         {gifUrl ? (

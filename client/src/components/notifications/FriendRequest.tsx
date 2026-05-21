@@ -23,7 +23,7 @@ export const FriendRequest = ({ data }: FriendRequestProps) => {
       <div className="p-2 flex flex-row items-center">
 
         <div className="flex flex-row items-center gap-2 mr-32">
-          <Avatar containerStyle="w-12 h-12 shrink-0" src={data.sender.avatarUrl} />
+          <Avatar containerStyle="w-12 h-12 shrink-0" src={data.sender.avatarUrl} username={data.sender.username} />
           <div className="flex flex-col">
 
           <p className="text-sm font-medium">{data.sender.username}</p>
