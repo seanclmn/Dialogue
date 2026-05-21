@@ -65,14 +65,13 @@ export const Nav = () => {
             <BellAlertIcon className="my-4 w-7" />
           )}
         </Link>
-          {pathname.includes(`/u/${data.user.username}`) ? (
-            <Avatar
-              src={data.user.avatarUrl}
-              containerStyle="m-0 my-4 w-7 h-7 border-bgd-highlight border-[1px] object-cover"
-            />
-          ) : (
-            <Avatar src={data.user.avatarUrl} containerStyle="m-0 my-4 w-7 h-7 object-cover" username={data.user.username ?? ''} />
-          )}
+          
+        <Avatar 
+          src={data.user.avatarUrl} 
+          containerStyle={`m-0 my-4 w-7 h-7 ${ pathname.includes(`/u/${data.user.username}`) ? "border-bgd-highlight border-[1px]" : ""} object-cover`} 
+          username={data.user.username ?? ''} 
+          link={`/u/${data.user.username}`} />
+          
       </div>
 
       <div className="mt-auto">
