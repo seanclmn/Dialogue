@@ -1,6 +1,7 @@
 import { Resolver, Query, Mutation, Args, Int, Context, ID, ResolveField, Parent, Subscription } from '@nestjs/graphql';
 import { ChatsService, CreateChatFuncInput } from './chats.service';
 import { Chat } from './entities/chat.entity';
+import { ChatParticipant } from './entities/chat-participant.entity';
 import { CreateChatInput } from './dto/create-chat.input';
 import { UpdateChatInput } from './dto/update-chat.input';
 import { JwtGuard } from 'src/auth/jwt-auth.guard';
@@ -81,6 +82,17 @@ export class ChatsResolver {
   @UseGuards(JwtGuard)
   removeChat(@Args('id', { type: () => Int }) id: string) {
     return this.chatsService.remove(id);
+  }
+
+  @Mutation(() => ChatParticipant)
+  @UseGuards(JwtGuard)
+  async markLastRead(
+    @Args('chatId', { type: () => ID }) chatId: string,
+    @Args('messageId', { type: () => ID }) messageId: string,
+    @Context() context: any,
+  ): Promise<ChatParticipant> {
+    const userId: string = context.req.user.id;
+    return this.chatsService.markLastRead(userId, chatId, messageId);
   }
 
   @ResolveField('messages', () => MessageConnection)

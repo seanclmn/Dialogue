@@ -7,6 +7,7 @@ interface ChatGroupProps {
   name: string;
   chatId: string;
   avatarUrl?: string | null;
+  hasUnread?: boolean;
   lastMessage?: {
     text: string;
     userId: string;
@@ -15,7 +16,7 @@ interface ChatGroupProps {
   } | null;
 }
 
-export const ChatGroup = ({ name, chatId, avatarUrl, lastMessage }: ChatGroupProps) => {
+export const ChatGroup = ({ name, chatId, avatarUrl, lastMessage, hasUnread }: ChatGroupProps) => {
   const { id } = useParams();
   return (
     <Link to={`/chats/${chatId}`}>
@@ -25,11 +26,16 @@ export const ChatGroup = ({ name, chatId, avatarUrl, lastMessage }: ChatGroupPro
         p-2 h-18 hover:bg-bgd-highlight
         ${id === chatId ? "bg-bgd-highlight" : ""}`}
       >
-        <Avatar src={avatarUrl} containerStyle="h-10 w-10 md:h-14 md:w-14 shrink-0" username={name} />
-        <div className="hidden md:flex mx-2 h-full flex-col justify-between min-w-0">
-          <p className="text-sm font-bold mb-1 text-txt-color truncate">{name}</p>
+        <div className="relative shrink-0">
+          <Avatar src={avatarUrl} containerStyle="h-10 w-10 md:h-14 md:w-14" username={name} />
+          {hasUnread && (
+            <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-error border-2 border-bgd-color" />
+          )}
+        </div>
+        <div className="hidden md:flex mx-2 h-full flex-col justify-between min-w-0 flex-1">
+          <p className={`text-sm mb-1 text-txt-color truncate ${hasUnread ? "font-extrabold" : "font-bold"}`}>{name}</p>
           {lastMessage ? (
-            <LastMessage lastMessage={lastMessage} />
+            <LastMessage lastMessage={lastMessage} hasUnread={hasUnread} />
           ) : (
             <p className="text-xs">Say hi!</p>
           )}
@@ -39,24 +45,24 @@ export const ChatGroup = ({ name, chatId, avatarUrl, lastMessage }: ChatGroupPro
   );
 };
 
-const LastMessage = ({ lastMessage }: { lastMessage: { text: string; userId: string; username: string; gifUrl?: string } }) => {
+const LastMessage = ({ lastMessage, hasUnread }: { lastMessage: { text: string; userId: string; username: string; gifUrl?: string }; hasUnread?: boolean }) => {
   const userContext = useContext(UserContext);
+  const weight = hasUnread ? "font-semibold text-txt-color" : "text-txt-muted";
 
-
-  if(lastMessage.gifUrl) {
+  if (lastMessage.gifUrl) {
     return (
-      <p className="text-xs">
-        {userContext.user.id === lastMessage.userId ? <b>You sent a gif </b> : <b>{lastMessage.username} sent a gif </b>}
+      <p className={`text-xs ${weight}`}>
+        {userContext.user.id === lastMessage.userId ? "You sent a gif" : `${lastMessage.username} sent a gif`}
       </p>
     );
   }
 
+  const prefix = userContext.user.id === lastMessage.userId ? "You" : lastMessage.username;
+  const body = lastMessage.text.length > 20 ? lastMessage.text.slice(0, 20) + "…" : lastMessage.text;
+
   return (
-    <p className="text-xs">
-      {userContext.user.id === lastMessage.userId ? <b>You: </b> : <b>{lastMessage.username}: </b>}
-      {lastMessage.text.length > 20
-        ? lastMessage.text.slice(0, 20) + "..."
-        : lastMessage.text}
+    <p className={`text-xs ${weight}`}>
+      <span className={` ${hasUnread ? "font-bold" : "font-semibold"}`}>{prefix}: </span>{body}
     </p>
   );
 };

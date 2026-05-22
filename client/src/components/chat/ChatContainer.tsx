@@ -20,6 +20,7 @@ import { useParams } from "react-router";
 import { ChatHeader } from "./ChatHeader";
 import { ChatSendButton } from "@components/shared/Buttons/ChatSendButton";
 import { useUpdateTyping } from "@mutations/UpdateTyping";
+import { useMarkLastRead } from "@mutations/MarkLastRead";
 import { ChatContainerSubscription } from "@generated/ChatContainerSubscription.graphql";
 import { GifPicker, type GifPayload } from "./GifPicker";
 
@@ -35,6 +36,9 @@ const query = graphql`
             username
             avatarUrl
           }
+        }
+        lastMessage {
+          id
         }
         ...Messages_chat
       }
@@ -89,7 +93,9 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   const { user } = useContext(UserContext);
   const [commitMutation] = useMutation<ChatContainerMutation>(mutation);
   const { updateTyping } = useUpdateTyping();
+  const { markLastRead } = useMarkLastRead();
   const data = usePreloadedQuery(query, queryReference);
+  const lastMessageId = data.node?.lastMessage?.id ?? null;
 
   const participantAvatars = useMemo<Record<string, string | null>>(
     () => Object.fromEntries(
@@ -98,6 +104,10 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [data.node?.id],
   );
+
+  useEffect(() => {
+    if (lastMessageId) markLastRead(chatId, lastMessageId);
+  }, [chatId, lastMessageId]);
 
   useEffect(() => {
     const { id: userId } = user;

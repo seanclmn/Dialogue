@@ -23,6 +23,7 @@ export const Nav = () => {
   const { pathname } = useLocation();
   const data = useContext(UserContext);
   const navigate = useNavigate();
+  const { notificationCount, unreadChatCount } = data;
   const [cookies, setCookies, removeCookie] = useCookies([
     "accessToken",
     "theme",
@@ -44,11 +45,16 @@ export const Nav = () => {
   return (
     <div className="border-brd-color border-r-[1px] px-4 h-full flex flex-col items-center justify-between py-4">
       <div className="flex flex-col items-center">
-        <Link to="/chats">
+        <Link to="/chats" className="relative my-4">
           {pathname.includes("/chats") || pathname === "/" ? (
-            <ChatBubbleOvalLeftEllipsisIconSolid className="my-4 w-7 font-bold" />
+            <ChatBubbleOvalLeftEllipsisIconSolid className="w-7 font-bold" />
           ) : (
-            <ChatBubbleOvalLeftEllipsisIcon className="my-4 w-7" />
+            <ChatBubbleOvalLeftEllipsisIcon className="w-7" />
+          )}
+          {unreadChatCount > 0 && (
+            <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[16px] h-4 rounded-full bg-error text-white text-[10px] font-bold px-[3px] leading-none">
+              {unreadChatCount > 99 ? "99+" : unreadChatCount}
+            </span>
           )}
         </Link>
         <Link to="/search">
@@ -58,11 +64,16 @@ export const Nav = () => {
             <MagnifyingGlassCircleIcon className="my-4 w-7" />
           )}
         </Link>
-        <Link to="/notifications">
+        <Link to="/notifications" className="relative my-4">
           {pathname.includes("/notifications") ? (
-            <BellAlertIconSolid className="my-4 w-7" />
+            <BellAlertIconSolid className="w-7" />
           ) : (
-            <BellAlertIcon className="my-4 w-7" />
+            <BellAlertIcon className="w-7" />
+          )}
+          {notificationCount > 0 && (
+            <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[16px] h-4 rounded-full bg-red-500 text-white text-[10px] font-bold px-[3px] leading-none">
+              {notificationCount > 99 ? "99+" : notificationCount}
+            </span>
           )}
         </Link>
           

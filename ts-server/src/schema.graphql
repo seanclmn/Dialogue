@@ -144,6 +144,7 @@ type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   declineFriendRequest(declineFriendRequestInput: DeclineFriendRequestInput!): FriendRequest!
   login(loginUserInput: LoginUserInput!): LoginResponse!
+  markLastRead(chatId: ID!, messageId: ID!): ChatParticipant!
   removeChat(id: Int!): Chat!
   sendFriendRequest(sendFriendRequestInput: SendFriendRequestInput!): FriendRequest!
   signup(createUserInput: CreateUserInput!): LoginResponse!

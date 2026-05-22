@@ -90,4 +90,18 @@ export class ChatsService {
 
     return this.findOne(chat.id);
   }
+
+  async markLastRead(userId: string, chatId: string, messageId: string): Promise<ChatParticipant> {
+    const participant = await this.participantRepository.findOne({
+      where: { chat: { id: chatId }, user: { id: userId } },
+      relations: ['lastReadMessage'],
+    });
+
+    if (!participant) {
+      throw new NotFoundException(`Participant not found for chat ${chatId}`);
+    }
+
+    participant.lastReadMessage = { id: messageId } as any;
+    return this.participantRepository.save(participant);
+  }
 }

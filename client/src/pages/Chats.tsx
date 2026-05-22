@@ -2,7 +2,7 @@ import { ChatGroup } from "@components/chat/ChatGroup";
 import { CreateChat } from "@components/dialogs/CreateChat";
 import { EmptyChat } from "@components/chat/EmptyChat";
 import { Loader } from "@components/shared/loaders/Loader";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { Outlet, useParams } from "react-router";
 import { graphql } from "relay-runtime";
 import { usePaginationFragment } from "react-relay";
@@ -30,8 +30,12 @@ const fragment = graphql`
               username
               avatarUrl
             }
+            lastReadMessage {
+              id
+            }
           }
           lastMessage {
+            id
             text
             userId
             username
@@ -49,16 +53,26 @@ type ChatsContentProps = {
 const ChatsContent = ({ fragmentKey }: ChatsContentProps) => {
   const { id: chatId } = useParams();
   const [open, setOpen] = useState(false);
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser, setUnreadChatCount } = useContext(UserContext);
   const { data } = usePaginationFragment(fragment, fragmentKey);
 
   useEffect(() => {
-    const chatIds: string[] = data.chats.edges.map(
-      (chat) => chat.node.id
-    );
+    const chatIds: string[] = data.chats.edges.map((chat) => chat.node.id);
     setUser({ ...user, chatIds });
   }, [user?.id]);
-console.log(data.chats.edges);
+
+  const unreadCount = useMemo(() => {
+    return data.chats.edges.filter(({ node }) => {
+      const myParticipant = node.participants?.find((p) => p.user.id === user.id);
+      if (!node.lastMessage) return false;
+      return myParticipant?.lastReadMessage?.id !== node.lastMessage.id;
+    }).length;
+  }, [data.chats.edges, user.id]);
+
+  useEffect(() => {
+    setUnreadChatCount(unreadCount);
+  }, [unreadCount]);
+
   if (!data.chats) return <Loader />;
 
   return (
@@ -69,6 +83,10 @@ console.log(data.chats.edges);
             <div className="overflow-auto w-full h-full">
               {data.chats.edges.map((edge) => {
                 const participants = edge.node.participants ?? [];
+                const myParticipant = participants.find((p) => p.user.id === user.id);
+                const hasUnread =
+                  !!edge.node.lastMessage &&
+                  myParticipant?.lastReadMessage?.id !== edge.node.lastMessage.id;
                 return (
                   <ChatGroup
                     name={getChatDisplayName(
@@ -80,10 +98,10 @@ console.log(data.chats.edges);
                     key={edge.node.id}
                     chatId={edge.node.id}
                     lastMessage={edge.node.lastMessage}
+                    hasUnread={hasUnread}
                   />
                 );
-              }
-              )}
+              })}
             </div>
           ) : null}
           <CreateChat open={open} setIsOpen={setOpen} />
