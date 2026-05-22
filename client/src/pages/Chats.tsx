@@ -78,7 +78,7 @@ const ChatsContent = ({ fragmentKey }: ChatsContentProps) => {
   return (
     <>
       <div className="border-brd-color border-r-[1px] w-16 min-w-0 shrink-0 md:w-60 md:min-w-60 h-full flex flex-col items-center">
-        <Suspense fallback={<p>wontons</p>}>
+        <Suspense fallback={<Loader />}>
           {data.chats.edges.length > 0 ? (
             <div className="overflow-auto w-full h-full">
               {data.chats.edges.map((edge) => {
@@ -107,7 +107,7 @@ const ChatsContent = ({ fragmentKey }: ChatsContentProps) => {
           <CreateChat open={open} setIsOpen={setOpen} />
         </Suspense>
       </div>
-      <Suspense fallback={<p>wonton</p>}>
+      <Suspense fallback={<Loader />}>
         <div className="w-full h-full flex-grow relative">
           {chatId ? <Outlet /> : <EmptyChat onNewChat={() => setOpen(true)} />}
         </div>

@@ -284,7 +284,7 @@ export const ChatContainer = () => {
     </div>);
 
   return (
-    <Suspense fallback={<div className="h-full w-full flex flex-col justify-between"><Loader /></div>}>
+    <Suspense fallback={<Loader />}>
       <Content queryReference={queryReference} chatId={id} />
     </Suspense>
   );

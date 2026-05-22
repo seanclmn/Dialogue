@@ -66,10 +66,10 @@ const Page = () => {
     loadQuery({}, { fetchPolicy: "network-only" });
   }, []);
 
-  if (!queryReference) return null;
+  if (!queryReference) return <Loader />;
 
   return (
-    <Suspense fallback={<div />}>
+    <Suspense fallback={<Loader />}>
       <Content queryReference={queryReference} />
     </Suspense>
   );

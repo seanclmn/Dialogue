@@ -102,7 +102,7 @@ const NotificationsContent = ({ fragmentKey }: { fragmentKey: NotificationsList_
 export const Notifications = () => {
   const { currentUserRef } = useContext(UserContext);
 
-  if (!currentUserRef) return <Loader styles="w-full h-full" />;
+  if (!currentUserRef) return <Loader />;
 
   return <NotificationsContent fragmentKey={currentUserRef as NotificationsList_user$key} />;
 };

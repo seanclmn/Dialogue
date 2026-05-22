@@ -161,7 +161,7 @@ export const UserProfile = () => {
     }
   }, [username]);
 
-  if (!queryReference) return <Loader styles="w-full h-full" />;
+  if (!queryReference) return <Loader />;
 
   return <Content queryReference={queryReference} />;
 };
