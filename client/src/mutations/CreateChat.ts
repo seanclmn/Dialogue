@@ -12,7 +12,9 @@ const createChatMutation = graphql`
       id
       name
       participants {
-        username
+        user {
+          username
+        } 
       }
       lastMessage {
         text

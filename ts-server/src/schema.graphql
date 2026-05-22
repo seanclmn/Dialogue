@@ -12,7 +12,7 @@ type Chat implements Node {
   lastMessage: Message
   messages(after: String, first: Int): MessageConnection!
   name: String
-  participants: [User!]
+  participants: [ChatParticipant!]
 }
 
 type ChatConnection {
@@ -29,6 +29,13 @@ input ChatInput {
   id: ID!
   name: String!
   participants: [UpdateUserInput!]!
+}
+
+type ChatParticipant implements Node {
+  createdAt: DateTime!
+  id: ID!
+  lastReadMessage: Message
+  user: User!
 }
 
 type ChatUpdate {

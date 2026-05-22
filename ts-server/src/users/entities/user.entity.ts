@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Node } from 'src/relay';
-import { Chat } from 'src/chats/entities/chat.entity';
+import { ChatParticipant } from 'src/chats/entities/chat-participant.entity';
 import { FriendRequest as FriendRequestEntity } from "src/friends/entities/friend-request.entity";
 import { NotificationConnection } from 'src/notifications/entities/notification.connection';
 
@@ -30,10 +30,8 @@ export class User implements Node {
   // @Column()
   // hashedRefreshToken?: string;
 
-  // @Field(() => [Chat], { nullable: true })
-  @ManyToMany(() => Chat, (chat) => chat.participants, { eager: true })
-  @JoinTable()
-  chats: Chat[]
+  @OneToMany(() => ChatParticipant, (cp) => cp.user, { eager: true })
+  chats: ChatParticipant[]
 
   @OneToMany(() => FriendRequestEntity, (friendRequest) => friendRequest.sender, { nullable: true })
   @Field(() => [FriendRequestEntity], { nullable: true })

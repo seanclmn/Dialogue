@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { Repository } from 'typeorm';
 import { User } from './users/entities/user.entity';
 import { Chat } from './chats/entities/chat.entity';
+import { ChatParticipant } from './chats/entities/chat-participant.entity';
 import { Message } from './messages/entities/message.entity';
 import { Notification, NotificationsType, FriendRequestNotification } from './notifications/entities/notification.entity';
 import { FriendRequest } from './friends/entities/friend-request.entity';
@@ -14,6 +15,7 @@ async function seed() {
   
   const userRepository = app.get<Repository<User>>('UserRepository');
   const chatRepository = app.get<Repository<Chat>>('ChatRepository');
+  const chatParticipantRepository = app.get<Repository<ChatParticipant>>('ChatParticipantRepository');
   const messageRepository = app.get<Repository<Message>>('MessageRepository');
   const notificationRepository = app.get<Repository<Notification>>('NotificationRepository');
   const friendRequestNotificationRepository = app.get<Repository<FriendRequestNotification>>('FriendRequestNotificationRepository');
@@ -52,15 +54,18 @@ async function seed() {
     bio: 'Charlie in the Chocolate Factory',
   });
 
-  const groupChat = await chatRepository.save({
-    name: null,
-    participants: [alice, bob, charlie],
-  });
+  const groupChat = await chatRepository.save({ name: null });
+  await chatParticipantRepository.save([
+    chatParticipantRepository.create({ chat: groupChat, user: alice }),
+    chatParticipantRepository.create({ chat: groupChat, user: bob }),
+    chatParticipantRepository.create({ chat: groupChat, user: charlie }),
+  ]);
 
-  const directChat = await chatRepository.save({
-    name: null,
-    participants: [alice, bob],
-  });
+  const directChat = await chatRepository.save({ name: null });
+  await chatParticipantRepository.save([
+    chatParticipantRepository.create({ chat: directChat, user: alice }),
+    chatParticipantRepository.create({ chat: directChat, user: bob }),
+  ]);
 
   const possibleMessages = [
     "Hey, how's it going?",

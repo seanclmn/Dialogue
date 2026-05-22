@@ -2,14 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateChatInput } from './dto/update-chat.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
+import { ChatParticipant } from './entities/chat-participant.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
-import { UpdateUserInput } from 'src/users/dto/update-user.input';
 
 export interface CreateChatFuncInput {
   name?: string | null;
-  participants: UpdateUserInput[]
+  participants: User[];
 }
 
 @Injectable()
@@ -17,78 +17,77 @@ export class ChatsService {
 
   constructor(
     @InjectRepository(Chat) private chatsRepository: Repository<Chat>,
+    @InjectRepository(ChatParticipant) private participantRepository: Repository<ChatParticipant>,
     private usersService: UsersService,
   ) { }
 
   async findExistingDM(userId1: string, userId2: string): Promise<Chat | null> {
     const candidates = await this.chatsRepository
       .createQueryBuilder('chat')
-      .innerJoin('chat.participants', 'p1', 'p1.id = :userId1', { userId1 })
-      .leftJoinAndSelect('chat.participants', 'participant')
+      .innerJoin('chat.participants', 'cp1')
+      .innerJoin('cp1.user', 'u1', 'u1.id = :userId1', { userId1 })
+      .leftJoinAndSelect('chat.participants', 'cp')
+      .leftJoinAndSelect('cp.user', 'u')
       .getMany();
 
     return (
       candidates.find(
         (chat) =>
           chat.participants.length === 2 &&
-          chat.participants.some((p) => p.id === userId2),
+          chat.participants.some((cp) => cp.user.id === userId2),
       ) ?? null
     );
   }
 
-  async create(createChatInput: CreateChatFuncInput) {
+  async create(createChatInput: CreateChatFuncInput): Promise<Chat> {
+    const chat = await this.chatsRepository.save({ name: createChatInput.name });
 
-    const chat = {
-      name: createChatInput.name,
-      participants: createChatInput.participants
-    }
+    const participantRows = createChatInput.participants.map((user) =>
+      this.participantRepository.create({ chat, user }),
+    );
+    await this.participantRepository.save(participantRows);
 
-    return await this.chatsRepository.save(chat)
-
+    return this.chatsRepository.findOne({
+      where: { id: chat.id },
+      relations: ['participants', 'participants.user'],
+    });
   }
 
   async findAll() {
     return await this.chatsRepository.find({
-      relations: ["participants"]
-    })
+      relations: ['participants', 'participants.user'],
+    });
   }
 
   async findOne(id: string) {
     const chat = await this.chatsRepository.findOne({
-      where: {
-        id: id
-      },
-      relations: ["participants"]
-    })
+      where: { id },
+      relations: ['participants', 'participants.user'],
+    });
     if (!chat) throw new NotFoundException(`Chat with ID ${id} not found`);
     return chat;
   }
 
   async update(updateChatInput: UpdateChatInput) {
-    return await this.chatsRepository.save(updateChatInput)
+    return await this.chatsRepository.save(updateChatInput);
   }
 
   async remove(id: string) {
     return `This action removes a #${id} chat`;
   }
 
-  async addParticipant(chat: Chat, user: User) {
+  async addParticipant(chat: Chat, user: User): Promise<Chat> {
+    if (!chat) throw new NotFoundException(`Chat not found`);
 
-    if (!chat) {
-      throw new NotFoundException(`Chat not found`);
+    const existing = await this.participantRepository.findOne({
+      where: { chat: { id: chat.id }, user: { id: user.id } },
+    });
+    if (!existing) {
+      await this.participantRepository.save(
+        this.participantRepository.create({ chat, user }),
+      );
     }
 
-    if (chat.participants) {
-      return await this.update({
-        ...chat,
-        participants: [...chat.participants, user]
-      })
-
-    }
-
-    return await this.update({
-      ...chat,
-      participants: [user]
-    })
+    return this.findOne(chat.id);
   }
 }

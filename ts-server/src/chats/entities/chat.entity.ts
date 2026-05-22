@@ -1,8 +1,8 @@
-import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
-import { User } from 'src/users/entities/user.entity';
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Node } from 'src/relay';
 import { Message } from 'src/messages/entities/message.entity';
+import { ChatParticipant } from './chat-participant.entity';
 
 @Entity()
 @ObjectType({ implements: Node })
@@ -11,9 +11,9 @@ export class Chat implements Node {
   @Field(() => ID)
   id: string;
 
-  @Field(() => [User], { nullable: true })
-  @ManyToMany(() => User, (user) => user.chats, { cascade: true })
-  participants: User[];
+  @OneToMany(() => ChatParticipant, (cp) => cp.chat, { cascade: true })
+  @Field(() => [ChatParticipant], { nullable: true })
+  participants: ChatParticipant[];
 
   @Column({ nullable: true })
   @Field({ nullable: true })

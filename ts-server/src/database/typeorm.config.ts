@@ -3,6 +3,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import type { DataSourceOptions } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 import { Chat } from '../chats/entities/chat.entity';
+import { ChatParticipant } from '../chats/entities/chat-participant.entity';
 import { Message } from '../messages/entities/message.entity';
 import { Notification, FriendRequestNotification } from '../notifications/entities/notification.entity';
 import { FriendRequest as FriendRequestEntity } from '../friends/entities/friend-request.entity';
@@ -12,6 +13,7 @@ import { FriendRequest } from '../users/entities/friendRequests.entity';
 export const typeOrmEntities = [
   User,
   Chat,
+  ChatParticipant,
   Message,
   FriendRequest,
   Notification,

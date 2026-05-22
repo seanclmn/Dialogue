@@ -30,9 +30,11 @@ const query = graphql`
         id
         name
         participants {
-          id
-          username
-          avatarUrl
+          user {
+            id
+            username
+            avatarUrl
+          }
         }
         ...Messages_chat
       }
@@ -91,7 +93,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
 
   const participantAvatars = useMemo<Record<string, string | null>>(
     () => Object.fromEntries(
-      (data.node?.participants ?? []).map((p) => [p.id, p.avatarUrl ?? null])
+      (data.node?.participants ?? []).map((p) => [p.user.id, p.user.avatarUrl ?? null])
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [data.node?.id],
@@ -169,10 +171,10 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
       <ChatHeader
         title={getChatDisplayName(
           data.node?.name,
-          (data.node?.participants ?? []).map((p) => p.username),
+          (data.node?.participants ?? []).map((p) => p.user.username),
           user.username
         )}
-        avatarUrl={getDMAvatar(data.node?.participants ?? [], user.id)}
+        avatarUrl={getDMAvatar((data.node?.participants ?? []).map((p) => p.user), user.id)}
       />
 
       <div className="flex flex-col items-start grow h-1">

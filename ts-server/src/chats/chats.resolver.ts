@@ -6,7 +6,7 @@ import { UpdateChatInput } from './dto/update-chat.input';
 import { JwtGuard } from 'src/auth/jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
-import { UpdateUserInput } from 'src/users/dto/update-user.input';
+import { User } from 'src/users/entities/user.entity';
 import { MessagesService } from 'src/messages/messages.service';
 import { MessageConnection } from 'src/messages/entities/message.connection.entity';
 import { ChatUpdate } from './dto/chatUpdate';
@@ -34,9 +34,11 @@ export class ChatsResolver {
     @Context() _context: any
   ) {
 
-    const participantObjects: UpdateUserInput[] = await Promise.all(createChatInput.participants.map(async (username) => {
-      return await this.usersService.findOne(username)
-    }))
+    const participantObjects: User[] = (
+      await Promise.all(
+        createChatInput.participants.map((username) => this.usersService.findOne(username)),
+      )
+    ).filter((u): u is User => u != null);
 
     if (participantObjects.length === 2) {
       const existingDM = await this.chatsService.findExistingDM(
@@ -52,17 +54,6 @@ export class ChatsResolver {
     }
 
     const res = await this.chatsService.create(input);
-
-    await Promise.all(res.participants.map(async (user) => {
-      const userObj: UpdateUserInput = structuredClone(user)
-
-      if (userObj.chats) {
-        userObj.chats.push(res)
-      } else {
-        userObj.chats = [res]
-      }
-      return await this.usersService.update(userObj)
-    }))
 
     return res;
 

@@ -48,8 +48,11 @@ export class UsersService {
   async getChatsForUser(id: string, first?: number, after?: Date) {
     let query = this.chatsRepository
       .createQueryBuilder('chat')
-      .innerJoin('chat.participants', 'filterP', 'filterP.id = :id', { id })
+      .innerJoin('chat.participants', 'filterCP')
+      .innerJoin('filterCP.user', 'filterU', 'filterU.id = :id', { id })
       .leftJoinAndSelect('chat.participants', 'participant')
+      .leftJoinAndSelect('participant.user', 'pUser')
+      .leftJoinAndSelect('participant.lastReadMessage', 'lastReadMessage')
       .leftJoinAndSelect('chat.lastMessage', 'lastMessage')
       .orderBy('chat.updatedAt', 'ASC');
 

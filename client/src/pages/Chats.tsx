@@ -25,9 +25,11 @@ const fragment = graphql`
           id
           name
           participants {
-            id
-            username
-            avatarUrl
+            user {
+              id
+              username
+              avatarUrl
+            }
           }
           lastMessage {
             text
@@ -56,7 +58,7 @@ const ChatsContent = ({ fragmentKey }: ChatsContentProps) => {
     );
     setUser({ ...user, chatIds });
   }, [user?.id]);
-
+console.log(data.chats.edges);
   if (!data.chats) return <Loader />;
 
   return (
@@ -71,10 +73,10 @@ const ChatsContent = ({ fragmentKey }: ChatsContentProps) => {
                   <ChatGroup
                     name={getChatDisplayName(
                       edge.node.name,
-                      participants.map((p) => p.username),
+                      participants.map((p) => p.user.username),
                       user.username
                     )}
-                    avatarUrl={getDMAvatar(participants, user.id)}
+                    avatarUrl={getDMAvatar(participants.map((p) => p.user), user.id)}
                     key={edge.node.id}
                     chatId={edge.node.id}
                     lastMessage={edge.node.lastMessage}
