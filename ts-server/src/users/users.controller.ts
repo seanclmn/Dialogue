@@ -30,17 +30,13 @@ export class UsersController {
     }),
   )
   async uploadAvatar(@UploadedFile() file: Express.Multer.File | undefined, @Req() req: Request) {
-    console.log("Uploading avatar controller");
     if (!file?.buffer?.length) {
       throw new BadRequestException('Expected multipart field "file" with image body.');
     }
 
     const jwtUser = req.user as { id: string; username: string };
-    console.log("JWT user: ", jwtUser);
     try {   
       const publicUrl = await this.storageService.uploadUserAvatar(jwtUser.id, file.buffer, file.mimetype);
-      console.log("Uploading avatar service");
-      console.log("Public URL: ", publicUrl);
       const user = await this.usersService.updateUserAvatar(jwtUser.id, publicUrl);
       return {
         id: user.id,
@@ -49,7 +45,6 @@ export class UsersController {
         avatarUrl: user.avatarUrl ?? null,
       };
     } catch (error) {
-      console.log("Error uploading avatar: ", error);
       throw new BadRequestException('Failed to upload avatar: ' + error.message);
     }
   }

@@ -130,7 +130,6 @@ export class FriendsService {
       where: { user: { id: userId } },
       relations: ['friend'],
     });
-    console.log(`Friends for ${userId}:`, friendships.map(f => f.friend.username));
     return friendships.map(f => f.friend);
   }
 
@@ -139,7 +138,6 @@ export class FriendsService {
     const count = await this.friendshipRepository.count({
       where: { user: { id: userId }, friend: { id: friendId } },
     });
-    console.log(`Is ${userId} friend with ${friendId}?`, count > 0);
     return count > 0;
   }
 }

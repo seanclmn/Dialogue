@@ -23,9 +23,6 @@ export const useUpdateTyping = () => {
         userId: input.userId
       },
 
-      onCompleted: (data: UpdateTypingMutation$data) => {
-        console.log(data)
-      }
     })
   }
 

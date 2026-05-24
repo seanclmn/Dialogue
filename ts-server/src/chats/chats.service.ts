@@ -49,20 +49,20 @@ export class ChatsService {
 
     return this.chatsRepository.findOne({
       where: { id: chat.id },
-      relations: ['participants', 'participants.user'],
+      relations: ['participants', 'participants.user', 'participants.lastReadMessage'],
     });
   }
 
   async findAll() {
     return await this.chatsRepository.find({
-      relations: ['participants', 'participants.user'],
+      relations: ['participants', 'participants.user', 'participants.lastReadMessage'],
     });
   }
 
   async findOne(id: string) {
     const chat = await this.chatsRepository.findOne({
       where: { id },
-      relations: ['participants', 'participants.user'],
+      relations: ['participants', 'participants.user', 'participants.lastReadMessage'],
     });
     if (!chat) throw new NotFoundException(`Chat with ID ${id} not found`);
     return chat;
@@ -94,14 +94,25 @@ export class ChatsService {
   async markLastRead(userId: string, chatId: string, messageId: string): Promise<ChatParticipant> {
     const participant = await this.participantRepository.findOne({
       where: { chat: { id: chatId }, user: { id: userId } },
-      relations: ['lastReadMessage'],
     });
 
     if (!participant) {
       throw new NotFoundException(`Participant not found for chat ${chatId}`);
     }
 
-    participant.lastReadMessage = { id: messageId } as any;
-    return this.participantRepository.save(participant);
+    await this.participantRepository.update(participant.id, {
+      lastReadMessage: { id: messageId },
+    });
+
+    const updated = await this.participantRepository.findOne({
+      where: { id: participant.id },
+      relations: ['lastReadMessage', 'user'],
+    });
+
+    if (!updated) {
+      throw new NotFoundException(`Participant not found after update`);
+    }
+
+    return updated;
   }
 }

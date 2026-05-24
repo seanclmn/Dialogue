@@ -40,11 +40,15 @@ function baseConnection(): DataSourceOptions {
 
 export function getTypeOrmRootOptions(): TypeOrmModuleOptions {
   const nodeEnv = process.env.NODE_ENV ?? 'development';
+  const runMigrations =
+    process.env.TYPEORM_MIGRATIONS_RUN === 'true' ||
+    (nodeEnv === 'development' && process.env.TYPEORM_MIGRATIONS_RUN !== 'false');
+
   return {
     ...baseConnection(),
-    synchronize: nodeEnv !== 'production',
+    synchronize: false,
     migrations: [join(__dirname, '..', 'migrations', '*.js')],
-    migrationsRun: process.env.TYPEORM_MIGRATIONS_RUN === 'true',
+    migrationsRun: runMigrations,
     retryAttempts: 5,
     retryDelay: 2000,
   } as TypeOrmModuleOptions;

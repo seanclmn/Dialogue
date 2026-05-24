@@ -54,10 +54,10 @@ export const Avatar = ({
   }
 
   return (
-    <Link to={link ?? `/u/${username}`}>
+    username ? (<Link to={link ?? `/u/${username}`}>
       {body}
-    </Link>
+    </Link>) : (
+      <>{body}</>
+    )
   );
-
-  return <>{body}</>;
 };

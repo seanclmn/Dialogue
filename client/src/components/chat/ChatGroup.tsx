@@ -27,7 +27,7 @@ export const ChatGroup = ({ name, chatId, avatarUrl, lastMessage, hasUnread }: C
         ${id === chatId ? "bg-bgd-highlight" : ""}`}
       >
         <div className="relative shrink-0">
-          <Avatar src={avatarUrl} containerStyle="h-10 w-10 md:h-14 md:w-14" username={name} />
+          <Avatar src={avatarUrl} containerStyle="h-10 w-10 md:h-14 md:w-14" />
           {hasUnread && (
             <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-error border-2 border-bgd-color" />
           )}

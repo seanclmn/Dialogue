@@ -36,9 +36,13 @@ const query = graphql`
             username
             avatarUrl
           }
+          lastReadMessage {
+            id
+          }
         }
         lastMessage {
           id
+          text
         }
         ...Messages_chat
       }
@@ -106,7 +110,9 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   );
 
   useEffect(() => {
-    if (lastMessageId) markLastRead(chatId, lastMessageId);
+    if (lastMessageId && lastMessageId !== data.node?.participants?.find((p) => p.user.id === user.id)?.lastReadMessage?.id) {
+      markLastRead(chatId, lastMessageId);
+    }
   }, [chatId, lastMessageId]);
 
   useEffect(() => {

@@ -4,7 +4,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Node } from 'src/relay';
@@ -26,7 +25,7 @@ export class ChatParticipant implements Node {
   @Field(() => User)
   user: User;
 
-  @OneToOne(() => Message, { nullable: true, eager: true, onDelete: 'SET NULL' })
+  @ManyToOne(() => Message, { nullable: true, eager: true, onDelete: 'SET NULL' })
   @JoinColumn()
   @Field(() => Message, { nullable: true })
   lastReadMessage: Message | null;
