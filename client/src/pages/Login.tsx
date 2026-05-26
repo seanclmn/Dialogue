@@ -147,9 +147,12 @@ export const Login = () => {
           Log in
         </Button>
       </form>
+      <Link to="/signup">
+        <p className="my-2 text-sm">Sign up here</p>
+      </Link>
 
       <div className="flex flex-col gap-2 mt-4">
-        <p className="text-xs text-gray-500 text-center">Quick Login (Dev)</p>
+        <p className="text-xs text-gray-500 text-center">Quick Login (Demo)</p>
         <div className="flex gap-2">
           {["alice", "bob", "charlie"].map((user) => (
             <Button
@@ -165,9 +168,6 @@ export const Login = () => {
         </div>
       </div>
 
-      <Link to="/signup">
-        <p className="my-2 text-sm">Sign up here</p>
-      </Link>
     </div>
   );
 };

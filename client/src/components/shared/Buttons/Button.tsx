@@ -16,9 +16,9 @@ export const Button = ({
 }: ButtonProps) => {
   return (
     <button
-      className={`bg-blue-400 text-white w-auto px-2
+      className={`bg-blue-400 text-white px-2
 			py-2 rounded-md border-blue-400 border-[1px] border-solid flex items-center justify-center
-      disabled:opacity-70 disabled:cursor-not-allowed
+      disabled:opacity-70 disabled:cursor-not-allowed h-10 min-w-20
       ${styles}`}
       onClick={onClick}
       disabled={disabled || loading}
