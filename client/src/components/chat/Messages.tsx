@@ -1,8 +1,7 @@
 import { Message } from "@components/shared/Messages/Message";
 import { Messages_chat$key } from "@generated/Messages_chat.graphql";
 import { Loader } from "@components/shared/loaders/Loader";
-import { UserContext } from "../../contexts/UserContext";
-import { useContext, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { usePaginationFragment } from "react-relay";
 import { graphql } from "relay-runtime";
 
@@ -43,7 +42,6 @@ type MessagesProps = {
 
 export const Messages = ({ fragmentKey, participantAvatars }: MessagesProps) => {
   const { data, loadNext, hasNext, isLoadingNext } = usePaginationFragment(fragment, fragmentKey);
-  const userContext = useContext(UserContext);
   const endMessagesRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -88,29 +86,24 @@ export const Messages = ({ fragmentKey, participantAvatars }: MessagesProps) => 
   return (
     <div ref={containerRef} className="w-full h-full overflow-auto flex flex-col-reverse scroll-py-48 py-4">
       <div ref={endMessagesRef} className="h-1" />
-      {data.messages.edges.map((edge, index) => {
-        const currentMessageDate = new Date(edge.node.createdAt);
-        return (
-          <Message
-            props={{
-              previousMessageUserId: data.messages.edges[index + 1]?.node?.userId,
-              nextMessageUserId: data.messages.edges[index - 1]?.node?.userId,
-              previousMessageDate: data.messages.edges[index + 1]?.node?.createdAt,
-              nextMessageDate: data.messages.edges[index - 1]?.node?.createdAt,
-              date: currentMessageDate.toLocaleString(),
-              text: edge.node.text,
-              gifUrl: edge.node.gifUrl,
-              gifWidth: edge.node.gifWidth ?? undefined,
-              gifHeight: edge.node.gifHeight ?? undefined,
-              id: edge.node.id,
-              userId: edge.node.userId,
-              senderAvatarUrl: participantAvatars[edge.node.userId] ?? null,
-              senderUsername: edge.node.username,
-            }}
-            key={edge.node.id}
-          />
-        );
-      })}
+      {data.messages.edges.map((edge, index) => (
+        <Message
+          key={edge.node.id}
+          id={edge.node.id}
+          text={edge.node.text}
+          date={new Date(edge.node.createdAt).toLocaleString()}
+          gifUrl={edge.node.gifUrl}
+          gifWidth={edge.node.gifWidth ?? undefined}
+          gifHeight={edge.node.gifHeight ?? undefined}
+          userId={edge.node.userId}
+          senderAvatarUrl={participantAvatars[edge.node.userId] ?? null}
+          senderUsername={edge.node.username}
+          previousMessageUserId={data.messages.edges[index + 1]?.node?.userId}
+          nextMessageUserId={data.messages.edges[index - 1]?.node?.userId}
+          previousMessageDate={data.messages.edges[index + 1]?.node?.createdAt}
+          nextMessageDate={data.messages.edges[index - 1]?.node?.createdAt}
+        />
+      ))}
       <div className="w-full flex flex-col items-center my-2">
         {isLoadingNext ? <Loader /> : null}
       </div>

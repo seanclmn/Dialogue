@@ -19,25 +19,25 @@ export interface MessageProps extends React.DOMAttributes<HTMLElement> {
   userId?: string;
   senderAvatarUrl?: string | null;
   senderUsername?: string;
+  isNew?: boolean;
 }
 
-export const Message = memo(({ props, isNew }: { props: MessageProps; isNew?: boolean }) => {
+export const Message = memo(({
+  isNew,
+  styles,
+  date,
+  text,
+  gifUrl,
+  gifWidth,
+  gifHeight,
+  previousMessageUserId,
+  nextMessageUserId,
+  previousMessageDate,
+  userId,
+  senderAvatarUrl,
+  senderUsername,
+}: MessageProps) => {
   const { user } = useContext(UserContext);
-  const {
-    styles,
-    date,
-    text,
-    gifUrl,
-    gifWidth,
-    gifHeight,
-    previousMessageUserId,
-    nextMessageUserId,
-    previousMessageDate,
-    nextMessageDate,
-    userId,
-    senderAvatarUrl,
-    senderUsername,
-  } = props;
 
   const startOfConversation = useMemo(() => {
     if (previousMessageDate) {

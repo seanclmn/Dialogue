@@ -32,62 +32,52 @@ const baseProps = {
 
 export const FromMe: Story = {
   args: {
-    props: {
-      ...baseProps,
-      text: "Hello from me!",
-      userId: "me",
-      previousMessageUserId: "me",
-      nextMessageUserId: "other",
-    },
+    ...baseProps,
+    text: "Hello from me!",
+    userId: "me",
+    previousMessageUserId: "me",
+    nextMessageUserId: "other",
   },
 };
 
 export const FromOther: Story = {
   args: {
-    props: {
-      ...baseProps,
-      text: "Hi there! How are you?",
-      userId: "other",
-      previousMessageUserId: "me",
-      nextMessageUserId: "other",
-    },
+    ...baseProps,
+    text: "Hi there! How are you?",
+    userId: "other",
+    previousMessageUserId: "me",
+    nextMessageUserId: "other",
   },
 };
 
 export const LongMessage: Story = {
   args: {
-    props: {
-      ...baseProps,
-      text: "This is a longer message to show how the component handles wrapping. It might span multiple lines in the chat bubble.",
-      userId: "other",
-      previousMessageUserId: "other",
-      nextMessageUserId: "other",
-    },
+    ...baseProps,
+    text: "This is a longer message to show how the component handles wrapping. It might span multiple lines in the chat bubble.",
+    userId: "other",
+    previousMessageUserId: "other",
+    nextMessageUserId: "other",
   },
 };
 
 export const WithGif: Story = {
   args: {
-    props: {
-      ...baseProps,
-      text: "",
-      gifUrl: "https://media.giphy.com/media/3o7TKsQ82J2q7bFpSo/giphy.gif",
-      userId: "me",
-      previousMessageUserId: "other",
-      nextMessageUserId: "me",
-    },
+    ...baseProps,
+    text: "",
+    gifUrl: "https://media.giphy.com/media/3o7TKsQ82J2q7bFpSo/giphy.gif",
+    userId: "me",
+    previousMessageUserId: "other",
+    nextMessageUserId: "me",
   },
 };
 
 export const StartOfConversation: Story = {
   args: {
-    props: {
-      ...baseProps,
-      text: "First message after a long pause",
-      userId: "other",
-      previousMessageUserId: "other",
-      nextMessageUserId: "other",
-      previousMessageDate: "2024-01-15 12:00",
-    },
+    ...baseProps,
+    text: "First message after a long pause",
+    userId: "other",
+    previousMessageUserId: "other",
+    nextMessageUserId: "other",
+    previousMessageDate: "2024-01-15 12:00",
   },
 };
