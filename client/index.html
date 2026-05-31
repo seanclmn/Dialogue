@@ -19,18 +19,20 @@
     }
     @media (prefers-color-scheme: light) {
       #root:empty { background: #ffffff; }
-      #root:empty::after { border-color: #e8e8e8d0; border-top-color: #3b82f6; }
+      #root:empty::after { color: #000000; }
+    }
+    @font-face {
+      font-family: "Cedarville Cursive";
+      font-style: normal;
+      font-weight: 400;
+      src: url("/fonts/cedarville-cursive-latin.woff2") format("woff2");
     }
     #root:empty::after {
-      content: "";
-      width: 36px;
-      height: 36px;
-      border: 3px solid #333333;
-      border-top-color: #3b82f6;
-      border-radius: 50%;
-      animation: _spin 0.7s linear infinite;
+      content: "Dialogue";
+      font-family: "Cedarville Cursive", cursive;
+      font-size: 3rem;
+      color: #ffffff;
     }
-    @keyframes _spin { to { transform: rotate(360deg); } }
 
     html, body, #root { height: 100%; width: 100%; margin: 0; }
   </style>
