@@ -89,11 +89,11 @@ export function GifPicker({ onSelect, onClose }: GifPickerProps) {
 
   if (!GIPHY_API_KEY) {
     return (
-      <div className="p-4 bg-bgd-highlight rounded-lg border border-brd-color text-txt-color text-sm w-full">
+      <div className="p-4 bg-bgd-highlight rounded-lg border border-brd-color text-txt-color text-sm w-xl">
         <p className="font-medium mb-1">GIF search</p>
         <p className="text-txt-color/80">
-          Set <code className="bg-bgd-color px-1 rounded">VITE_GIPHY_API_KEY</code> in your env to
-          enable. Get a key at{" "}
+          {/* Set <code className="bg-bgd-color px-1 rounded">VITE_GIPHY_API_KEY</code> in your env to
+          enable. Get a key at{" "} */}
           <a
             href="https://developers.giphy.com/"
             target="_blank"
@@ -116,8 +116,8 @@ export function GifPicker({ onSelect, onClose }: GifPickerProps) {
   }
 
   return (
-    <div className="flex flex-col bg-bgd-highlight rounded-lg border border-brd-color overflow-hidden max-h-[280px] w-full">
-      <div className="p-2 border-b border-brd-color flex items-center gap-2 shrink-0">
+    <div className="flex flex-col bg-bgd-highlight rounded-lg border border-brd-color overflow-hidden max-h-[400px] ml-auto w-xl">
+      <div className="p-2 border-b border-brd-color flex items-center gap-2 shrink-0 w-xl">
         <input
           type="search"
           placeholder="Search GIFs..."
@@ -136,7 +136,7 @@ export function GifPicker({ onSelect, onClose }: GifPickerProps) {
           ✕
         </button>
       </div>
-      <div className="overflow-auto p-2 flex-1">
+      <div className="overflow-auto p-2 flex-1 w-xl">
         {error ? (
           <p className="text-sm text-txt-color/80">{error}</p>
         ) : loading && results.length === 0 ? (
@@ -146,7 +146,7 @@ export function GifPicker({ onSelect, onClose }: GifPickerProps) {
         ) : results.length === 0 && query.trim() ? (
           <p className="text-sm text-txt-color/80 py-4 text-center">No GIFs found. Try another search.</p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 max-w-xl">
             {results.map((gif) => (
               <button
                 type="button"
