@@ -1,5 +1,5 @@
 import { Avatar } from "../users/Avatar";
-import { memo, useContext, useMemo } from "react";
+import { useContext } from "react";
 import { MessageMedia } from "./MessageMedia";
 import { UserContext } from "@contexts/UserContext";
 
@@ -22,7 +22,7 @@ export interface MessageProps extends React.DOMAttributes<HTMLElement> {
   isNew?: boolean;
 }
 
-export const Message = memo(({
+export function Message({
   isNew,
   styles,
   date,
@@ -36,36 +36,31 @@ export const Message = memo(({
   userId,
   senderAvatarUrl,
   senderUsername,
-}: MessageProps) => {
+}: MessageProps) {
   const { user } = useContext(UserContext);
 
-  const startOfConversation = useMemo(() => {
-    if (previousMessageDate) {
-      return new Date(date).getTime() - new Date(previousMessageDate).getTime() > 3600000;
-    }
-    return false;
-  }, [date, previousMessageDate]);
+  const startOfConversation = previousMessageDate
+    ? new Date(date).getTime() - new Date(previousMessageDate).getTime() > 3600000
+    : false;
 
   const first = previousMessageUserId !== userId;
   const last = nextMessageUserId !== userId && previousMessageUserId === userId;
   const isolatedMessage = previousMessageUserId !== userId && nextMessageUserId !== userId || startOfConversation;
   const senderIsMe = userId === user?.id;
 
-  const rowStyles = useMemo(() => {
-    if (senderIsMe) {
-      return `w-full flex items-end justify-end pr-2 ${styles ?? ""}`;
-    }
-    return `w-full flex items-start justify-start ${!last && !isolatedMessage ? "pl-14" : ""} ${styles ?? ""}`;
-  }, [userId, styles, last, isolatedMessage, senderIsMe]);
+  const rowStyles = senderIsMe
+    ? `w-full flex items-end justify-end pr-2 ${styles ?? ""}`
+    : `w-full flex items-start justify-start ${!last && !isolatedMessage ? "pl-14" : ""} ${styles ?? ""}`;
 
-  const bubbleStyles = useMemo(() => {
-    const base = "my-[1px] p-1 py-2 rounded-[18px] inline-flex flex-col gap-1";
-    const color = senderIsMe ? "bg-primary" : "bg-secondary";
-    if (isolatedMessage) return `${color} ${base} mb-4`;
-    if (last) return `${color} ${base} ${senderIsMe ? "rounded-tr-none" : "rounded-tl-none"} mb-4`;
-    if (first) return `${color} ${base} ${senderIsMe ? "rounded-br-none" : "rounded-bl-none"}`;
-    return `${color} ${base} ${senderIsMe ? "rounded-r-none" : "rounded-l-none"}`;
-  }, [first, last, isolatedMessage, senderIsMe]);
+  const base = "my-[1px] p-1 py-2 rounded-[18px] inline-flex flex-col gap-1";
+  const color = senderIsMe ? "bg-primary" : "bg-secondary";
+  const bubbleStyles = isolatedMessage
+    ? `${color} ${base} mb-4`
+    : last
+      ? `${color} ${base} ${senderIsMe ? "rounded-tr-none" : "rounded-tl-none"} mb-4`
+      : first
+        ? `${color} ${base} ${senderIsMe ? "rounded-br-none" : "rounded-bl-none"}`
+        : `${color} ${base} ${senderIsMe ? "rounded-r-none" : "rounded-l-none"}`;
 
   const textColor = senderIsMe ? "text-my-txt-color" : "text-txt-color";
 
@@ -97,4 +92,4 @@ export const Message = memo(({
       </div>
     </div>
   );
-});
+}

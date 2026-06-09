@@ -1,5 +1,3 @@
-import { memo } from "react";
-
 export type MessageMediaType = "gif";
 
 const MAX_GIF_WIDTH = 280;
@@ -31,7 +29,7 @@ function clampDimensions(
   return { width: Math.round(width * scale), height: Math.round(height * scale) };
 }
 
-export const MessageMedia = memo(({ type, url, width, height, styles }: MessageMediaProps) => {
+export function MessageMedia({ type, url, width, height, styles }: MessageMediaProps) {
   const config = MEDIA_CONFIG[type];
   if (!config) return null;
 
@@ -59,4 +57,4 @@ export const MessageMedia = memo(({ type, url, width, height, styles }: MessageM
       />
     </a>
   );
-});
+}

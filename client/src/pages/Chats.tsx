@@ -2,7 +2,7 @@ import { ChatGroup } from "@components/chat/ChatGroup";
 import { CreateChat } from "@components/dialogs/CreateChat";
 import { EmptyChat } from "@components/chat/EmptyChat";
 import { Loader } from "@components/shared/loaders/Loader";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router";
 import { graphql } from "relay-runtime";
 import { usePaginationFragment } from "react-relay";
@@ -61,13 +61,11 @@ const ChatsContent = ({ fragmentKey }: ChatsContentProps) => {
     setUser({ ...user, chatIds });
   }, [user?.id]);
 
-  const unreadCount = useMemo(() => {
-    return data.chats.edges.filter(({ node }) => {
-      const myParticipant = node.participants?.find((p) => p.user.id === user.id);
-      if (!node.lastMessage) return false;
-      return myParticipant?.lastReadMessage?.id !== node.lastMessage.id;
-    }).length;
-  }, [data.chats.edges, user.id]);
+  const unreadCount = data.chats.edges.filter(({ node }) => {
+    const myParticipant = node.participants?.find((p) => p.user.id === user.id);
+    if (!node.lastMessage) return false;
+    return myParticipant?.lastReadMessage?.id !== node.lastMessage.id;
+  }).length;
 
   useEffect(() => {
     setUnreadChatCount(unreadCount);

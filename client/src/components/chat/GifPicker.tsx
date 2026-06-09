@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader } from "@components/shared/loaders/Loader";
 
 const GIPHY_API_KEY = import.meta.env.VITE_GIPHY_API_KEY ?? "";
@@ -70,22 +70,19 @@ export function GifPicker({ onSelect, onClose }: GifPickerProps) {
     };
   }, [query]);
 
-  const handleSelect = useCallback(
-    (gif: GiphyGif) => {
-      const img =
-        gif.images.downsized_medium ??
-        gif.images.downsized ??
-        gif.images.fixed_height ??
-        gif.images.original;
-      const url = img?.url;
-      if (!url) return;
-      const width = img?.width != null ? parseInt(img.width, 10) : undefined;
-      const height = img?.height != null ? parseInt(img.height, 10) : undefined;
-      onSelect({ url, width: Number.isNaN(width) ? undefined : width, height: Number.isNaN(height) ? undefined : height });
-      onClose();
-    },
-    [onSelect, onClose],
-  );
+  const handleSelect = (gif: GiphyGif) => {
+    const img =
+      gif.images.downsized_medium ??
+      gif.images.downsized ??
+      gif.images.fixed_height ??
+      gif.images.original;
+    const url = img?.url;
+    if (!url) return;
+    const width = img?.width != null ? parseInt(img.width, 10) : undefined;
+    const height = img?.height != null ? parseInt(img.height, 10) : undefined;
+    onSelect({ url, width: Number.isNaN(width) ? undefined : width, height: Number.isNaN(height) ? undefined : height });
+    onClose();
+  };
 
   if (!GIPHY_API_KEY) {
     return (

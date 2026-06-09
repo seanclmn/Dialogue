@@ -1,4 +1,4 @@
-import { Suspense, useContext, useEffect, useMemo, useState } from "react";
+import { Suspense, useContext, useEffect, useState } from "react";
 import { getChatDisplayName, getDMAvatar } from "@utils/chatName";
 import { ChatInput } from "../shared/Inputs/ChatInput";
 import { Typing } from "./Typing";
@@ -101,12 +101,8 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   const data = usePreloadedQuery(query, queryReference);
   const lastMessageId = data.node?.lastMessage?.id ?? null;
 
-  const participantAvatars = useMemo<Record<string, string | null>>(
-    () => Object.fromEntries(
-      (data.node?.participants ?? []).map((p) => [p.user.id, p.user.avatarUrl ?? null])
-    ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data.node?.id],
+  const participantAvatars: Record<string, string | null> = Object.fromEntries(
+    (data.node?.participants ?? []).map((p) => [p.user.id, p.user.avatarUrl ?? null])
   );
 
   useEffect(() => {
@@ -131,27 +127,24 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     return () => clearTimeout(delayDebounceFn);
   }, [isTyping, chatId]);
 
-  const config: GraphQLSubscriptionConfig<ChatContainerSubscription> = useMemo(
-    () => ({
-      subscription: subscription,
-      variables: { chatId: chatId },
-      updater: (store) => {
-        const newEventField = store.getRootField("userTyping");
-        const typingUser = newEventField.getValue("userId") as string;
-        const isTyping = newEventField.getValue("isTyping");
-        if (typingUser !== user.id) {
-          setTypingUserId(isTyping ? typingUser : null);
-        }
-      },
-      onError: (e) => {
-        console.log(e);
-      },
-      onCompleted: () => {
-        console.log("completed");
-      },
-    }),
-    [data.node?.id],
-  );
+  const config: GraphQLSubscriptionConfig<ChatContainerSubscription> = {
+    subscription: subscription,
+    variables: { chatId: chatId },
+    updater: (store) => {
+      const newEventField = store.getRootField("userTyping");
+      const typingUser = newEventField.getValue("userId") as string;
+      const isTyping = newEventField.getValue("isTyping");
+      if (typingUser !== user.id) {
+        setTypingUserId(isTyping ? typingUser : null);
+      }
+    },
+    onError: (e) => {
+      console.log(e);
+    },
+    onCompleted: () => {
+      console.log("completed");
+    },
+  };
 
   useSubscription(config);
 

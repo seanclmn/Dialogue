@@ -6,7 +6,16 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [relay, react()],
+  plugins: [
+    relay,
+    react({
+      babel: {
+        plugins: [
+          ["babel-plugin-react-compiler", { target: "18" }],
+        ],
+      },
+    }),
+  ],
   base: "/",
   build: {
     rollupOptions: {

@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
+    "@tanstack/react-virtual": "^3.13.24",
     "@heroicons/react": "^2.2.0",
     "@storybook/addon-themes": "^10.4.1",
     "@types/uuid": "^10.0.0",
@@ -30,6 +31,7 @@
     "postcss": "^8.4.41",
     "prettier": "^3.4.2",
     "react": "^18.3.1",
+    "react-compiler-runtime": "^19.1.0-rc.2",
     "react-cookie": "^7.2.0",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.2",
@@ -43,11 +45,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",
-    "@storybook/addon-essentials": "^10.0.0",
-    "@storybook/addon-interactions": "^10.0.0",
-    "@storybook/blocks": "^10.0.0",
     "@storybook/react": "^10.0.0",
     "@storybook/react-vite": "^10.0.0",
+    "babel-plugin-react-compiler": "^19.1.0-rc.2",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.0.0",
     "@types/react": "^18.3.3",

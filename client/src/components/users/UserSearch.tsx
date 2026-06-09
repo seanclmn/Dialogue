@@ -1,6 +1,6 @@
 import { Input } from "@components/shared/Inputs/GenericInput";
 import { UserSearchQuery } from "@generated/UserSearchQuery.graphql";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRelayEnvironment } from "react-relay";
 import { fetchQuery, graphql } from "relay-runtime";
 import { UserSearchItem } from "./UserSearchItem";
@@ -23,15 +23,12 @@ export const UserSearch = () => {
     ReadonlyArray<{ id: string; username: string; avatarUrl?: string | null }>
   >([]);
 
-  const fetch = useCallback(
-    (username: string) => {
-      if (username === "") return null;
-      return fetchQuery<UserSearchQuery>(env, query, { username: username })
-        .toPromise()
-        .then((result) => result);
-    },
-    [input],
-  );
+  const fetch = (username: string) => {
+    if (username === "") return null;
+    return fetchQuery<UserSearchQuery>(env, query, { username: username })
+      .toPromise()
+      .then((result) => result);
+  };
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
