@@ -14,6 +14,7 @@ import { getTypeOrmRootOptions } from './database/typeorm.config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { NotificationsModule } from './notifications/notifications.module';
 import { APP_FILTER } from '@nestjs/core';
+import { RedisModule } from './redis/redis.module';
 import { GraphQLErrorFilter } from './common/filters/graphql-error.filter';
 
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
@@ -61,6 +62,7 @@ const nodeEnv = process.env.NODE_ENV ?? 'development';
       },
     }),
     TypeOrmModule.forRoot(getTypeOrmRootOptions()),
+    RedisModule,
     UsersModule,
     AuthModule,
     ChatsModule,

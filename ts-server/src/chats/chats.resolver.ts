@@ -5,25 +5,29 @@ import { ChatParticipant } from './entities/chat-participant.entity';
 import { CreateChatInput } from './dto/create-chat.input';
 import { UpdateChatInput } from './dto/update-chat.input';
 import { JwtGuard } from 'src/auth/jwt-auth.guard';
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, Inject } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
 import { MessagesService } from 'src/messages/messages.service';
 import { MessageConnection } from 'src/messages/entities/message.connection.entity';
 import { ChatUpdate } from './dto/chatUpdate';
-import { pubSub } from 'src/messages/messages.resolver';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TypingEvent } from './events/typing.event';
 import { TypingEventOutput } from './dto/typingEvent';
+import { PUB_SUB } from 'src/redis/redis.module';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
+
 @Resolver(() => Chat)
 export class ChatsResolver {
-  constructor(private readonly chatsService: ChatsService,
+  constructor(
+    private readonly chatsService: ChatsService,
     private usersService: UsersService,
     private messagesService: MessagesService,
     private eventEmitter: EventEmitter2,
+    @Inject(PUB_SUB) private readonly pubSub: RedisPubSub,
   ) {
     this.eventEmitter.on('chat.typing', (event: TypingEvent) => {
-      pubSub.publish('userTyping', { userTyping: event });
+      this.pubSub.publish('userTyping', { userTyping: event });
     });
   }
 
@@ -110,7 +114,7 @@ export class ChatsResolver {
     filter: (payload: { messageAdded: ChatUpdate }, variables) => variables.chatIds.includes(payload.messageAdded.chatId),
   })
   newMessage(@Args('chatIds', { type: () => [ID!]! }) _chatIds: string[]) {
-    return pubSub.asyncIterableIterator('newMessage')
+    return this.pubSub.asyncIterator('newMessage')
   }
 
   @Mutation(() => TypingEventOutput)
@@ -137,6 +141,6 @@ export class ChatsResolver {
     resolve: (payload) => payload.userTyping,
   })
   userTyping(@Args('chatId', { type: () => ID }) _chatId: string) {
-    return pubSub.asyncIterableIterator('userTyping');
+    return this.pubSub.asyncIterator('userTyping');
   }
 }

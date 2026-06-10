@@ -100,7 +100,7 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   const { markLastRead } = useMarkLastRead();
   const data = usePreloadedQuery(query, queryReference);
   const lastMessageId = data.node?.lastMessage?.id ?? null;
-
+  console.log(data);
   const participantAvatars: Record<string, string | null> = Object.fromEntries(
     (data.node?.participants ?? []).map((p) => [p.user.id, p.user.avatarUrl ?? null])
   );
