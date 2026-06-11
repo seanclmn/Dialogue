@@ -1,14 +1,14 @@
 import {
   ConnectionHandler,
   graphql,
-  GraphQLSubscriptionConfig,
+  requestSubscription,
 } from "relay-runtime";
 import { Suspense, useContext, useEffect } from "react";
 import {
   PreloadedQuery,
   usePreloadedQuery,
   useQueryLoader,
-  useSubscription,
+  useRelayEnvironment,
 } from "react-relay";
 import { PageQuery } from "@generated/PageQuery.graphql";
 import { Loader } from "@components/shared/loaders/Loader";
@@ -82,46 +82,56 @@ type ContentProps = {
 const Content = ({ queryReference }: ContentProps) => {
   const { currentUser } = usePreloadedQuery(query, queryReference);
   const { user, setUser, setCurrentUserRef } = useContext(UserContext);
-  const config: GraphQLSubscriptionConfig<PageChatsSubscription> = {
-    subscription: subscription,
-    variables: { chatIds: user.chatIds },
-    updater: (store) => {
-      const newMessageField = store.getRootField("newMessage");
-      if (!newMessageField) return;
+  const environment = useRelayEnvironment();
 
-      const chatId = newMessageField.getValue("chatId") as string;
-      const newMessageNode = newMessageField.getLinkedRecord("newMessage");
-      if (!chatId || !newMessageNode) return;
+  // Re-subscribe whenever the set of chat IDs changes. Relay's useSubscription
+  // captures variables at mount time and never updates them, so we manage the
+  // subscription lifecycle manually so that events are received as soon as
+  // chatIds are populated (and again if new chats are created).
+  useEffect(() => {
+    if (!user.chatIds.length) return;
 
-      const chatRecord = store.get(chatId);
-      if (!chatRecord) return;
+    const sub = requestSubscription<PageChatsSubscription>(environment, {
+      subscription,
+      variables: { chatIds: user.chatIds },
+      updater: (store) => {
+        const newMessageField = store.getRootField("newMessage");
+        if (!newMessageField) return;
 
-      chatRecord?.setLinkedRecord(newMessageNode, "lastMessage");
+        const chatId = newMessageField.getValue("chatId") as string;
+        const newMessageNode = newMessageField.getLinkedRecord("newMessage");
+        if (!chatId || !newMessageNode) return;
 
-      const messagesConnection = ConnectionHandler.getConnection(
-        chatRecord,
-        "Messages_messages",
-      );
-      if (!messagesConnection) return;
+        const chatRecord = store.get(chatId);
+        if (!chatRecord) return;
 
-      const newEdge = ConnectionHandler.createEdge(
-        store,
-        messagesConnection,
-        newMessageNode,
-        "MessageEdge",
-      );
+        chatRecord.setLinkedRecord(newMessageNode, "lastMessage");
 
-      ConnectionHandler.insertEdgeBefore(messagesConnection, newEdge);
-    },
-    onError: (e) => {
-      console.log(e);
-    },
-    onCompleted: () => {
-      console.log("completed");
-    },
-  };
+        const messagesConnection = ConnectionHandler.getConnection(
+          chatRecord,
+          "Messages_messages",
+        );
+        if (!messagesConnection) return;
 
-  useSubscription(config);
+        const newEdge = ConnectionHandler.createEdge(
+          store,
+          messagesConnection,
+          newMessageNode,
+          "MessageEdge",
+        );
+
+        ConnectionHandler.insertEdgeBefore(messagesConnection, newEdge);
+      },
+      onError: (e) => {
+        console.log(e);
+      },
+      onCompleted: () => {
+        console.log("completed");
+      },
+    });
+
+    return () => sub.dispose();
+  }, [user.chatIds.join(","), environment]);
 
   useEffect(() => {
     setUser({

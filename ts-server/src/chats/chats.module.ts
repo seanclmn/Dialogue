@@ -7,9 +7,10 @@ import { ChatParticipant } from './entities/chat-participant.entity';
 import { UsersModule } from 'src/users/users.module';
 import { MessagesModule } from 'src/messages/messages.module';
 import { TypingEvent } from './events/typing.event';
+import { DataloaderModule } from 'src/dataloader/dataloader.module';
 
 @Module({
-  imports: [forwardRef(() => UsersModule), TypeOrmModule.forFeature([Chat, ChatParticipant]), forwardRef(() => MessagesModule)],
+  imports: [forwardRef(() => UsersModule), TypeOrmModule.forFeature([Chat, ChatParticipant]), forwardRef(() => MessagesModule), DataloaderModule],
   providers: [ChatsResolver, ChatsService, TypingEvent],
   exports: [ChatsService, TypeOrmModule]
 })

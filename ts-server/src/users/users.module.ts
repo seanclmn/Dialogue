@@ -11,6 +11,7 @@ import { ChatsModule } from 'src/chats/chats.module';
 import { FriendRequest } from './entities/friendRequests.entity';
 import { NotificationsModule } from 'src/notifications/notifications.module';
 import { FriendsModule } from 'src/friends/friends.module';
+import { DataloaderModule } from 'src/dataloader/dataloader.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { FriendsModule } from 'src/friends/friends.module';
     forwardRef(() => FriendsModule),
     forwardRef(() => AuthModule),
     StorageModule,
+    DataloaderModule,
   ],
   controllers: [UsersController],
   providers: [UsersResolver, UsersService],

@@ -16,6 +16,7 @@ import { TypingEvent } from './events/typing.event';
 import { TypingEventOutput } from './dto/typingEvent';
 import { PUB_SUB } from 'src/redis/redis.module';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { DataloaderService } from 'src/dataloader/dataloader.service';
 
 @Resolver(() => Chat)
 export class ChatsResolver {
@@ -24,6 +25,7 @@ export class ChatsResolver {
     private usersService: UsersService,
     private messagesService: MessagesService,
     private eventEmitter: EventEmitter2,
+    private readonly dataloaderService: DataloaderService,
     @Inject(PUB_SUB) private readonly pubSub: RedisPubSub,
   ) {
     this.eventEmitter.on('chat.typing', (event: TypingEvent) => {
@@ -36,12 +38,13 @@ export class ChatsResolver {
   @UseGuards(JwtGuard)
   async createChat(
     @Args('createChatInput') createChatInput: CreateChatInput,
-    @Context() _context: any
   ) {
 
     const participantObjects: User[] = (
       await Promise.all(
-        createChatInput.participants.map((username) => this.usersService.findOne(username)),
+        createChatInput.participants.map((username) =>
+          this.dataloaderService.userByUsername(username),
+        ),
       )
     ).filter((u): u is User => u != null);
 

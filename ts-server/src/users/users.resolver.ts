@@ -14,6 +14,7 @@ import { NotificationsService } from 'src/notifications/notifications.service';
 import { NotificationConnection } from 'src/notifications/entities/notification.connection';
 import { FriendsService } from '../friends/friends.service';
 import { FriendRequest as FriendRequestEntity } from '../friends/entities/friend-request.entity';
+import { DataloaderService } from 'src/dataloader/dataloader.service';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -21,6 +22,7 @@ export class UsersResolver {
     private readonly usersService: UsersService,
     private readonly notificationsService: NotificationsService,
     private readonly friendsService: FriendsService,
+    private readonly dataloaderService: DataloaderService,
   ) { }
 
   @Query(() => User)
@@ -116,7 +118,7 @@ export class UsersResolver {
   ): Promise<boolean> {
     const currentUser = context.req.user;
     if (!currentUser || currentUser.id === user.id) return false;
-    return await this.friendsService.isFriend(currentUser.id, user.id);
+    return this.dataloaderService.isFriend(currentUser.id, user.id);
   }
 
   @ResolveField("notifications", () => NotificationConnection)
