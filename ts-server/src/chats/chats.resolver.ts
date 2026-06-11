@@ -113,8 +113,17 @@ export class ChatsResolver {
   }
 
   @Subscription(() => ChatUpdate, {
-    resolve: (payload: { messageAdded: ChatUpdate }) => payload.messageAdded,
-    filter: (payload: { messageAdded: ChatUpdate }, variables) => variables.chatIds.includes(payload.messageAdded.chatId),
+    resolve: (payload: { messageAdded: ChatUpdate }) => {
+      const msg = payload.messageAdded.newMessage;
+      // Redis JSON round-trip turns Date objects into strings.
+      // Re-hydrate so GraphQLISODateTime.serialize receives an actual Date.
+      if (msg && !(msg.createdAt instanceof Date)) {
+        msg.createdAt = new Date(msg.createdAt as unknown as string);
+      }
+      return payload.messageAdded;
+    },
+    filter: (payload: { messageAdded: ChatUpdate }, variables) =>
+      variables.chatIds.includes(payload.messageAdded.chatId),
   })
   newMessage(@Args('chatIds', { type: () => [ID!]! }) _chatIds: string[]) {
     return this.pubSub.asyncIterator('newMessage')
