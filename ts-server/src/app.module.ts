@@ -16,6 +16,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { APP_FILTER } from '@nestjs/core';
 import { RedisModule } from './redis/redis.module';
 import { GraphQLErrorFilter } from './common/filters/graphql-error.filter';
+import { CacheModule } from '@nestjs/cache-manager';
 
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
@@ -61,6 +62,7 @@ const nodeEnv = process.env.NODE_ENV ?? 'development';
         return { req };
       },
     }),
+    CacheModule.register({ isGlobal: true, ttl: 5 * 60 * 1000 }),
     TypeOrmModule.forRoot(getTypeOrmRootOptions()),
     RedisModule,
     UsersModule,

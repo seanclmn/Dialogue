@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { PubSub } from 'graphql-subscriptions';
 
 export const REDIS_CLIENT = 'REDIS_CLIENT';
 export const PUB_SUB = 'PUB_SUB';
@@ -33,13 +33,7 @@ function createRedisClient(configService: ConfigService): Redis {
     },
     {
       provide: PUB_SUB,
-      useFactory: (configService: ConfigService) => {
-        return new RedisPubSub({
-          publisher: createRedisClient(configService),
-          subscriber: createRedisClient(configService),
-        });
-      },
-      inject: [ConfigService],
+      useValue: new PubSub(),
     },
   ],
   exports: [REDIS_CLIENT, PUB_SUB],

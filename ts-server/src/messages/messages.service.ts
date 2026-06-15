@@ -8,26 +8,21 @@ import { MessageConnection } from './entities/message.connection.entity';
 import { Chat } from 'src/chats/entities/chat.entity';
 import { buildRelayConnection, decodeCursor } from 'src/relay-helpers';
 import { User } from 'src/users/entities/user.entity';
-import { REDIS_CLIENT } from 'src/redis/redis.module';
-import Redis from 'ioredis';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
-const MESSAGES_CACHE_TTL_SECONDS = 300;
-
-const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
-function dateReviver(_key: string, value: unknown): unknown {
-  if (typeof value === 'string' && ISO_DATE_RE.test(value)) {
-    return new Date(value);
-  }
-  return value;
-}
+const MESSAGES_CACHE_TTL_MS = 5 * 60 * 1000;
 
 @Injectable()
 export class MessagesService {
+  // Tracks which cache keys belong to each chat so we can invalidate them all
+  // when a new message is posted without needing a Redis SCAN.
+  private readonly chatCacheKeys = new Map<string, Set<string>>();
+
   constructor(
     @InjectRepository(Message) private messagesRepository: Repository<Message>,
     @InjectRepository(Chat) private chatsRepository: Repository<Chat>,
     @InjectRepository(User) private usersRepository: Repository<User>,
-    @Inject(REDIS_CLIENT) private readonly redis: Redis,
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) { }
 
   async create(createMessageInput: CreateMessageInput) {
@@ -85,10 +80,8 @@ export class MessagesService {
     const take = first || 20;
     const cacheKey = `chat:messages:${id}:${skip}:${take}`;
 
-    const cached = await this.redis.get(cacheKey);
-    if (cached) {
-      return JSON.parse(cached, dateReviver) as MessageConnection;
-    }
+    const cached = await this.cache.get<MessageConnection>(cacheKey);
+    if (cached) return cached;
 
     const [messages, totalCount] = await this.messagesRepository.findAndCount({
       where: { chat: { id } },
@@ -99,20 +92,22 @@ export class MessagesService {
 
     const connection = buildRelayConnection(messages, totalCount, { first, after: skip });
 
-    await this.redis.set(cacheKey, JSON.stringify(connection), 'EX', MESSAGES_CACHE_TTL_SECONDS);
+    await this.cache.set(cacheKey, connection, MESSAGES_CACHE_TTL_MS);
+
+    // Register the key so invalidation can find it without a scan.
+    if (!this.chatCacheKeys.has(id)) {
+      this.chatCacheKeys.set(id, new Set());
+    }
+    this.chatCacheKeys.get(id).add(cacheKey);
 
     return connection;
   }
 
   private async invalidateMessagesCache(chatId: string): Promise<void> {
-    const pattern = `chat:messages:${chatId}:*`;
-    let cursor = '0';
-    do {
-      const [nextCursor, keys] = await this.redis.scan(cursor, 'MATCH', pattern, 'COUNT', '100');
-      cursor = nextCursor;
-      if (keys.length > 0) {
-        await this.redis.del(...keys);
-      }
-    } while (cursor !== '0');
+    const keys = this.chatCacheKeys.get(chatId);
+    if (!keys?.size) return;
+
+    await Promise.all([...keys].map((key) => this.cache.del(key)));
+    this.chatCacheKeys.delete(chatId);
   }
 }

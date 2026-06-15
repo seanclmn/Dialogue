@@ -6,13 +6,13 @@ import { UpdateMessageInput } from './dto/update-message.input';
 import { UseGuards, Inject } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/jwt-auth.guard';
 import { PUB_SUB } from 'src/redis/redis.module';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { PubSub } from 'graphql-subscriptions';
 
 @Resolver(() => Message)
 export class MessagesResolver {
   constructor(
     private readonly messagesService: MessagesService,
-    @Inject(PUB_SUB) private readonly pubSub: RedisPubSub,
+    @Inject(PUB_SUB) private readonly pubSub: PubSub,
   ) { }
 
   @Mutation(() => Message)

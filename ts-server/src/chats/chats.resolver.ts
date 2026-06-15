@@ -15,7 +15,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TypingEvent } from './events/typing.event';
 import { TypingEventOutput } from './dto/typingEvent';
 import { PUB_SUB } from 'src/redis/redis.module';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { PubSub } from 'graphql-subscriptions';
 import { DataloaderService } from 'src/dataloader/dataloader.service';
 
 @Resolver(() => Chat)
@@ -26,7 +26,7 @@ export class ChatsResolver {
     private messagesService: MessagesService,
     private eventEmitter: EventEmitter2,
     private readonly dataloaderService: DataloaderService,
-    @Inject(PUB_SUB) private readonly pubSub: RedisPubSub,
+    @Inject(PUB_SUB) private readonly pubSub: PubSub,
   ) {
     this.eventEmitter.on('chat.typing', (event: TypingEvent) => {
       this.pubSub.publish('userTyping', { userTyping: event });
@@ -113,20 +113,12 @@ export class ChatsResolver {
   }
 
   @Subscription(() => ChatUpdate, {
-    resolve: (payload: { messageAdded: ChatUpdate }) => {
-      const msg = payload.messageAdded.newMessage;
-      // Redis JSON round-trip turns Date objects into strings.
-      // Re-hydrate so GraphQLISODateTime.serialize receives an actual Date.
-      if (msg && !(msg.createdAt instanceof Date)) {
-        msg.createdAt = new Date(msg.createdAt as unknown as string);
-      }
-      return payload.messageAdded;
-    },
+    resolve: (payload: { messageAdded: ChatUpdate }) => payload.messageAdded,
     filter: (payload: { messageAdded: ChatUpdate }, variables) =>
       variables.chatIds.includes(payload.messageAdded.chatId),
   })
   newMessage(@Args('chatIds', { type: () => [ID!]! }) _chatIds: string[]) {
-    return this.pubSub.asyncIterator('newMessage')
+    return this.pubSub.asyncIterableIterator('newMessage')
   }
 
   @Mutation(() => TypingEventOutput)
@@ -153,6 +145,6 @@ export class ChatsResolver {
     resolve: (payload) => payload.userTyping,
   })
   userTyping(@Args('chatId', { type: () => ID }) _chatId: string) {
-    return this.pubSub.asyncIterator('userTyping');
+    return this.pubSub.asyncIterableIterator('userTyping');
   }
 }
