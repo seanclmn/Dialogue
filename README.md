@@ -1,6 +1,6 @@
 # Dialogue
 
-A full-stack web chat application written in TypeScript.
+A full-stack web chat application written in TypeScript. View the demo: <https://dialogue-spa.web.app/>
 
 ## Tech stack
 
