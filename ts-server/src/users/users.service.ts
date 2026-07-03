@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
 import { CreateUserInput } from './dto/create-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
@@ -9,12 +9,16 @@ import { Chat } from 'src/chats/entities/chat.entity';
 import { PageInfo } from 'src/relay';
 import { UserEdge } from './entities/user.edge.entity';
 import { FriendRequest } from './entities/friendRequests.entity';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
+
+const CHATS_CACHE_TTL_MS = 30_000;
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(Chat) private chatsRepository: Repository<Chat>,
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) { }
 
   async create(createUserInput: CreateUserInput) {
@@ -46,6 +50,10 @@ export class UsersService {
   }
 
   async getChatsForUser(id: string, first?: number, after?: Date) {
+    const cacheKey = `chats:user:${id}:${first ?? 'all'}:${after?.toISOString() ?? ''}`;
+    const cached = await this.cache.get<{ edges: ChatEdge[]; pageInfo: PageInfo }>(cacheKey);
+    if (cached) return cached;
+
     let query = this.chatsRepository
       .createQueryBuilder('chat')
       .innerJoin('chat.participants', 'filterCP')
@@ -66,7 +74,7 @@ export class UsersService {
     const chats = await query.getMany();
 
     const edges: ChatEdge[] = chats.slice(0, first).map((chat) => ({
-      cursor: chat.updatedAt.toISOString(), // Use createdAt as cursor
+      cursor: chat.updatedAt.toISOString(),
       node: chat,
     }));
 
@@ -77,7 +85,9 @@ export class UsersService {
       hasNextPage: chats.length > first,
     };
 
-    return { edges, pageInfo };
+    const result = { edges, pageInfo };
+    await this.cache.set(cacheKey, result, CHATS_CACHE_TTL_MS);
+    return result;
   }
 
   async updateUser(updateUserInput: UpdateUserInput) {

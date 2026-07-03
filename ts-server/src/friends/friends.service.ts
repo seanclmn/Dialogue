@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FriendRequest } from './entities/friend-request.entity';
@@ -6,6 +6,9 @@ import { Friendship } from './entities/friendship.entity';
 import { User } from '../users/entities/user.entity';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationsType } from '../notifications/entities/notification.entity';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
+
+const FRIENDS_CACHE_TTL_MS = 5 * 60_000;
 
 @Injectable()
 export class FriendsService {
@@ -17,6 +20,7 @@ export class FriendsService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private notificationsService: NotificationsService,
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) {}
 
   async sendFriendRequest(senderId: string, receiverId: string) {
@@ -79,6 +83,12 @@ export class FriendsService {
     await this.notificationsService.deleteFriendRequestNotification(sender.id, receiver.id);
     await this.notificationsService.deleteFriendRequestNotification(receiver.id, sender.id);
 
+    // Invalidate friends cache for both users
+    await Promise.all([
+      this.cache.del(`friends:user:${sender.id}`),
+      this.cache.del(`friends:user:${receiver.id}`),
+    ]);
+
     return savedRequest;
   }
 
@@ -126,11 +136,17 @@ export class FriendsService {
   }
 
   async getFriends(userId: string) {
+    const cacheKey = `friends:user:${userId}`;
+    const cached = await this.cache.get<User[]>(cacheKey);
+    if (cached) return cached;
+
     const friendships = await this.friendshipRepository.find({
       where: { user: { id: userId } },
       relations: ['friend'],
     });
-    return friendships.map(f => f.friend);
+    const friends = friendships.map(f => f.friend);
+    await this.cache.set(cacheKey, friends, FRIENDS_CACHE_TTL_MS);
+    return friends;
   }
 
   async isFriend(userId: string, friendId: string): Promise<boolean> {

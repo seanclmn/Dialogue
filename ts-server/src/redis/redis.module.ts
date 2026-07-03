@@ -18,7 +18,7 @@ function createRedisClient(configService: ConfigService): Redis {
     ...(password && { password }),
     ...(tls && { tls: {} }),
     retryStrategy: (times) => Math.min(times * 100, 3000),
-    lazyConnect: false,
+    lazyConnect: true,
   });
 }
 

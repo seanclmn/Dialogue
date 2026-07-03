@@ -1,0 +1,4 @@
+# Inherit all rules from .gitignore, then re-include the lockfile so Cloud
+# Build can reproduce a deterministic install inside the Docker builder stage.
+#!include:.gitignore
+!yarn.lock
