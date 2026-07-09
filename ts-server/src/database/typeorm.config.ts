@@ -23,16 +23,25 @@ export const typeOrmEntities = [
 ];
 
 function baseConnection(): DataSourceOptions {
+  const isProd = process.env.NODE_ENV === 'production';
+
+  // DB_SSL_CA: base64-encoded CA cert (e.g. from Aiven). When set, connects over
+  // TLS instead of a Cloud SQL Unix socket.
+  const sslCa = process.env.DB_SSL_CA
+    ? Buffer.from(process.env.DB_SSL_CA, 'base64').toString('utf-8')
+    : undefined;
+
   return {
     type: 'mysql',
-    host: process.env.NODE_ENV === 'production' ? process.env.DB_HOST : 'localhost',
-    port: process.env.NODE_ENV === 'production' ? Number(process.env.DB_PORT) : 3306,
-    username: process.env.NODE_ENV === 'production' ? process.env.DB_USERNAME : 'root',
-    password: process.env.NODE_ENV === 'production' ? process.env.DB_PASSWORD : 'root',
-    database: process.env.NODE_ENV === 'production' ? process.env.DB_DATABASE : 'chat',
+    host: isProd ? process.env.DB_HOST : 'localhost',
+    port: isProd ? Number(process.env.DB_PORT ?? 3306) : 3306,
+    username: isProd ? process.env.DB_USERNAME : 'root',
+    password: isProd ? process.env.DB_PASSWORD : 'root',
+    database: isProd ? process.env.DB_DATABASE : 'chat',
     entities: typeOrmEntities,
     timezone: 'Z',
-    extra: process.env.NODE_ENV === 'production' ? {
+    ssl: sslCa ? { ca: sslCa, rejectUnauthorized: true } : undefined,
+    extra: !sslCa && process.env.DB_SOCKET_PATH ? {
       socketPath: process.env.DB_SOCKET_PATH,
     } : undefined,
   } as DataSourceOptions;

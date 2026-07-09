@@ -15,6 +15,7 @@
     "start:prod": "NODE_ENV=production node dist/main",
     "seed": "ts-node -r tsconfig-paths/register src/seed.ts",
     "seed:prod": "node dist/seed.js",
+    "sync:prod": "node dist/sync.js",
     "migration:generate": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:generate -d src/data-source.ts",
     "migration:create": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:create",
     "migration:run": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:run -d src/data-source.ts",
