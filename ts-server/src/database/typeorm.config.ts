@@ -41,7 +41,7 @@ function baseConnection(): DataSourceOptions {
     entities: typeOrmEntities,
     timezone: 'Z',
     ssl: sslCa ? { ca: sslCa, rejectUnauthorized: true } : undefined,
-    extra: !sslCa && process.env.DB_SOCKET_PATH ? {
+    extra: isProd && !sslCa && process.env.DB_SOCKET_PATH ? {
       socketPath: process.env.DB_SOCKET_PATH,
     } : undefined,
   } as DataSourceOptions;

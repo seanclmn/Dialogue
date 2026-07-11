@@ -5,24 +5,12 @@ import { CreateUserInput } from './dto/create-user.input';
 import { UnauthorizedException, UseGuards, NotFoundException } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/jwt-auth.guard';
 import { ChatConnection } from 'src/chats/entities/chat.connection.entity';
-import { UserConnection } from './entities/user.connection.entity';
-import { UserEdge } from './entities/user.edge.entity';
-import { PageInfo } from 'src/relay';
-import { AcceptFriendRequestInput, DeclineFriendRequestInput, SendFriendRequestInput } from '../friends/dto/friend-request.input';
 import { UpdateUserInput } from './dto/update-user.input';
-import { NotificationsService } from 'src/notifications/notifications.service';
-import { NotificationConnection } from 'src/notifications/entities/notification.connection';
-import { FriendsService } from '../friends/friends.service';
-import { FriendRequest as FriendRequestEntity } from '../friends/entities/friend-request.entity';
-import { DataloaderService } from 'src/dataloader/dataloader.service';
 
 @Resolver(() => User)
 export class UsersResolver {
   constructor(
     private readonly usersService: UsersService,
-    private readonly notificationsService: NotificationsService,
-    private readonly friendsService: FriendsService,
-    private readonly dataloaderService: DataloaderService,
   ) { }
 
   @Query(() => User)
@@ -72,65 +60,5 @@ export class UsersResolver {
     @Args('after', { type: () => String, nullable: true }) after?: Date
   ): Promise<ChatConnection> {
     return await this.usersService.getChatsForUser(user.id, first, after);
-  }
-
-  @ResolveField('friends', () => UserConnection)
-  async friends(
-    @Parent() user: User,
-    @Args('first', { type: () => Int, nullable: true }) first?: number,
-    @Args('after', { type: () => String, nullable: true }) after?: string
-  ): Promise<UserConnection> {
-    const friends = await this.friendsService.getFriends(user.id);
-    
-    // Basic pagination for now as the service returns all friends
-    const start = after ? parseInt(Buffer.from(after, 'base64').toString('ascii')) + 1 : 0;
-    const limit = first || 10;
-    const paginatedFriends = friends.slice(start, start + limit);
-    
-    const edges: UserEdge[] = paginatedFriends.map((friend, index) => ({
-      cursor: Buffer.from((start + index).toString()).toString('base64'),
-      node: friend,
-    }));
-
-    const pageInfo: PageInfo = {
-      startCursor: edges[0]?.cursor || '',
-      endCursor: edges[edges.length - 1]?.cursor || '',
-      hasPreviousPage: start > 0,
-      hasNextPage: friends.length > start + limit,
-    };
-
-    return { edges, pageInfo };
-  }
-
-  @ResolveField('friendRequests', () => [FriendRequestEntity])
-  async friendRequests(
-    @Parent() user: User,
-  ): Promise<FriendRequestEntity[]> {
-    const requests = await this.friendsService.getFriendRequestsForUser(user.id);
-    return requests;
-  }
-
-  @ResolveField('isFriend', () => Boolean)
-  @UseGuards(JwtGuard)
-  async isFriend(
-    @Parent() user: User,
-    @Context() context: any
-  ): Promise<boolean> {
-    const currentUser = context.req.user;
-    if (!currentUser || currentUser.id === user.id) return false;
-    return this.dataloaderService.isFriend(currentUser.id, user.id);
-  }
-
-  @ResolveField("notifications", () => NotificationConnection)
-  async notifications(
-    @Parent() user: User,
-    @Args('first', { type: () => Int, nullable: true }) first: number,
-    @Args('after', { type: () => String, nullable: true }) after?: string
-  ): Promise<NotificationConnection> {
-    return await this.notificationsService.getNotificationsForUser(
-      user.id,
-      first || 10,
-      after
-    );
   }
 }
