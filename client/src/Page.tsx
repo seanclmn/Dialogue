@@ -11,7 +11,7 @@ import {
   useSubscription,
 } from "react-relay";
 import { PageQuery } from "@generated/PageQuery.graphql";
-import { Loader } from "@components/shared/loaders/Loader";
+import { SplashLogo } from "@components/shared/loaders/SplashLogo";
 import { UserContext } from "./contexts/UserContext";
 import { Outlet} from "react-router";
 import { PageChatsSubscription } from "@generated/PageChatsSubscription.graphql";
@@ -66,10 +66,10 @@ const Page = () => {
     loadQuery({}, { fetchPolicy: "network-only" });
   }, []);
 
-  if (!queryReference) return <Loader />;
+  if (!queryReference) return <SplashLogo />;
 
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={<SplashLogo />}>
       <Content queryReference={queryReference} />
     </Suspense>
   );
@@ -139,7 +139,7 @@ const Content = ({ queryReference }: ContentProps) => {
     setCurrentUserRef(currentUser);
   }, [currentUser.id]);
 
-  if (!currentUser.id) return <Loader />;
+  if (!currentUser.id) return <SplashLogo />;
 
   return (
     <>

@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { useCookies } from "react-cookie";
 import { ToastProvider } from "./components/common/ToastProvider";
-import { Loader } from "@components/shared/loaders/Loader";
+import { SplashLogo } from "@components/shared/loaders/SplashLogo";
 
 const ErrorPage = lazy(() => import("./pages/404"));
 const Login = lazy(() => import("./pages/Login").then((m) => ({ default: m.Login })));
@@ -84,7 +84,7 @@ export const RouterParent = () => {
   ]);
   
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={<SplashLogo />}>
       <RouterProvider router={router} />
     </Suspense>
   );
