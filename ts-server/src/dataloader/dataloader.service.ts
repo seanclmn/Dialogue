@@ -4,22 +4,27 @@ import { In, Repository } from 'typeorm';
 import * as DataLoader from 'dataloader';
 import { Friendship } from '../friends/entities/friendship.entity';
 import { User } from '../users/entities/user.entity';
+import { Message } from '../messages/entities/message.entity';
 
 @Injectable()
 export class DataloaderService implements OnModuleInit {
   private isFriendLoader: DataLoader<string, boolean>;
   private userByUsernameLoader: DataLoader<string, User | null>;
+  private messageByIdLoader: DataLoader<string, Message | null>;
 
   constructor(
     @InjectRepository(Friendship)
     private readonly friendshipRepository: Repository<Friendship>,
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    @InjectRepository(Message)
+    private readonly messagesRepository: Repository<Message>,
   ) {}
 
   onModuleInit() {
     this.isFriendLoader = this.createIsFriendLoader();
     this.userByUsernameLoader = this.createUserByUsernameLoader();
+    this.messageByIdLoader = this.createMessageByIdLoader();
   }
 
   /**
@@ -45,6 +50,16 @@ export class DataloaderService implements OnModuleInit {
    */
   userByUsername(username: string): Promise<User | null> {
     return this.userByUsernameLoader.load(username);
+  }
+
+  /**
+   * Looks up a Message by id.
+   *
+   * Used to resolve the `parentMessage` field on replies; batches all lookups
+   * within the same tick into a single WHERE id IN (…) query.
+   */
+  messageById(id: string): Promise<Message | null> {
+    return this.messageByIdLoader.load(id);
   }
 
   /**
@@ -93,6 +108,22 @@ export class DataloaderService implements OnModuleInit {
         });
         const userMap = new Map(users.map((u) => [u.username, u]));
         return usernames.map((username) => userMap.get(username) ?? null);
+      },
+      { cache: false },
+    );
+  }
+
+  /**
+   * Batches parent-message lookups for replies into a single WHERE id IN (…) query.
+   */
+  private createMessageByIdLoader(): DataLoader<string, Message | null> {
+    return new DataLoader<string, Message | null>(
+      async (ids: readonly string[]) => {
+        const messages = await this.messagesRepository.find({
+          where: { id: In([...ids]) },
+        });
+        const messageMap = new Map(messages.map((m) => [m.id, m]));
+        return ids.map((id) => messageMap.get(id) ?? null);
       },
       { cache: false },
     );

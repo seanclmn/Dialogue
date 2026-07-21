@@ -23,6 +23,7 @@ import { useUpdateTyping } from "@mutations/UpdateTyping";
 import { useMarkLastRead } from "@mutations/MarkLastRead";
 import { ChatContainerSubscription } from "@generated/ChatContainerSubscription.graphql";
 import { GifPicker, type GifPayload } from "./GifPicker";
+import { XMarkIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 
 const query = graphql`
   query ChatContainerQuery($id: ID!) {
@@ -58,9 +59,18 @@ const mutation = graphql`
     $gifUrl: String
     $gifWidth: Int
     $gifHeight: Int
+    $parentMessageId: String
   ) {
     createMessage(
-      createMessageInput: { text: $text, userId: $userId, chatId: $chatId, gifUrl: $gifUrl, gifWidth: $gifWidth, gifHeight: $gifHeight }
+      createMessageInput: {
+        text: $text
+        userId: $userId
+        chatId: $chatId
+        gifUrl: $gifUrl
+        gifWidth: $gifWidth
+        gifHeight: $gifHeight
+        parentMessageId: $parentMessageId
+      }
     ) {
       createdAt
       id
@@ -69,6 +79,14 @@ const mutation = graphql`
       gifWidth
       gifHeight
       userId
+      username
+      parentMessageId
+      parentMessage {
+        id
+        text
+        gifUrl
+        username
+      }
     }
   }
 `;
@@ -88,10 +106,18 @@ interface ContentProps {
   chatId: string;
 }
 
+type ReplyTarget = {
+  id: string;
+  text: string;
+  gifUrl?: string | null;
+  username: string;
+};
+
 export const Content = ({ queryReference, chatId }: ContentProps) => {
   const [messageMap, setMessageMap] = useState<Record<string, string>>({});
   const [gifPayloadMap, setGifPayloadMap] = useState<Record<string, GifPayload | undefined>>({});
   const [showGifPicker, setShowGifPicker] = useState<Record<string, boolean>>({});
+  const [replyToMap, setReplyToMap] = useState<Record<string, ReplyTarget | undefined>>({});
   const [isTyping, setIsTyping] = useState<boolean | null>(null);
   const [typingUserId, setTypingUserId] = useState<string | null>(null);
   const { user } = useContext(UserContext);
@@ -152,6 +178,8 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
     return null;
   }
 
+  const replyTo = replyToMap[chatId];
+
   const handleSendMessage = () => {
     const text = messageMap[chatId]?.trim() ?? "";
     const gif = gifPayloadMap[chatId];
@@ -166,11 +194,13 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
           gifUrl: gifUrl ?? undefined,
           gifWidth: gif?.width ?? undefined,
           gifHeight: gif?.height ?? undefined,
+          parentMessageId: replyTo?.id ?? undefined,
         },
       }).dispose();
       setMessageMap({ ...messageMap, [chatId]: "" });
       setGifPayloadMap({ ...gifPayloadMap, [chatId]: undefined });
       setShowGifPicker({ ...showGifPicker, [chatId]: false });
+      setReplyToMap({ ...replyToMap, [chatId]: undefined });
     }
   };
 
@@ -188,7 +218,11 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
 
       <div className="flex flex-col items-start grow h-1">
         {data.node ? (
-          <Messages fragmentKey={data.node} participantAvatars={participantAvatars} />
+          <Messages
+            fragmentKey={data.node}
+            participantAvatars={participantAvatars}
+            onReply={(message) => setReplyToMap({ ...replyToMap, [chatId]: message })}
+          />
         ) : null}
         {typingUserId ? (
           <div className="flex flex-row items-center mb-4">
@@ -205,6 +239,25 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
             }}
             onClose={() => setShowGifPicker({ ...showGifPicker, [chatId]: false })}
           />
+        </div>
+      ) : null}
+      {replyTo ? (
+        <div className="mx-2 mb-1 flex items-center gap-2 rounded-[15px] border-[1px] border-brd-color bg-bgd-color px-3 py-1">
+          <ArrowUturnLeftIcon className="w-4 h-4 text-txt-color shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-semibold text-txt-color">Replying to {replyTo.username}</p>
+            <p className="text-xs text-txt-color opacity-70 truncate">
+              {replyTo.gifUrl ? "GIF" : replyTo.text}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setReplyToMap({ ...replyToMap, [chatId]: undefined })}
+            aria-label="Cancel reply"
+            className="text-txt-color hover:bg-bgd-highlight rounded-full p-1 shrink-0"
+          >
+            <XMarkIcon className="w-4 h-4" />
+          </button>
         </div>
       ) : null}
       {gifPayloadMap[chatId]?.url ? (

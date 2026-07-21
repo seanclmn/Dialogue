@@ -1,4 +1,4 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateMessageInput } from './dto/create-message.input';
 import { UpdateMessageInput } from './dto/update-message.input';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -34,6 +34,26 @@ export class MessagesService {
       where: { id: createMessageInput.userId }
     })
     if (!chat) throw new NotFoundException(`Chat with ID ${createMessageInput.chatId} not found`);
+
+    let parentMessageId: string | undefined;
+    if (createMessageInput.parentMessageId) {
+      const parentMessage = await this.messagesRepository.findOne({
+        where: { id: createMessageInput.parentMessageId },
+        relations: { chat: true },
+      });
+      if (!parentMessage) {
+        throw new NotFoundException(`Message with ID ${createMessageInput.parentMessageId} not found`);
+      }
+      if (parentMessage.chat.id !== createMessageInput.chatId) {
+        throw new BadRequestException('Cannot reply to a message from a different chat');
+      }
+      if (parentMessage.parentMessageId) {
+        // Keep replies flat (no threads): a reply always points at a top-level message.
+        throw new BadRequestException('Cannot reply to a message that is itself a reply');
+      }
+      parentMessageId = parentMessage.id;
+    }
+
     const newMessage = await this.messagesRepository.save({
       text: createMessageInput.text,
       chat: chat,
@@ -41,6 +61,7 @@ export class MessagesService {
       ...(createMessageInput.gifUrl && { gifUrl: createMessageInput.gifUrl }),
       ...(createMessageInput.gifWidth != null && { gifWidth: createMessageInput.gifWidth }),
       ...(createMessageInput.gifHeight != null && { gifHeight: createMessageInput.gifHeight }),
+      ...(parentMessageId && { parentMessageId }),
       username: user.username,
     })
     await this.chatsRepository.save({

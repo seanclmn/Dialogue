@@ -19,4 +19,7 @@ export class CreateMessageInput {
 
   @Field(() => Int, { nullable: true })
   gifHeight?: number;
+
+  @Field({ nullable: true })
+  parentMessageId?: string;
 }

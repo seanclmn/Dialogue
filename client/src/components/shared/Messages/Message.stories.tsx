@@ -81,3 +81,28 @@ export const StartOfConversation: Story = {
     previousMessageDate: "2024-01-15 12:00",
   },
 };
+
+export const HoverToReply: Story = {
+  args: {
+    ...baseProps,
+    text: "Hover over me to see the reply button",
+    userId: "other",
+    previousMessageUserId: "other",
+    nextMessageUserId: "other",
+    onReply: () => alert("Reply clicked"),
+  },
+};
+
+export const Reply: Story = {
+  args: {
+    ...baseProps,
+    text: "Sounds good, see you then!",
+    userId: "me",
+    previousMessageUserId: "other",
+    nextMessageUserId: "me",
+    parentMessageId: "0",
+    parentMessageText: "Are we still meeting at 5pm today?",
+    parentMessageUsername: "other",
+    onReply: () => alert("Reply clicked"),
+  },
+};

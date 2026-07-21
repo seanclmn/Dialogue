@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
 import { MessagesService } from './messages.service';
 import { Message } from './entities/message.entity';
 import { CreateMessageInput } from './dto/create-message.input';
@@ -7,12 +7,14 @@ import { UseGuards, Inject } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/jwt-auth.guard';
 import { PUB_SUB } from 'src/redis/redis.module';
 import { PubSub } from 'graphql-subscriptions';
+import { DataloaderService } from 'src/dataloader/dataloader.service';
 
 @Resolver(() => Message)
 export class MessagesResolver {
   constructor(
     private readonly messagesService: MessagesService,
     @Inject(PUB_SUB) private readonly pubSub: PubSub,
+    private readonly dataloaderService: DataloaderService,
   ) { }
 
   @Mutation(() => Message)
@@ -38,5 +40,11 @@ export class MessagesResolver {
   @UseGuards(JwtGuard)
   updateMessage(@Args('updateMessageInput') updateMessageInput: UpdateMessageInput) {
     return this.messagesService.update(updateMessageInput);
+  }
+
+  @ResolveField('parentMessage', () => Message, { nullable: true })
+  async parentMessage(@Parent() message: Message): Promise<Message | null> {
+    if (!message.parentMessageId) return null;
+    return this.dataloaderService.messageById(message.parentMessageId);
   }
 }

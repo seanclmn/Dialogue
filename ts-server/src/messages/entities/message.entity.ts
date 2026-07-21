@@ -35,6 +35,15 @@ export class Message implements Node {
   @Field()
   username: string;
 
+  @Column({ type: 'varchar', length: 36, nullable: true })
+  @Field(() => ID, { nullable: true })
+  parentMessageId?: string | null;
+
+  // Resolved on demand by MessagesResolver.parentMessage (batched via DataloaderService)
+  // rather than being a TypeORM relation, since it's derived from parentMessageId.
+  @Field(() => Message, { nullable: true })
+  parentMessage?: Message | null;
+
   @Field(() => Chat)
   @ManyToOne(() => Chat, (chat) => chat.messages)
   chat: Chat;

@@ -26,6 +26,13 @@ const fragment = graphql`
           createdAt
           userId
           username
+          parentMessageId
+          parentMessage {
+            id
+            text
+            gifUrl
+            username
+          }
         }
       }
       pageInfo {
@@ -39,9 +46,10 @@ const fragment = graphql`
 type MessagesProps = {
   fragmentKey: Messages_chat$key;
   participantAvatars: Record<string, string | null>;
+  onReply?: (message: { id: string; text: string; gifUrl?: string | null; username: string }) => void;
 };
 
-export const Messages = ({ fragmentKey, participantAvatars }: MessagesProps) => {
+export const Messages = ({ fragmentKey, participantAvatars, onReply }: MessagesProps) => {
   const { data, loadNext, hasNext, isLoadingNext } = usePaginationFragment(fragment, fragmentKey);
   const parentRef = useRef<HTMLDivElement | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -170,6 +178,22 @@ export const Messages = ({ fragmentKey, participantAvatars }: MessagesProps) => 
                 nextMessageUserId={edges[virtualItem.index + 1]?.node?.userId}
                 previousMessageDate={edges[virtualItem.index - 1]?.node?.createdAt}
                 nextMessageDate={edges[virtualItem.index + 1]?.node?.createdAt}
+                parentMessageId={edge.node.parentMessageId}
+                parentMessageText={edge.node.parentMessage?.text}
+                parentMessageGifUrl={edge.node.parentMessage?.gifUrl}
+                parentMessageUsername={edge.node.parentMessage?.username}
+                onReply={
+                  // Replies are single-level (no threads), so a reply can't itself be replied to.
+                  onReply && !edge.node.parentMessageId
+                    ? () =>
+                        onReply({
+                          id: edge.node.id,
+                          text: edge.node.text,
+                          gifUrl: edge.node.gifUrl,
+                          username: edge.node.username,
+                        })
+                    : undefined
+                }
               />
             </div>
           );

@@ -2,6 +2,7 @@ import { Avatar } from "../users/Avatar";
 import { useContext } from "react";
 import { MessageMedia } from "./MessageMedia";
 import { UserContext } from "@contexts/UserContext";
+import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 
 export interface MessageProps extends React.DOMAttributes<HTMLElement> {
   styles?: string;
@@ -20,6 +21,11 @@ export interface MessageProps extends React.DOMAttributes<HTMLElement> {
   senderAvatarUrl?: string | null;
   senderUsername?: string;
   isNew?: boolean;
+  parentMessageId?: string | null;
+  parentMessageText?: string | null;
+  parentMessageGifUrl?: string | null;
+  parentMessageUsername?: string | null;
+  onReply?: () => void;
 }
 
 export function Message({
@@ -36,6 +42,11 @@ export function Message({
   userId,
   senderAvatarUrl,
   senderUsername,
+  parentMessageId,
+  parentMessageText,
+  parentMessageGifUrl,
+  parentMessageUsername,
+  onReply,
 }: MessageProps) {
   const { user } = useContext(UserContext);
 
@@ -64,15 +75,44 @@ export function Message({
 
   const textColor = senderIsMe ? "text-my-txt-color" : "text-txt-color";
 
+  const isReply = !!parentMessageId;
+  const replyPreviewRowStyles = senderIsMe
+    ? "w-full flex justify-end pr-2"
+    : `w-full flex justify-start ${!last && !isolatedMessage ? "pl-14" : ""}`;
+
+  const replyButton = onReply ? (
+    <button
+      type="button"
+      onClick={onReply}
+      aria-label="Reply"
+      title="Reply"
+      className={`shrink-0 self-center p-1 rounded-full opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity text-txt-color hover:bg-bgd-highlight ${senderIsMe ? "mr-1" : "ml-1"}`}
+    >
+      <ArrowUturnLeftIcon className="w-4 h-4" />
+    </button>
+  ) : null;
+
   return (
     <div className={`${isNew ? "message-in" : ""}${styles ?? ""}`}>
       {startOfConversation ? (
         <p className="text-center text-gray-500 mb-4 mt-16">{date}</p>
       ) : null}
-      <div className={`${rowStyles} ${styles} `}>
+      {isReply ? (
+        <div className={replyPreviewRowStyles}>
+          <div className="max-w-md min-w-0 mb-1 px-3 py-1 rounded-2xl bg-secondary opacity-50">
+            <p className="text-xs font-semibold truncate">{parentMessageUsername}</p>
+            <p className="text-xs truncate">
+              {parentMessageGifUrl ? "GIF" : parentMessageText || "Message"}
+            </p>
+          </div>
+        </div>
+      ) : null}
+      <div className={`${rowStyles} ${styles} group`}>
         {(last || isolatedMessage) && !senderIsMe ? (
           <Avatar src={senderAvatarUrl} containerStyle="h-10 w-10 mx-2" username={senderUsername} />
         ) : null}
+
+        {senderIsMe ? replyButton : null}
 
         {gifUrl ? (
           <MessageMedia
@@ -89,6 +129,8 @@ export function Message({
               </p>
             </div>
         ) : null}
+
+        {!senderIsMe ? replyButton : null}
       </div>
     </div>
   );

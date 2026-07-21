@@ -53,6 +53,7 @@ input CreateMessageInput {
   gifHeight: Int
   gifUrl: String
   gifWidth: Int
+  parentMessageId: String
   text: String!
   userId: String!
 }
@@ -121,6 +122,8 @@ type Message implements Node {
   gifUrl: String
   gifWidth: Int
   id: ID!
+  parentMessage: Message
+  parentMessageId: ID
   text: String!
   userId: String!
   username: String!
@@ -224,6 +227,7 @@ input UpdateMessageInput {
   gifUrl: String
   gifWidth: Int
   id: String!
+  parentMessageId: String
   text: String!
   userId: String!
 }
