@@ -98,14 +98,21 @@ export function Message({
         <p className="text-center text-gray-500 mb-4 mt-16">{date}</p>
       ) : null}
       {isReply ? (
-        <div className={replyPreviewRowStyles}>
-          <div className="max-w-md min-w-0 mb-1 px-3 py-1 rounded-2xl bg-secondary opacity-50">
-            <p className="text-xs font-semibold truncate">{parentMessageUsername}</p>
-            <p className="text-xs truncate">
-              {parentMessageGifUrl ? "GIF" : parentMessageText || "Message"}
-            </p>
+        <>
+        <div className={rowStyles }>
+          <div className={`pl-2 flex flex-col my-2 ${senderIsMe ? "items-end" : "items-start ml-12"}`}>
+            <p className={`text-xs truncate my-1 `}>{senderIsMe ? `You replied to ${parentMessageUsername}` : `${senderUsername} replied to ${parentMessageUsername === user.username ? "you" : parentMessageUsername}`}</p>
+            <div className={`flex flex-row justify-between ${senderIsMe ? "flex-row-reverse" : "flex-row"}`}>
+              <div className="border-l-2"/>
+              <div className="mx-2 max-w-md min-w-0 my-1 px-3 py-1 rounded-2xl bg-secondary opacity-50">
+                <p className="truncate">
+                  {parentMessageGifUrl ? "GIF" : parentMessageText || "Message"}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
+        </>
       ) : null}
       <div className={`${rowStyles} ${styles} group`}>
         {(last || isolatedMessage) && !senderIsMe ? (
