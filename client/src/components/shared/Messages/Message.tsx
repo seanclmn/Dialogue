@@ -191,11 +191,7 @@ export function Message({
           aria-label={groupedReactions
             .map((g) => `${g.emoji} from ${g.reactors.map((r) => r.username).join(", ")}`)
             .join("; ")}
-          className={`flex items-center gap-1 text-xs rounded-full px-2 py-0.5 border shadow-sm transition-colors ${
-            iHaveReacted
-              ? "bg-secondary border-bgd-color text-txt-color"
-              : "bg-bgd-highlight border-brd-color text-txt-color"
-          }`}
+          className={"flex items-center gap-1 text-xs rounded-full px-2 py-0.5 border shadow-sm transition-colors bg-secondary border-bgd-color text-my-txt-color"}
         >
           {visibleReactionEmojis.map((emoji, index) => (
             <span key={`${emoji}-${index}`}>{emoji}</span>
