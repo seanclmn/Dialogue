@@ -106,3 +106,32 @@ export const Reply: Story = {
     onReply: () => alert("Reply clicked"),
   },
 };
+
+export const WithReactions: Story = {
+  args: {
+    ...baseProps,
+    text: "Check out this cool feature!",
+    userId: "other",
+    previousMessageUserId: "other",
+    nextMessageUserId: "other",
+    reactions: [
+      { id: "r1", emoji: "👍", userId: "me", username: "me", avatarUrl: null },
+      { id: "r2", emoji: "👍", userId: "other2", username: "other2", avatarUrl: null },
+      { id: "r3", emoji: "❤️", userId: "other3", username: "other3", avatarUrl: null },
+    ],
+    onToggleReaction: (emoji, isRemoving) =>
+      alert(`${isRemoving ? "Remove" : "Add"} ${emoji} reaction`),
+  },
+};
+
+export const HoverToReact: Story = {
+  args: {
+    ...baseProps,
+    text: "Hover over me to see the react button",
+    userId: "other",
+    previousMessageUserId: "other",
+    nextMessageUserId: "other",
+    onToggleReaction: (emoji, isRemoving) =>
+      alert(`${isRemoving ? "Remove" : "Add"} ${emoji} reaction`),
+  },
+};

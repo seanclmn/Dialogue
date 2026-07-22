@@ -5,12 +5,14 @@ import * as DataLoader from 'dataloader';
 import { Friendship } from '../friends/entities/friendship.entity';
 import { User } from '../users/entities/user.entity';
 import { Message } from '../messages/entities/message.entity';
+import { MessageReaction } from '../messages/entities/message-reaction.entity';
 
 @Injectable()
 export class DataloaderService implements OnModuleInit {
   private isFriendLoader: DataLoader<string, boolean>;
   private userByUsernameLoader: DataLoader<string, User | null>;
   private messageByIdLoader: DataLoader<string, Message | null>;
+  private reactionsByMessageIdLoader: DataLoader<string, MessageReaction[]>;
 
   constructor(
     @InjectRepository(Friendship)
@@ -19,12 +21,15 @@ export class DataloaderService implements OnModuleInit {
     private readonly usersRepository: Repository<User>,
     @InjectRepository(Message)
     private readonly messagesRepository: Repository<Message>,
+    @InjectRepository(MessageReaction)
+    private readonly messageReactionsRepository: Repository<MessageReaction>,
   ) {}
 
   onModuleInit() {
     this.isFriendLoader = this.createIsFriendLoader();
     this.userByUsernameLoader = this.createUserByUsernameLoader();
     this.messageByIdLoader = this.createMessageByIdLoader();
+    this.reactionsByMessageIdLoader = this.createReactionsByMessageIdLoader();
   }
 
   /**
@@ -60,6 +65,16 @@ export class DataloaderService implements OnModuleInit {
    */
   messageById(id: string): Promise<Message | null> {
     return this.messageByIdLoader.load(id);
+  }
+
+  /**
+   * Looks up all reactions for a message, ordered by creation time.
+   *
+   * Used to resolve the `reactions` field on Message; batches all lookups
+   * within the same tick into a single WHERE messageId IN (…) query.
+   */
+  reactionsByMessageId(messageId: string): Promise<MessageReaction[]> {
+    return this.reactionsByMessageIdLoader.load(messageId);
   }
 
   /**
@@ -124,6 +139,34 @@ export class DataloaderService implements OnModuleInit {
         });
         const messageMap = new Map(messages.map((m) => [m.id, m]));
         return ids.map((id) => messageMap.get(id) ?? null);
+      },
+      { cache: false },
+    );
+  }
+
+  /**
+   * Batches reaction lookups for a list of messages into a single
+   * WHERE messageId IN (…) query, grouping results by message.
+   */
+  private createReactionsByMessageIdLoader(): DataLoader<string, MessageReaction[]> {
+    return new DataLoader<string, MessageReaction[]>(
+      async (messageIds: readonly string[]) => {
+        const reactions = await this.messageReactionsRepository.find({
+          where: { messageId: In([...messageIds]) },
+          order: { createdAt: 'ASC' },
+        });
+
+        const reactionsByMessage = new Map<string, MessageReaction[]>();
+        for (const reaction of reactions) {
+          const existing = reactionsByMessage.get(reaction.messageId);
+          if (existing) {
+            existing.push(reaction);
+          } else {
+            reactionsByMessage.set(reaction.messageId, [reaction]);
+          }
+        }
+
+        return messageIds.map((id) => reactionsByMessage.get(id) ?? []);
       },
       { cache: false },
     );

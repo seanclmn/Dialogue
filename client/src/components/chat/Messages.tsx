@@ -33,6 +33,15 @@ const fragment = graphql`
             gifUrl
             username
           }
+          reactions {
+            id
+            emoji
+            user {
+              id
+              username
+              avatarUrl
+            }
+          }
         }
       }
       pageInfo {
@@ -47,9 +56,10 @@ type MessagesProps = {
   fragmentKey: Messages_chat$key;
   participantAvatars: Record<string, string | null>;
   onReply?: (message: { id: string; text: string; gifUrl?: string | null; username: string }) => void;
+  onToggleReaction?: (messageId: string, emoji: string, isRemoving: boolean) => void;
 };
 
-export const Messages = ({ fragmentKey, participantAvatars, onReply }: MessagesProps) => {
+export const Messages = ({ fragmentKey, participantAvatars, onReply, onToggleReaction }: MessagesProps) => {
   const { data, loadNext, hasNext, isLoadingNext } = usePaginationFragment(fragment, fragmentKey);
   const parentRef = useRef<HTMLDivElement | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -182,6 +192,18 @@ export const Messages = ({ fragmentKey, participantAvatars, onReply }: MessagesP
                 parentMessageText={edge.node.parentMessage?.text}
                 parentMessageGifUrl={edge.node.parentMessage?.gifUrl}
                 parentMessageUsername={edge.node.parentMessage?.username}
+                reactions={edge.node.reactions.map((reaction) => ({
+                  id: reaction.id,
+                  emoji: reaction.emoji,
+                  userId: reaction.user.id,
+                  username: reaction.user.username,
+                  avatarUrl: reaction.user.avatarUrl,
+                }))}
+                onToggleReaction={
+                  onToggleReaction
+                    ? (emoji, isRemoving) => onToggleReaction(edge.node.id, emoji, isRemoving)
+                    : undefined
+                }
                 onReply={
                   // Replies are single-level (no threads), so a reply can't itself be replied to.
                   onReply && !edge.node.parentMessageId

@@ -3,10 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Friendship } from '../friends/entities/friendship.entity';
 import { User } from '../users/entities/user.entity';
 import { Message } from '../messages/entities/message.entity';
+import { MessageReaction } from '../messages/entities/message-reaction.entity';
 import { DataloaderService } from './dataloader.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Friendship, User, Message])],
+  imports: [TypeOrmModule.forFeature([Friendship, User, Message, MessageReaction])],
   providers: [DataloaderService],
   exports: [DataloaderService],
 })

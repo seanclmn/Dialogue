@@ -1,8 +1,9 @@
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Node } from 'src/relay';
 import { User } from 'src/users/entities/user.entity';
 import { Chat } from 'src/chats/entities/chat.entity';
+import { MessageReaction } from './message-reaction.entity';
 
 @Entity()
 @ObjectType({ implements: Node })
@@ -47,6 +48,13 @@ export class Message implements Node {
   @Field(() => Chat)
   @ManyToOne(() => Chat, (chat) => chat.messages)
   chat: Chat;
+
+  // Resolved on demand by MessagesResolver.reactions (batched via DataloaderService)
+  // rather than eager-loaded here, so it doesn't interfere with the messages
+  // connection's skip/take pagination.
+  @OneToMany(() => MessageReaction, (reaction) => reaction.message)
+  @Field(() => [MessageReaction])
+  reactions: MessageReaction[];
 
   @Field()
   @CreateDateColumn()

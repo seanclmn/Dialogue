@@ -21,7 +21,10 @@ import { ChatHeader } from "./ChatHeader";
 import { ChatSendButton } from "@components/shared/Buttons/ChatSendButton";
 import { useUpdateTyping } from "@mutations/UpdateTyping";
 import { useMarkLastRead } from "@mutations/MarkLastRead";
+import { useAddMessageReaction } from "@mutations/AddMessageReaction";
+import { useRemoveMessageReaction } from "@mutations/RemoveMessageReaction";
 import { ChatContainerSubscription } from "@generated/ChatContainerSubscription.graphql";
+import { ChatContainerReactionsSubscription } from "@generated/ChatContainerReactionsSubscription.graphql";
 import { GifPicker, type GifPayload } from "./GifPicker";
 import { XMarkIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 
@@ -87,6 +90,15 @@ const mutation = graphql`
         gifUrl
         username
       }
+      reactions {
+        id
+        emoji
+        user {
+          id
+          username
+          avatarUrl
+        }
+      }
     }
   }
 `;
@@ -98,6 +110,26 @@ const subscription = graphql`
       isTyping
       userId
     } 
+  }
+`;
+
+const reactionsSubscription = graphql`
+  subscription ChatContainerReactionsSubscription($chatIds: [ID!]!) {
+    reactionsUpdated(chatIds: $chatIds) {
+      chatId
+      message {
+        id
+        reactions {
+          id
+          emoji
+          user {
+            id
+            username
+            avatarUrl
+          }
+        }
+      }
+    }
   }
 `;
 
@@ -124,6 +156,8 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
   const [commitMutation] = useMutation<ChatContainerMutation>(mutation);
   const { updateTyping } = useUpdateTyping();
   const { markLastRead } = useMarkLastRead();
+  const { addMessageReaction } = useAddMessageReaction();
+  const { removeMessageReaction } = useRemoveMessageReaction();
   const data = usePreloadedQuery(query, queryReference);
   const lastMessageId = data.node?.lastMessage?.id ?? null;
   console.log(data);
@@ -174,6 +208,16 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
 
   useSubscription(config);
 
+  const reactionsConfig: GraphQLSubscriptionConfig<ChatContainerReactionsSubscription> = {
+    subscription: reactionsSubscription,
+    variables: { chatIds: [chatId] },
+    onError: (e) => {
+      console.log(e);
+    },
+  };
+
+  useSubscription(reactionsConfig);
+
   if (!queryReference || !data.node) {
     return null;
   }
@@ -222,6 +266,11 @@ export const Content = ({ queryReference, chatId }: ContentProps) => {
             fragmentKey={data.node}
             participantAvatars={participantAvatars}
             onReply={(message) => setReplyToMap({ ...replyToMap, [chatId]: message })}
+            onToggleReaction={(messageId, emoji, isRemoving) =>
+              isRemoving
+                ? removeMessageReaction(messageId, emoji)
+                : addMessageReaction(messageId, emoji)
+            }
           />
         ) : null}
         {typingUserId ? (

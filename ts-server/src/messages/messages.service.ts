@@ -3,6 +3,7 @@ import { CreateMessageInput } from './dto/create-message.input';
 import { UpdateMessageInput } from './dto/update-message.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Message } from './entities/message.entity';
+import { MessageReaction } from './entities/message-reaction.entity';
 import { Repository } from 'typeorm';
 import { MessageConnection } from './entities/message.connection.entity';
 import { Chat } from 'src/chats/entities/chat.entity';
@@ -12,6 +13,10 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
 const MESSAGES_CACHE_TTL_MS = 5 * 60 * 1000;
 
+// Generous enough for multi-codepoint emoji (skin tones, ZWJ sequences) while
+// still comfortably fitting the `emoji` column and rejecting garbage input.
+const MAX_EMOJI_LENGTH = 16;
+
 @Injectable()
 export class MessagesService {
   // Tracks which cache keys belong to each chat so we can invalidate them all
@@ -20,6 +25,7 @@ export class MessagesService {
 
   constructor(
     @InjectRepository(Message) private messagesRepository: Repository<Message>,
+    @InjectRepository(MessageReaction) private messageReactionsRepository: Repository<MessageReaction>,
     @InjectRepository(Chat) private chatsRepository: Repository<Chat>,
     @InjectRepository(User) private usersRepository: Repository<User>,
     @Inject(CACHE_MANAGER) private readonly cache: Cache,
@@ -90,6 +96,55 @@ export class MessagesService {
 
   async update(updateMessageInput: UpdateMessageInput) {
     return await this.messagesRepository.save(updateMessageInput)
+  }
+
+  /**
+   * Adds `emoji` as a reaction from `userId` on `messageId`, unless that
+   * exact (message, user, emoji) combination already exists — reacting with
+   * an emoji you've already used on this message is a no-op rather than an
+   * error, so double-clicks/retries are safe.
+   */
+  async addReaction(messageId: string, userId: string, emoji: string): Promise<Message> {
+    this.validateEmoji(emoji);
+    const message = await this.findMessageWithChat(messageId);
+
+    const existing = await this.messageReactionsRepository.findOne({
+      where: { messageId, userId, emoji },
+    });
+    if (!existing) {
+      await this.messageReactionsRepository.save({ messageId, userId, emoji });
+    }
+
+    return message;
+  }
+
+  /**
+   * Removes the reaction `userId` left with `emoji` on `messageId`.
+   */
+  async removeReaction(messageId: string, userId: string, emoji: string): Promise<Message> {
+    const message = await this.findMessageWithChat(messageId);
+
+    const result = await this.messageReactionsRepository.delete({ messageId, userId, emoji });
+    if (!result.affected) {
+      throw new NotFoundException(`No ${emoji} reaction from this user on message ${messageId}`);
+    }
+
+    return message;
+  }
+
+  private validateEmoji(emoji: string): void {
+    if (!emoji || !emoji.trim() || emoji.length > MAX_EMOJI_LENGTH) {
+      throw new BadRequestException('Invalid emoji');
+    }
+  }
+
+  private async findMessageWithChat(messageId: string): Promise<Message> {
+    const message = await this.messagesRepository.findOne({
+      where: { id: messageId },
+      relations: { chat: true },
+    });
+    if (!message) throw new NotFoundException(`Message with ID ${messageId} not found`);
+    return message;
   }
 
   async getMessagesForChat(

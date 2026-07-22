@@ -60,6 +60,15 @@ const subscription = graphql`
           gifUrl
           username
         }
+        reactions {
+          id
+          emoji
+          user {
+            id
+            username
+            avatarUrl
+          }
+        }
       }
     }
   }

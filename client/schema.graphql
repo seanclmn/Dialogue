@@ -124,6 +124,7 @@ type Message implements Node {
   id: ID!
   parentMessage: Message
   parentMessageId: ID
+  reactions: [MessageReaction!]!
   text: String!
   userId: String!
   username: String!
@@ -139,8 +140,21 @@ type MessageEdge {
   node: Message!
 }
 
+type MessageReaction {
+  createdAt: DateTime!
+  emoji: String!
+  id: ID!
+  user: User!
+}
+
+type MessageReactionsUpdate {
+  chatId: String!
+  message: Message!
+}
+
 type Mutation {
   acceptFriendRequest(acceptFriendRequestInput: AcceptFriendRequestInput!): FriendRequest!
+  addMessageReaction(emoji: String!, messageId: ID!): Message!
   createChat(createChatInput: CreateChatInput!): Chat!
   createFriendRequest(createFriendRequestInput: CreateNotificationInput!): Notification!
   createMessage(createMessageInput: CreateMessageInput!): Message!
@@ -149,6 +163,7 @@ type Mutation {
   login(loginUserInput: LoginUserInput!): LoginResponse!
   markLastRead(chatId: ID!, messageId: ID!): ChatParticipant!
   removeChat(id: Int!): Chat!
+  removeMessageReaction(emoji: String!, messageId: ID!): Message!
   sendFriendRequest(sendFriendRequestInput: SendFriendRequestInput!): FriendRequest!
   signup(createUserInput: CreateUserInput!): LoginResponse!
   updateChat(updateChatInput: UpdateChatInput!): Chat!
@@ -206,6 +221,7 @@ input SendFriendRequestInput {
 
 type Subscription {
   newMessage(chatIds: [ID!]!): ChatUpdate!
+  reactionsUpdated(chatIds: [ID!]!): MessageReactionsUpdate!
   userTyping(chatId: ID!): TypingEventOutput!
 }
 

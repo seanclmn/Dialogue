@@ -5,6 +5,7 @@ import { User } from '../users/entities/user.entity';
 import { Chat } from '../chats/entities/chat.entity';
 import { ChatParticipant } from '../chats/entities/chat-participant.entity';
 import { Message } from '../messages/entities/message.entity';
+import { MessageReaction } from '../messages/entities/message-reaction.entity';
 import { Notification, FriendRequestNotification } from '../notifications/entities/notification.entity';
 import { FriendRequest as FriendRequestEntity } from '../friends/entities/friend-request.entity';
 import { Friendship } from '../friends/entities/friendship.entity';
@@ -15,6 +16,7 @@ export const typeOrmEntities = [
   Chat,
   ChatParticipant,
   Message,
+  MessageReaction,
   FriendRequest,
   Notification,
   FriendRequestEntity,
